@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/src/output.css" />
+		<title>Register</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body class="bg-gray-100">
+		<!-- Header -->
+		<header class="bg-purple-600 text-white">
+			<div
+				class="container mx-auto flex items-center justify-between py-4 px-6"
+			>
+				<div class="text-2xl font-bold">PLAYERHAVEN</div>
+				<nav class="flex space-x-4">
+					<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
+					<a href="#" class="hover:text-indigo-300">ไอดีเกมออนไลน์</a>
+					<a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
+					<a href="#" class="hover:text-indigo-300">บัตรเติมเกมออนไลน์</a>
+					<a href="#" class="hover:text-indigo-300">เติมเกมออนไลน์</a>
+					<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
+				</nav>
+				<div class="space-x-4">
+					<button class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800" onclick="location.href='Login.html'">
+						เข้าสู่ระบบ
+					</button>
+					<button
+						class="border border-white px-4 py-2 rounded hover:bg-indigo-700 onclick="location.href='Register.html'
+					>
+						สมัครสมาชิก
+					</button>
+				</div>
+			</div>
+		</header>
+
+		<!-- Register Section -->
+		<section class="bg-indigo-600 text-white py-6">
+			<div class="container mx-auto text-center">
+				<h2 class="text-xl font-bold">สมัครสมาชิก</h2>
+				<p class="opacity-90">Home &gt; Register</p>
+			</div>
+		</section>
+        <!--  Card Register Section -->
+		<section class="container mx-auto py-12 flex justify-center">
+			<div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
+				<div class="text-center mb-6">
+					<img
+						src="img/player_logo.jpg"
+						alt="PlayerHaven Logo"
+						class="mx-auto w-26 h-24 mb-6"
+					/>
+					<h2 class="text-3xl font-bold text-indigo-800">PLAYERHAVEN</h2>
+					<p class="text-gray-600">GAME ONLINE STORE CENTER</p>
+				</div>
+				<div class="flex flex-col items-center mb-6">
+					<button
+						class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 mb-3 w-full max-w-sm"
+					>
+						Sign in with Discord
+					</button>
+					<button
+						class="bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 w-full max-w-sm"
+					>
+						Sign in with Google
+					</button>
+				</div>
+				<p class="text-center text-gray-600 mb-4 font-medium">
+					OR REGISTER WITH
+				</p>
+				<form action="#" method="POST">
+					<div class="mb-4">
+						<label for="username" class="block text-gray-800 font-medium"
+							>ชื่อผู้ใช้ *</label
+						>
+						<input
+							type="text"
+							id="username"
+							name="username"
+							class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+							required
+						/>
+					</div>
+					<div class="mb-4">
+						<label for="password" class="block text-gray-800 font-medium"
+							>รหัสผ่าน *</label
+						>
+						<input
+							type="password"
+							id="password"
+							name="password"
+							class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+							required
+						/>
+					</div>
+					<div class="mb-4">
+						<label for="email" class="block text-gray-800 font-medium"
+							>อีเมล *</label
+						>
+						<input
+							type="email"
+							id="email"
+							name="email"
+							class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+							required
+						/>
+					</div>
+					<div class="mb-4">
+						<label for="phone" class="block text-gray-800 font-medium"
+							>เบอร์โทรศัพท์ *</label
+						>
+						<input
+							type="tel"
+							id="phone"
+							name="phone"
+							class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+							required
+						/>
+					</div>
+					<div class="mb-4 flex items-center">
+						<input type="checkbox" id="terms" name="terms" class="mr-2" />
+						<label for="terms" class="text-gray-800"
+							>ฉันยินยอมตามเงื่อนไขและนโยบาย</label
+						>
+					</div>
+					<div class="mb-6">
+						<div class="g-recaptcha" data-sitekey="your-site-key"></div>
+					</div>
+					<div class="flex space-x-4">
+						<button
+							type="submit"
+							class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 w-full"
+						>
+							สมัครสมาชิก
+						</button>
+						<button
+							type="button"
+							class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 w-full"
+						>
+							ยกเลิก
+						</button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</body>
+</html>
