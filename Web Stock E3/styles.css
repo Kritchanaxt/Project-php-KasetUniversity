@@ -1,0 +1,153 @@
+/* CSS File (styles.css) */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.navbar {
+    background: linear-gradient(to right, #6a0dad, #8a2be2);
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .menu {
+    display: flex;
+    gap: 20px;
+}
+
+.navbar .menu a {
+    color: white;
+    text-decoration: none;
+}
+
+.profile-dropdown {
+    position: relative;
+}
+
+.profile-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    padding: 10px;
+    width: 200px;
+}
+
+.dropdown-menu a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar {
+    width: 200px;
+    float: left;
+}
+
+.content {
+    margin-left: 220px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: #6a0dad;
+    text-decoration: none;
+}
+
+.header-bar {
+    background-color: #534ade;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    border-top: 2px solid #8a2be2;
+}
+.header-bar h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header-bar p {
+    margin: 5px 0 0;
+    font-size: 14px;
+}
+.profile-icon {
+    width: 24px; /* กำหนดความกว้าง */
+    height: 24px; /* กำหนดความสูง */
+    object-fit: contain; /* ทำให้ภาพปรับขนาดและไม่บิดเบี้ยว */
+}
+.center-box {
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางในแนวตั้ง */
+    justify-content: center; /* จัดกึ่งกลางในแนวนอน */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    width: 200px; /* ปรับขนาดตามต้องการ */
+    height: 60px; /* ปรับขนาดตามต้องการ */
+}
+
+.icon {
+    width: 24px; /* ปรับขนาดไอคอน */
+    height: 24px;
+    margin-right: 10px; /* เว้นระยะระหว่างไอคอนกับข้อความ */
+}

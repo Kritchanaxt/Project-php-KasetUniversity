@@ -1,0 +1,80 @@
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setting</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            PLAYER HAVEN
+        </div>
+        <div class="menu">
+            <a href="#"><class="menu-icon"> หน้าแรก </a>
+            <a href="#"><class="menu-icon"> ไอดีเกมออนไลน์</a>
+            <a href="#"><class="menu-icon"> สุ่มไอดีเกม</a>
+            <a href="#"><class="menu-icon"> บัตรเติมเกม</a>
+            <a href="#"><class="menu-icon"> เติมเกมออนไลน์</a>
+            <a href="#"><class="menu-icon"> ติดต่อเรา</a>
+        </div>
+        <div class="profile-dropdown">
+            <div>
+                <img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332039709097988186/profile_4372360.png?ex=6793ce26&is=67927ca6&hm=fba17feaf7d8cf7e0702197e6d3e436016be3e339c423a8607cd628334cea5fc&" alt="ชื่อไอดีสมาชิก" class="profile-icon">
+                ชื่อไอดีสมาชิก &#9662;
+            </div>
+            <div class="dropdown-menu">
+                <a href="#"><img src="icons/profile.png" alt="ดูโปรไฟล์ของคุณ" class="dropdown-icon"> ดูโปรไฟล์ของคุณ</a>
+                <a href="#"><img src="icons/history.png" alt="ประวัติเติมเงิน" class="dropdown-icon"> ประวัติเติมเงิน</a>
+                <a href="#"><img src="icons/order-history.png" alt="ประวัติการสั่งซื้อ" class="dropdown-icon"> ประวัติการสั่งซื้อ</a>
+                <a href="#"><img src="icons/gift-card.png" alt="กล่องบัตรเติมเงิน" class="dropdown-icon"> กล่องบัตรเติมเงิน</a>
+                <a href="#"><img src="icons/mailbox.png" alt="กล่องจดหมาย" class="dropdown-icon"> กล่องจดหมาย</a>
+                <a href="#"><img src="icons/logout.png" alt="ออกจากระบบ" class="dropdown-icon"> ออกจากระบบ</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-bar">
+        <h1>ตั้งค่าสมาชิก</h1>
+        <p>HOME &gt; USER &gt; PROFILE SETTING</p>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332039709097988186/profile_4372360.png?ex=6793ce26&is=67927ca6&hm=fba17feaf7d8cf7e0702197e6d3e436016be3e339c423a8607cd628334cea5fc&" alt="ข้อมูลสมาชิก" class="profile-icon"> ข้อมูลสมาชิก</a></li>
+                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332043391395168339/time-past_3917309.png?ex=6793d194&is=67928014&hm=347ee54121fa401c4c465cc2be35941063a8f7fc4b59348df0360bcc7a8ff986&" alt="ประวัติเติมเงิน" class="profile-icon"> ประวัติเติมเงิน</a></li>
+                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332043391395168339/time-past_3917309.png?ex=6793d194&is=67928014&hm=347ee54121fa401c4c465cc2be35941063a8f7fc4b59348df0360bcc7a8ff986&" alt="ประวัติการสั่งซื้อ/โค้ดเติมเกม" class="profile-icon"> ประวัติการสั่งซื้อ/โค้ดเติมเกม</a></li>
+                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332044437282488330/email_4546924.png?ex=6793d28e&is=6792810e&hm=82c2b1c1940fe3571806fc0521f50222264543b2086214c124c1e10b52390d31&" alt="กล่องบัตรเติมเงิน/ไอเทม" class="profile-icon"> กล่องบัตรเติมเงิน/ไอเทม</a></li>
+                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332044437282488330/email_4546924.png?ex=6793d28e&is=6792810e&hm=82c2b1c1940fe3571806fc0521f50222264543b2086214c124c1e10b52390d31&" alt="กล่องจดหมาย" class="profile-icon"> กล่องจดหมาย</a></li>
+                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332045252822958130/logout_659988.png?ex=6793d350&is=679281d0&hm=dbc5f48a38578b00c018f9ceadbee068ce1bcdba0b0514af97d48204fe2894c2&" alt="ออกจากระบบ" class="profile-icon"> ออกจากระบบ</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <h2>ข้อมูลสมาชิก</h2>
+            <form>
+                <div class="form-group">
+                    <label for="user-id">รหัสผู้ใช้</label>
+                    <input type="text" id="user-id" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="username">ชื่อผู้ใช้</label>
+                    <input type="text" id="username">
+                </div>
+                <div class="form-group">
+                    <label for="email">อีเมล์</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">เบอร์โทร</label>
+                    <input type="text" id="phone">
+                </div>
+                <div class="form-group">
+                    <label for="member-since">เป็นสมาชิกเมื่อ</label>
+                    <input type="text" id="member-since" disabled>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
