@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <title>Game Online Center</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cheddar+Gothic+Rough:wght@400;700&display=swap');
+
+        .full-page-gradient {
+            background: linear-gradient(to right, #6a0dad, #8e44ad, #3498db);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        .welcome-btn {
+            border: 2px solid #6a0dad;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .welcome-btn:hover {
+            transform: scale(1.1);
+            background-color: #6a0dad;
+            color: white;
+        }
+        .hero-image {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            max-height: 80vh;
+            object-fit: contain;
+            z-index: 2;
+        }
+        .hero-text-container {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-text, .hero-subtext {
+            font-family: 'Cheddar Gothic Rough', sans-serif;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+        .hero-text {
+            font-size: 10rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .hero-subtext {
+            font-size: 10rem;
+            color: rgba(255, 255, 255, 0.2);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            white-space: nowrap;
+        }
+        .navbar-logo {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+        }
+    </style>
+</head>
+<body class="full-page-gradient text-white">
+    <!-- Header Section -->
+    <header class="bg-purple-700 text-white py-4 relative">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="text-2xl font-bold">PLAYER HAVEN</div>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#" class="hover:text-indigo-300">หน้าแรก</a>
+                <a href="#" class="hover:text-indigo-300">บริการต่างๆ</a>
+                <a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
+                <a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
+            </nav>
+            <button class="md:hidden text-white focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        <img src="https://your-image-link-here.com/icon.png" alt="Game Icon" class="navbar-logo">
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative text-center py-20">
+        <div class="container mx-auto hero-text-container">
+            <h1 class="hero-text">GAME ONLINE</h1>
+            <p class="hero-subtext">GAME ONLINE</p>
+            <img src="https://your-image-link-here.com/soldier.png" alt="Soldier" class="hero-image">
+            <div class="mt-8">
+                <button class="welcome-btn px-6 py-3 rounded-full text-lg font-semibold">Welcome</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-4">
+        <div class="container mx-auto text-center">
+            <p>PLAYER HAVEN</p>
+        </div>
+    </footer>
+</body>
+</html>
