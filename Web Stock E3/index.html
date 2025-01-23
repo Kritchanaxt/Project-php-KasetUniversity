@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <title>Game Online Center</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cheddar+Gothic+Rough:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
         .full-page-gradient {
             background: linear-gradient(to right, #6a0dad, #8e44ad, #3498db);
@@ -26,31 +26,33 @@
             color: white;
         }
         .hero-image {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            max-height: 80vh;
-            object-fit: contain;
-            z-index: 2;
-        }
+    position: absolute;
+    bottom: -400px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    max-height: 80vh;
+    object-fit: contain;
+    z-index: 2;
+}
+
         .hero-text-container {
             position: relative;
             z-index: 1;
         }
-        .hero-text, .hero-subtext {
-            font-family: 'Cheddar Gothic Rough', sans-serif;
-            text-transform: uppercase;
-            line-height: 1;
-        }
         .hero-text {
-            font-size: 10rem;
+            font-family: 'Russo One', sans-serif;
+            font-size: 6rem;
+            line-height: 1;
             color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
         }
         .hero-subtext {
+            font-family: 'Russo One', sans-serif;
             font-size: 10rem;
+            line-height: 1;
             color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -90,9 +92,9 @@
     <!-- Hero Section -->
     <section class="relative text-center py-20">
         <div class="container mx-auto hero-text-container">
-            <h1 class="hero-text">GAME ONLINE</h1>
+            <h1 class="hero-text">GAME ONLINE CENTER</h1>
             <p class="hero-subtext">GAME ONLINE</p>
-            <img src="https://your-image-link-here.com/soldier.png" alt="Soldier" class="hero-image">
+            <img src="https://images-ext-1.discordapp.net/external/r9FsCYDvVCni9YlnOB0cpwyE2S4cnqQU-JKQi_WvxwE/https/pngimg.com/d/soldier_PNG16072.png?format=webp&quality=lossless" alt="Soldier" class="hero-image">
             <div class="mt-8">
                 <button class="welcome-btn px-6 py-3 rounded-full text-lg font-semibold">Welcome</button>
             </div>
