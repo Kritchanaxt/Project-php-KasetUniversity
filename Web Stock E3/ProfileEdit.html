@@ -1,80 +1,316 @@
-<html lang="th">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Setting</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #10142B; /* สีพื้นหลัง */
+            font-family: 'Inter', sans-serif;
+        }
+
+        .navbar {
+            background-color: #1A1F36; /* พื้นหลังแท็บบน */
+        }
+
+        .sidebar {
+            background-color: #ECECFF; /* พื้นหลัง Sidebar */
+        }
+
+        .sidebar-item {
+            color: #6C61EC; /* สีข้อความใน Sidebar */
+            background-color: #FFFFFF; /* สีพื้นหลังไอเท็ม */
+        }
+
+        .sidebar-item:hover {
+            background-color: #F3F1FF; /* สีพื้นหลังเมื่อโฮเวอร์ */
+        }
+
+        .content {
+            background-color: #ECECFF; /* พื้นหลังเนื้อหา */
+            color: #000000; /* สีข้อความในเนื้อหา */
+            max-width: 70%; /* ย่อขนาด Main Section */
+        }
+
+        .btn-primary {
+            background-color: #7F56D9; /* ปุ่มหลัก */
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background-color: #6844B1; /* ปุ่มเมื่อโฮเวอร์ */
+        }
+        /* แทบด้านบนเว็บ */
+.w-full.text-2xl.font-bold.text-left {
+    font-family: 'Russo One', sans-serif; /* ฟอนต์ที่เข้ากับธีม Cyberpunk */
+    color: #00FFFF; /* สีฟ้านีออน */
+    font-size: 2rem; /* ขนาดตัวอักษร */
+    text-shadow: 
+        0 0 5px #00FFFF,  /* เรืองแสงฟ้ารอบๆ */
+        0 0 10px #00FFFF, 
+        0 0 20px #00FFFF, 
+        0 0 30px #FF00FF, /* เพิ่มแสงชมพู */
+        0 0 80px #FF00FF; 
+    letter-spacing: 2px; /* เพิ่มช่องว่างระหว่างตัวอักษร */
+    text-transform: uppercase; /* ทำให้ตัวอักษรเป็นตัวพิมพ์ใหญ่ทั้งหมด */
+    margin-left: -80px; /* เว้นระยะจากขอบซ้าย */
+}
+
+header {
+    background: linear-gradient(to right, #070F1F, #0C1326); /* ไล่สีจากน้ำเงินเข้มไปเข้มขึ้น */
+    color: #FFFFFF; /* ข้อความสีขาว */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 20px 30px; /* เพิ่ม padding ด้านบนและด้านล่าง */
+}
+/* General Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling during loading */
+    font-family: 'Arial', sans-serif;
+    background-color: #0C1326; /* Default background */
+}
+
+/* Fullscreen Loading Container */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0C1326; /* Dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    z-index: 9999;
+}
+
+/* Background Animation Split */
+.background {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    background-color: #070F1F;
+    z-index: 1;
+}
+.background.top {
+    top: 0;
+    animation: slide-out-top 1.5s ease 2.5s forwards;
+}
+.background.bottom {
+    bottom: 0;
+    animation: slide-out-bottom 1.5s ease 2.5s forwards;
+}
+
+/* Text Animation */
+.loading-text-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.loading-text-store {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    color: #FFFFFF;
+    letter-spacing: 3px;
+    writing-mode: vertical-rl; /* แสดงข้อความเป็นแนวตั้ง */
+    transform: rotate(180deg) translateX(-100%); /* หมุนกลับหัว */
+    animation: slide-in-left 1.5s ease forwards;
+    margin-right: 10px; 
+}
+
+.loading-text-game {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    color: #FFFFFF;
+    letter-spacing: 3px;
+    opacity: 0; /* เริ่มต้นซ่อน */
+    transform: translateY(100%); /* เลื่อนออกไปด้านล่าง */
+    animation: slide-in-up 1.5s ease 1.5s forwards; 
+}
+
+/* Animations */
+@keyframes slide-out-top {
+    0% {
+        height: 50%;
+    }
+    100% {
+        height: 0%;
+    }
+}
+
+@keyframes slide-out-bottom {
+    0% {
+        height: 50%;
+    }
+    100% {
+        height: 0%;
+    }
+}
+
+@keyframes slide-in-left {
+    0% {
+        transform: rotate(180deg) translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: rotate(180deg) translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-up {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+    </style>
 </head>
-<body>
-    <div class="navbar">
-        <div class="logo">
-            PLAYER HAVEN
-        </div>
-        <div class="menu">
-            <a href="HomePage.html"><class="menu-icon"> หน้าแรก </a>
-            <a href="#"><class="menu-icon"> ไอดีเกมออนไลน์</a>
-            <a href="#"><class="menu-icon"> สุ่มไอดีเกม</a>
-            <a href="#"><class="menu-icon"> บัตรเติมเกม</a>
-            <a href="#"><class="menu-icon"> เติมเกมออนไลน์</a>
-            <a href="#"><class="menu-icon"> ติดต่อเรา</a>
-        </div>
-        <div class="profile-dropdown">
-            <div>
-                <img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332039709097988186/profile_4372360.png?ex=6793ce26&is=67927ca6&hm=fba17feaf7d8cf7e0702197e6d3e436016be3e339c423a8607cd628334cea5fc&" alt="ชื่อไอดีสมาชิก" class="profile-icon">
-                ชื่อไอดีสมาชิก &#9662;
-            </div>
-            <div class="dropdown-menu">
-                <a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332039709097988186/profile_4372360.png?ex=6793ce26&is=67927ca6&hm=fba17feaf7d8cf7e0702197e6d3e436016be3e339c423a8607cd628334cea5fc&" alt="ดูโปรไฟล์ของคุณ" class="profile-icon"> ดูโปรไฟล์ของคุณ</a>
-                <a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332043391395168339/time-past_3917309.png?ex=6793d194&is=67928014&hm=347ee54121fa401c4c465cc2be35941063a8f7fc4b59348df0360bcc7a8ff986&" alt="ประวัติเติมเงิน" class="profile-icon"> ประวัติเติมเงิน</a>
-                <a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332043391395168339/time-past_3917309.png?ex=6793d194&is=67928014&hm=347ee54121fa401c4c465cc2be35941063a8f7fc4b59348df0360bcc7a8ff986&" alt="ประวัติการสั่งซื้อ" class="profile-icon"> ประวัติการสั่งซื้อ</a>
-                <a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332044437282488330/email_4546924.png?ex=6793d28e&is=6792810e&hm=82c2b1c1940fe3571806fc0521f50222264543b2086214c124c1e10b52390d31&" alt="กล่องบัตรเติมเงิน" class="profile-icon"> กล่องบัตรเติมเงิน</a>
-                <a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332044437282488330/email_4546924.png?ex=6793d28e&is=6792810e&hm=82c2b1c1940fe3571806fc0521f50222264543b2086214c124c1e10b52390d31&" alt="กล่องจดหมาย" class="profile-icon"> กล่องจดหมาย</a>
-                <a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332045252822958130/logout_659988.png?ex=6793d350&is=679281d0&hm=dbc5f48a38578b00c018f9ceadbee068ce1bcdba0b0514af97d48204fe2894c2&" alt="ออกจากระบบ" class="profile-icon"> ออกจากระบบ</a>
-            </div>
-        </div>
+<body class="full-page-gradient text-white">
+    <!-- Loading Screen -->
+<div class="loading-screen">
+    <!-- Loading Text -->
+    <div class="loading-text-container">
+        <div class="loading-text-store">STORE</div>
+        <div class="loading-text-game">GAME ONLINE</div>
     </div>
 
-    <div class="header-bar">
-        <h1>ตั้งค่าสมาชิก</h1>
-        <p>HOME &gt; USER &gt; PROFILE SETTING</p>
-    </div>
+    <!-- Background Split -->
+    <div class="background top"></div>
+    <div class="background bottom"></div>
+</div>
+    
+    <!-- Navbar -->
+    <nav class="navbar p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold text-white">PLAYER HAVEN</div>
+            <div class="flex space-x-6">
+                <a href="HomePage.html" class="text-gray-300 hover:text-white">Home</a>
+                <a href="#" class="text-gray-300 hover:text-white">Online Game IDs</a>
+                <a href="#" class="text-gray-300 hover:text-white">Random Game IDs</a>
+                <a href="#" class="text-gray-300 hover:text-white">Game Cards</a>
+                <a href="#" class="text-gray-300 hover:text-white">Top-Up</a>
+                <a href="#" class="text-gray-300 hover:text-white">Contact Us</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button class="flex items-center text-gray-300 hover:text-white focus:outline-none">
+                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+                             alt="Profile" 
+                             class="w-8 h-8 rounded-full mr-2">
+                        <span>Profile</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <div class="container">
-        <div class="sidebar">
-            <ul>
-                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332039709097988186/profile_4372360.png?ex=6793ce26&is=67927ca6&hm=fba17feaf7d8cf7e0702197e6d3e436016be3e339c423a8607cd628334cea5fc&" alt="ข้อมูลสมาชิก" class="profile-icon"> ข้อมูลสมาชิก</a></li>
-                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332043391395168339/time-past_3917309.png?ex=6793d194&is=67928014&hm=347ee54121fa401c4c465cc2be35941063a8f7fc4b59348df0360bcc7a8ff986&" alt="ประวัติเติมเงิน" class="profile-icon"> ประวัติเติมเงิน</a></li>
-                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332043391395168339/time-past_3917309.png?ex=6793d194&is=67928014&hm=347ee54121fa401c4c465cc2be35941063a8f7fc4b59348df0360bcc7a8ff986&" alt="ประวัติการสั่งซื้อ/โค้ดเติมเกม" class="profile-icon"> ประวัติการสั่งซื้อ/โค้ดเติมเกม</a></li>
-                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332044437282488330/email_4546924.png?ex=6793d28e&is=6792810e&hm=82c2b1c1940fe3571806fc0521f50222264543b2086214c124c1e10b52390d31&" alt="กล่องบัตรเติมเงิน/ไอเทม" class="profile-icon"> กล่องบัตรเติมเงิน/ไอเทม</a></li>
-                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332044437282488330/email_4546924.png?ex=6793d28e&is=6792810e&hm=82c2b1c1940fe3571806fc0521f50222264543b2086214c124c1e10b52390d31&" alt="กล่องจดหมาย" class="profile-icon"> กล่องจดหมาย</a></li>
-                <li><a href="#"><img src="https://cdn.discordapp.com/attachments/1127642209475383326/1332045252822958130/logout_659988.png?ex=6793d350&is=679281d0&hm=dbc5f48a38578b00c018f9ceadbee068ce1bcdba0b0514af97d48204fe2894c2&" alt="ออกจากระบบ" class="profile-icon"> ออกจากระบบ</a></li>
+    <!-- Main Section -->
+    <div class="flex justify-center py-8">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 p-6 rounded-lg shadow-md">
+            <ul class="space-y-4">
+                <!-- Tab: Top-Up History -->
+                <li class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                    <img src="https://cdn.discordapp.com/attachments/1333465176686723124/1333739459614736384/DALL_E-2025-01-28-17.03.01-A-sleek_-cyberpunk-themed-icon-for-a-top-up-system-removebg-preview.png?ex=6799fd2a&is=6798abaa&hm=fbde12851b4d3ea71daf8da35159cd7ef2efa8487b837884adc619f22b9b4bc3&" alt="Top-Up History" class="w-6 h-6">
+                    <span class="font-semibold">Top-Up History</span>
+                </li>
+                <!-- Tab: Purchase History -->
+                <li class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                    <img src="https://cdn.discordapp.com/attachments/1333465176686723124/1333739998385541130/DALL_E-2025-01-28-17.05.44-A-sleek_-cyberpunk-themed-icon-representing-_Purchase-History-removebg-preview.png?ex=6799fdab&is=6798ac2b&hm=a3b32dbb7886fde1bda3390c45602621a78ad3e4530ee65b3ad8d7ffd7aa97bb&" alt="Purchase History" class="w-6 h-6">
+                    <span class="font-semibold">Purchase History</span>
+                </li>
+                <!-- Tab: Game Card Box -->
+                <li class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                    <img src="https://cdn.discordapp.com/attachments/1333465176686723124/1333740853314846761/DALL_E-2025-01-28-17.07.50-A-sleek_-cyberpunk-themed-icon-representing-a-_Game-Card-Box-removebg-preview.png?ex=6799fe77&is=6798acf7&hm=4ae528f0d59da29747f16afa9202b8c08b45ebd8c83fc4167027e30f5f342609&" alt="Game Card Box" class="w-6 h-6">
+                    <span class="font-semibold">Game Card Box</span>
+                </li>
+                <!-- Tab: Mailbox -->
+                <li class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                    <img src="https://cdn.discordapp.com/attachments/1333465176686723124/1333743617851789323/DALL_E-2025-01-28-17.18-removebg-preview-removebg-preview.png?ex=679a010a&is=6798af8a&hm=b5cb791be5f1e80650f1ecf31a34d6cb8d598c28377213873e5ee6d2a1b9fa21&" alt="Mailbox" class="w-6 h-6">
+                    <span class="font-semibold">Mailbox</span>
+                </li>
+                <!-- Tab: Log Out -->
+                <li class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                    <img src="https://cdn.discordapp.com/attachments/1333465176686723124/1333741803706384394/DALL_E-2025-01-28-17.11.30-A-sleek_-cyberpunk-themed-icon-representing-_Log-Out-removebg-preview.png?ex=6799ff59&is=6798add9&hm=136cdf858304ea5aecb6ac9bae7bc8b4345f600a1069446b0bd150a343261c76&" alt="Log Out" class="w-6 h-6">
+                    <span class="font-semibold">Log Out</span>
+                </li>
             </ul>
-        </div>
-        <div class="content">
-            <h2>ข้อมูลสมาชิก</h2>
+        </aside>
+
+        <!-- Content -->
+        <main class="content flex-1 p-6 rounded-lg shadow-md ml-6">
+            <h2 class="text-2xl font-bold mb-6">Personal Information</h2>
             <form>
-                <div class="form-group">
-                    <label for="user-id">รหัสผู้ใช้</label>
-                    <input type="text" id="user-id" disabled>
+                <div class="mb-4">
+                    <label for="first-name" class="block text-gray-600 font-semibold">First Name</label>
+                    <input type="text" id="first-name" class="w-full p-2 rounded bg-white border border-gray-300" placeholder="Enter Your first name">
                 </div>
-                <div class="form-group">
-                    <label for="username">ชื่อผู้ใช้</label>
-                    <input type="text" id="username">
+                <div class="mb-4">
+                    <label for="last-name" class="block text-gray-600 font-semibold">Last Name</label>
+                    <input type="text" id="last-name" class="w-full p-2 rounded bg-white border border-gray-300" placeholder="Enter Your last name">
                 </div>
-                <div class="form-group">
-                    <label for="email">อีเมล์</label>
-                    <input type="email" id="email">
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-600 font-semibold">Email</label>
+                    <input type="email" id="email" class="w-full p-2 rounded bg-white border border-gray-300" placeholder="Enter Your email">
                 </div>
-                <div class="form-group">
-                    <label for="phone">เบอร์โทร</label>
-                    <input type="text" id="phone">
+                <div class="mb-4">
+                    <label for="revenue" class="block text-gray-600 font-semibold">Time</label>
+                    <input type="text" id="revenue" class="w-full p-2 rounded bg-white border border-gray-300" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="member-since">เป็นสมาชิกเมื่อ</label>
-                    <input type="text" id="member-since" disabled>
-                </div>
+                <button class="btn-primary py-2 px-4 rounded font-bold">Save Profile</button>
             </form>
-        </div>
+        </main>
     </div>
+
+<script>
+    // ฟังก์ชันสำหรับอัปเดตเวลา
+    function updateTime() {
+        const timeInput = document.getElementById('revenue'); // เลือก input
+        const now = new Date(); // เวลาปัจจุบัน
+        // รูปแบบเวลา: HH:MM:SS
+        const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+        timeInput.value = timeString; // อัปเดตค่าใน input
+    }
+
+    // เรียกใช้งานทุก ๆ 1 วินาที
+    setInterval(updateTime, 1000);
+
+    // เรียกใช้งานทันทีเมื่อโหลดหน้า
+    updateTime();
+    document.addEventListener("DOMContentLoaded", () => {
+            const explosionGif = document.querySelector(".explosion-gif");
+            const explosionText = document.getElementById("explosion-text");
+
+            // Add an event listener to detect when the fade-out animation ends
+            explosionGif.addEventListener("animationend", () => {
+                explosionText.classList.remove("hidden"); // Show the text
+            });
+        });
+        document.addEventListener("DOMContentLoaded", () => {
+    const loadingScreen = document.querySelector('.loading-screen');
+
+    setTimeout(() => {
+        loadingScreen.style.display = 'none'; 
+    }, 4000); 
+});
+</script>
 </body>
 </html>
