@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="style.css">
-    <title>Game Online Center</title>
+    <title>PLAYERHAVEN</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
         .full-page-gradient {
     background: 
-        linear-gradient(to right, rgba(106, 13, 173, 0.7), rgba(52, 152, 219, 0.7)), /* ไล่สีพร้อมความโปร่งแสง */
+        linear-gradient(to right, rgba(12, 19, 38), rgba(12, 19, 38)), /* ไล่สีพร้อมความโปร่งแสง */
         url('https://cdn.discordapp.com/attachments/1333465176686723124/1333504184326164553/image.png?ex=6799220c&is=6797d08c&hm=c2469c25bd745c640dba75b092233183ab5d7d7fadef872f0c9a00181a56d37c&');
     background-size: cover; /* ปรับขนาดภาพให้เต็มพื้นที่ */
     background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
@@ -24,19 +24,20 @@
 }
 
         .welcome-btn {
-            border: 2px solid #6a0dad;
+            border: 2px solid #070F1F;
             transition: transform 0.3s ease, background-color 0.3s ease;
         }
         .welcome-btn:hover {
             transform: scale(1.1);
-            background-color: #6a0dad;
+            background-color: #070F1F;
             color: white;
         }
   /* Hero Image */
   .hero-image {
     position: relative;
     margin: 20px auto;
-    width: 700px; /* Adjust size of soldier */
+    left: 4%;
+    width: 800px; /* Adjust size of soldier */
     height: auto;
     transition: transform 0.3s ease, filter 0.3s ease; /* Smooth initial effect */
     filter: drop-shadow(0px 5px 15px rgba(0, 0, 0, 0.5));
@@ -327,10 +328,158 @@
     -webkit-text-stroke: 2px #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
+/* แทบด้านบนเว็บ */
+.w-full.text-2xl.font-bold.text-left {
+    font-family: 'Russo One', sans-serif; /* ฟอนต์ที่เข้ากับธีม Cyberpunk */
+    color: #00FFFF; /* สีฟ้านีออน */
+    font-size: 2rem; /* ขนาดตัวอักษร */
+    text-shadow: 
+        0 0 5px #00FFFF,  /* เรืองแสงฟ้ารอบๆ */
+        0 0 10px #00FFFF, 
+        0 0 20px #00FFFF, 
+        0 0 30px #FF00FF, /* เพิ่มแสงชมพู */
+        0 0 80px #FF00FF; 
+    letter-spacing: 2px; /* เพิ่มช่องว่างระหว่างตัวอักษร */
+    text-transform: uppercase; /* ทำให้ตัวอักษรเป็นตัวพิมพ์ใหญ่ทั้งหมด */
+    margin-left: -80px; /* เว้นระยะจากขอบซ้าย */
+}
+
+header {
+    background: linear-gradient(to right, #070F1F, #0C1326); /* ไล่สีจากน้ำเงินเข้มไปเข้มขึ้น */
+    color: #FFFFFF; /* ข้อความสีขาว */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 20px 30px; /* เพิ่ม padding ด้านบนและด้านล่าง */
+}
+/* General Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling during loading */
+    font-family: 'Arial', sans-serif;
+    background-color: #0C1326; /* Default background */
+}
+
+/* Fullscreen Loading Container */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0C1326; /* Dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    z-index: 9999;
+}
+
+/* Background Animation Split */
+.background {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    background-color: #070F1F;
+    z-index: 1;
+}
+.background.top {
+    top: 0;
+    animation: slide-out-top 1.5s ease 2.5s forwards;
+}
+.background.bottom {
+    bottom: 0;
+    animation: slide-out-bottom 1.5s ease 2.5s forwards;
+}
+
+/* Text Animation */
+.loading-text-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.loading-text-store {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    color: #FFFFFF;
+    letter-spacing: 3px;
+    writing-mode: vertical-rl; /* แสดงข้อความเป็นแนวตั้ง */
+    transform: rotate(180deg) translateX(-100%); /* หมุนกลับหัว */
+    animation: slide-in-left 1.5s ease forwards;
+    margin-right: 10px; 
+}
+
+.loading-text-game {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    color: #FFFFFF;
+    letter-spacing: 3px;
+    opacity: 0; /* เริ่มต้นซ่อน */
+    transform: translateY(100%); /* เลื่อนออกไปด้านล่าง */
+    animation: slide-in-up 1.5s ease 1.5s forwards; 
+}
+
+/* Animations */
+@keyframes slide-out-top {
+    0% {
+        height: 50%;
+    }
+    100% {
+        height: 0%;
+    }
+}
+
+@keyframes slide-out-bottom {
+    0% {
+        height: 50%;
+    }
+    100% {
+        height: 0%;
+    }
+}
+
+@keyframes slide-in-left {
+    0% {
+        transform: rotate(180deg) translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: rotate(180deg) translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-up {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 
 </style>
 </head>
 <body class="full-page-gradient text-white">
+    <!-- Loading Screen -->
+<div class="loading-screen">
+    <!-- Loading Text -->
+    <div class="loading-text-container">
+        <div class="loading-text-store">STORE</div>
+        <div class="loading-text-game">GAME ONLINE</div>
+    </div>
+
+    <!-- Background Split -->
+    <div class="background top"></div>
+    <div class="background bottom"></div>
+</div>
+
     <!-- Header Section -->
     <header class="bg-purple-700 text-white py-4 relative">
         <div class="container mx-auto flex items-center justify-between">
@@ -379,7 +528,7 @@
             <!-- Soldier Image with Explosion Effect -->
             <div class="hero-image-container">
                 <!-- Soldier Image -->
-                <img src="https://images-ext-1.discordapp.net/external/r9FsCYDvVCni9YlnOB0cpwyE2S4cnqQU-JKQi_WvxwE/https/pngimg.com/d/soldier_PNG16072.png?format=webp&quality=lossless" 
+                <img src="https://cdn.discordapp.com/attachments/1333465176686723124/1333707196218871809/DALL_E-2025-01-28-14.53-removebg-preview.png?ex=6799df1e&is=67988d9e&hm=5ea2fce971c568f0ff2d133545a00885b0c9bb14a76d2cadd2ec8b2ff787f73d&" 
                      alt="Soldier" class="hero-image">
 
                 <!-- Explosion GIF -->
@@ -411,6 +560,14 @@
                 explosionText.classList.remove("hidden"); // Show the text
             });
         });
+        document.addEventListener("DOMContentLoaded", () => {
+    const loadingScreen = document.querySelector('.loading-screen');
+
+    setTimeout(() => {
+        loadingScreen.style.display = 'none'; 
+    }, 4000); 
+});
     </script>
+    
 </body>
 </html>
