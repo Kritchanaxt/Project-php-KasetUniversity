@@ -32,6 +32,53 @@
             background-color: #ECECFF; /* พื้นหลัง Content */
             color: #000000; /* ข้อความ */
         }
+        
+        /* ToggleButton */
+			:root {
+				--bg-dark: #10142b;
+				--navbar-dark: #1a1f36;
+				--sidebar-dark: #ececff;
+				--sidebar-item-dark: #ffffff;
+				--sidebar-item-hover-dark: #f3f1ff;
+				--content-dark: #ececff;
+				--text-dark: #ffffff;
+			}
+
+			.light {
+				--bg-dark: #ffffff;
+				--navbar-dark: #6b46c1; /* bg-purple-600 */
+				--sidebar-dark: #f9f9f9;
+				--sidebar-item-dark: #e5e5e5;
+				--sidebar-item-hover-dark: #dadada;
+				--content-dark: #ffffff;
+				--text-dark: #000000;
+				--navbar-text: #ffffff;
+			}
+
+			body {
+				background-color: var(--bg-dark);
+				font-family: "Inter", sans-serif;
+				color: var(--text-dark);
+			}
+			.navbar {
+				background-color: var(--navbar-dark);
+				color: var(--text-dark);
+			}
+			.light .navbar {
+				color: var(--navbar-text);
+			}
+			.sidebar {
+				background-color: var(--sidebar-dark);
+			}
+			.sidebar-item {
+				background-color: var(--sidebar-item-dark);
+			}
+			.sidebar-item:hover {
+				background-color: var(--sidebar-item-hover-dark);
+			}
+			.content {
+				background-color: var(--content-dark);
+			}
     </style>
 </head>
 <body>
@@ -47,6 +94,12 @@
                 <a href="#" class="text-gray-300 hover:text-white">Game Cards</a>
                 <a href="#" class="text-gray-300 hover:text-white">Top-Up</a>
             </div>
+            <button
+							onclick="toggleTheme()"
+							class="p-2 rounded bg-gray-300 dark:bg-gray-600"
+						>
+							🌙 / ☀️
+						</button>
         </div>
     </nav>
 
@@ -96,5 +149,22 @@
             </div>
         </main>
     </div>
+    <!--? JS toggleTheme -->
+		<script>
+			function toggleTheme() {
+				const html = document.documentElement;
+				html.classList.toggle("light");
+				localStorage.setItem(
+					"theme",
+					html.classList.contains("light") ? "light" : "dark"
+				);
+			}
+
+			document.addEventListener("DOMContentLoaded", () => {
+				if (localStorage.getItem("theme") === "light") {
+					document.documentElement.classList.add("light");
+				}
+			});
+		</script>
 </body>
 </html>
