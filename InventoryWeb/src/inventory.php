@@ -1,3 +1,32 @@
+<?php
+// เชื่อมต่อฐานข้อมูล
+$servername = getenv('DB_SERVER') ?: '158.108.101.153';
+$username = getenv('DB_USERNAME') ?: 'std6630202015';
+$password = getenv('DB_PASSWORD') ?: 'g3#Vjp8L';
+$dbname = getenv('DB_NAME') ?: 'it_std6630202015';
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+mysqli_set_charset($conn, "utf8");
+
+// ดึงข้อมูลยอดขาย
+$query = "SELECT game_id, COUNT(*) as sales_count, SUM(price) as total_sales FROM Accounts WHERE status = 'sold' GROUP BY game_id ORDER BY total_sales DESC";
+$result = mysqli_query($conn, $query);
+
+$game_sales = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $game_sales[] = [
+        "game_id" => $row['game_id'],
+        "sales_count" => (int)$row['sales_count'],
+        "total_sales" => (float)$row['total_sales'],
+    ];
+}
+
+mysqli_close($conn);
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -507,10 +536,10 @@
     <div class="nav-logo">📦 Inventory</div>
     <ul class="nav-links">
         <li><a href="#">🏪 Store</a></li>
-        <li><a href="test">📦 ShowProducts</a></li>
-        <li><a href="#">📂 Categories</a></li>
-        <li><a href="#">💰 Finances</a></li>
-        <li><a href="#" class="add-product-btn">➕ Add Product</a></li>
+        <li><a href="showproduct.php">📦 ShowProducts</a></li>
+        <li><a href="edit_product.php">📂 EditProduct</a></li>
+        <li><a href="#">💰 Statistic</a></li>
+        <li><a href="add_product.php" class="add-product-btn">➕ Add Product</a></li>
     </ul>
 </nav>
 
@@ -605,114 +634,152 @@
     </div>
 
     <script>
-        // ฟังก์ชันล็อคอิน
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+      // ฟังก์ชันล็อคอิน
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-            // ตรวจสอบข้อมูลล็อคอิน (ตัวอย่างง่ายๆ)
-            if (username === "admin" && password === "1234") {
-                // บันทึกสถานะการล็อคอิน
-                localStorage.setItem('isLoggedIn', 'true');
-                // ซ่อนหน้าล็อคอินและแสดง Dashboard
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.querySelector('.navbar').style.display = 'flex';
-            } else {
-                alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!");
+    if (username === "admin" && password === "1234") {
+        localStorage.setItem('isLoggedIn', 'true');
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.querySelector('.navbar').style.display = 'flex';
+    } else {
+        alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!");
+    }
+}
+
+// ตรวจสอบสถานะการล็อคอินเมื่อโหลดหน้าเว็บ
+function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.querySelector('.navbar').style.display = 'flex';
+    } else {
+        document.getElementById('loginContainer').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'none';
+        document.querySelector('.navbar').style.display = 'none';
+    }
+}
+
+// ฟังก์ชันล็อคเอาท์
+function logout() {
+    localStorage.removeItem('isLoggedIn');
+    location.reload();
+}
+
+// ตัวแปร global สำหรับ Chart.js
+let salesChart;
+
+// อัปเดตข้อมูล dashboard จากฐานข้อมูล
+function updateDashboard() {
+    fetch("fetch_dashboard.php")
+        .then(response => response.json())
+        .then(data => {
+            if (!data || data.length === 0) {
+                console.error("Error: No data received.");
+                return;
             }
-        }
 
-        // ตรวจสอบสถานะการล็อคอินเมื่อโหลดหน้าเว็บ
-        function checkLoginStatus() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            if (isLoggedIn === 'true') {
-                // ถ้าล็อคอินอยู่ ให้ซ่อนหน้าล็อคอินและแสดง Dashboard
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.querySelector('.navbar').style.display = 'flex';
-            } else {
-                // ถ้ายังไม่ล็อคอิน ให้แสดงหน้าล็อคอินและซ่อน Dashboard
-                document.getElementById('loginContainer').style.display = 'block';
-                document.getElementById('dashboard').style.display = 'none';
-                document.querySelector('.navbar').style.display = 'none';
-            }
-        }
-        
-        // ข้อมูลเกม
-        const gameData = [
-            { name: 'League of Legends', sales: 38000, users: 27, share: 10, icon: 'img/lol.jpg' },
-            { name: 'Realm of Valor', sales: 53500, users: 54, share: 25, icon: 'img/rov.png' },
-            { name: 'Valorant', sales: 65200, users: 48, share: 30, icon: 'img/valorant.png' },
-            { name: 'Call of Duty', sales: 32600, users: 28, share: 10, icon: 'img/callofduty.jpg' },
-            { name: 'Golden Spatula', sales: 47800, users: 29, share: 20, icon: 'img/golden.jpg' },
-            { name: 'Teamfight Tactics', sales: 26400, users: 18, share: 5, icon: 'img/tft.jpg' }
-        ];
+            console.log("Fetched Data:", data);
 
-        // สร้างกราฟยอดขาย
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: gameData.map(game => game.name),
-                datasets: [{
-                    label: 'ยอดขาย (บาท)',
-                    data: gameData.map(game => game.sales),
-                    backgroundColor: '#a78bfa',
-                    borderRadius: 8
-                }]
+            updateChart(data);
+            updateMarketShare(data);
+            updateTable(data);
+        })
+        .catch(error => console.error("Error fetching data:", error));
+}
+
+// อัปเดต Chart.js
+function updateChart(data) {
+    const chartLabels = data.map(game => `Game ID: ${game.game_id}`);
+    const chartData = data.map(game => game.total_sales);
+
+    if (salesChart) {
+        salesChart.destroy(); // ทำลายกราฟเก่า ก่อนสร้างใหม่
+    }
+
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                label: 'ยอดขายรวม (บาท)',
+                data: chartData,
+                backgroundColor: '#a78bfa',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#fff' } }
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#fff'
-                        }
-                    }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#fff' }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#fff'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#fff'
-                        }
-                    }
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#fff' }
                 }
             }
-        });
-
-        // แสดงส่วนแบ่งการตลาด
-        const shareContainer = document.getElementById('shareContainer');
-        gameData.forEach(game => {
-            shareContainer.innerHTML += `
-                <div class="game-share">
-                    <img src="${game.icon}" class="game-icon" alt="${game.name}">
-                    <span>${game.name}</span>
-                    <div class="share-bar">
-                        <div class="share-value" style="width: ${game.share}%"></div>
-                    </div>
-                    <span class="share-percent">${game.share}%</span>
-                </div>
-            `;
-        });
-        function logout() {
-    localStorage.removeItem('isLoggedIn'); // ลบสถานะการล็อคอิน
-    location.reload(); // รีโหลดหน้าเพื่อกลับไปหน้าล็อคอิน
+        }
+    });
 }
-        // ตรวจสอบสถานะการล็อคอินเมื่อโหลดหน้าเว็บ
-        checkLoginStatus();
+
+// อัปเดตส่วนแบ่งการตลาด
+function updateMarketShare(data) {
+    const shareContainer = document.getElementById('shareContainer');
+    shareContainer.innerHTML = ""; // ล้างค่าก่อนอัปเดตใหม่
+
+    const totalRevenue = data.reduce((sum, game) => sum + game.total_sales, 0); // คำนวณยอดขายรวม
+
+    data.forEach(game => {
+        const sharePercentage = ((game.total_sales / totalRevenue) * 100).toFixed(1);
+        const gameIcon = `img/${game.game_id}.png`;
+
+        shareContainer.innerHTML += `
+            <div class="game-share">
+                <img src="${gameIcon}" class="game-icon" alt="Game ID ${game.game_id}">
+                <span>Game ID: ${game.game_id}</span>
+                <div class="share-bar">
+                    <div class="share-value" style="width: ${sharePercentage}%"></div>
+                </div>
+                <span class="share-percent">${sharePercentage}%</span>
+            </div>
+        `;
+    });
+}
+
+// อัปเดตตารางข้อมูล
+function updateTable(data) {
+    const tableBody = document.querySelector(".data-table tbody");
+    tableBody.innerHTML = ""; // ล้างค่าก่อนอัปเดตใหม่
+
+    data.forEach(game => {
+        tableBody.innerHTML += `
+            <tr>
+                <td>Game ID: ${game.game_id}</td>
+                <td>${game.total_sales.toLocaleString()} บาท</td>
+                <td>${game.sales_count}</td>
+            </tr>
+        `;
+    });
+}
+
+// โหลดข้อมูลทุก ๆ 5 วินาที
+setInterval(updateDashboard, 5000);
+
+// โหลดข้อมูลครั้งแรก
+updateDashboard();      
+
+    checkLoginStatus();
+
 
     </script>
 </body>
