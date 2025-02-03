@@ -15,17 +15,71 @@ mysqli_set_charset($conn, "utf8");
 $query = "SELECT * FROM Accounts WHERE status = 'available' ORDER BY account_id ASC";
 $result = mysqli_query($conn, $query);
 
+// เริ่มเซสชันสำหรับตะกร้า
+session_start();
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// เพิ่มสินค้าลงตะกร้า
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_to_cart'])) {
+    $account_id = $_POST['account_id'];
+    $game_id = $_POST['game_id'];
+
+    if (!in_array($account_id, array_column($_SESSION['cart'], 'account_id'))) {
+        $_SESSION['cart'][] = [
+            'account_id' => $account_id,
+            'game_id' => $game_id
+        ];
+    }
+    header("Location: purchase.php");
+    exit();
+}
+
+// ลบสินค้าออกจากตะกร้า
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_from_cart'])) {
+    $account_id = $_POST['account_id'];
+    $_SESSION['cart'] = array_filter($_SESSION['cart'], function ($item) use ($account_id) {
+        return $item['account_id'] != $account_id;
+    });
+    header("Location: purchase.php");
+    exit();
+}
+
 // ทำคำสั่งซื้อ
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['purchase'])) {
-    $account_id = mysqli_real_escape_string($conn, $_POST['account_id']);
-    $update_query = "UPDATE Accounts SET status = 'sold' WHERE account_id = '$account_id'";
-    
-    if (mysqli_query($conn, $update_query)) {
-        header("Location: purchase.php");
-        exit();
-    } else {
-        echo "Error updating product: " . mysqli_error($conn);
+    // ตรวจสอบว่ามีสินค้าในตะกร้าหรือไม่
+    if (empty($_SESSION['cart'])) {
+        die("Error: Cart is empty. Please add items to your cart.");
     }
+
+    // ตั้งค่า user_id (หากไม่มีให้ใช้ guest_user)
+    $user_id = $_SESSION['user_id'] ?? 'guest_user';
+
+    // อัปเดตสถานะใน Accounts และบันทึกลง TempAccounts
+    foreach ($_SESSION['cart'] as $item) {
+        $account_id = mysqli_real_escape_string($conn, $item['account_id']);
+        $game_id = mysqli_real_escape_string($conn, $item['game_id']);
+
+        // อัปเดตสถานะบัญชี
+        $update_query = "UPDATE Accounts SET status = 'sold' WHERE account_id = '$account_id'";
+        if (!mysqli_query($conn, $update_query)) {
+            die("Error updating Accounts: " . mysqli_error($conn));
+        }
+
+        // บันทึกข้อมูลการซื้อไปยัง TempAccounts
+        $insert_temp_query = "INSERT INTO TempAccounts (account_id, game_id, user_id, username, password, details, price, status)
+                              SELECT account_id, game_id, '$user_id', username, password, details, price, status
+                              FROM Accounts WHERE account_id = '$account_id'";
+        if (!mysqli_query($conn, $insert_temp_query)) {
+            die("Error inserting into TempAccounts: " . mysqli_error($conn));
+        }
+    }
+
+    // ล้างตะกร้า
+    $_SESSION['cart'] = [];
+    header("Location: confirmation.php");
+    exit();
 }
 
 mysqli_close($conn);
@@ -39,7 +93,6 @@ mysqli_close($conn);
     <title>Game Store - Purchase</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ตั้งค่า UI พื้นฐาน */
         body {
             font-family: 'Kanit', sans-serif;
             margin: 0;
@@ -49,10 +102,11 @@ mysqli_close($conn);
             text-align: center;
         }
 
-        /* เมนูด้านบน */
+        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 20px;
             background: #007bff;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -72,128 +126,189 @@ mysqli_close($conn);
             transform: scale(1.1);
         }
 
-        /* Container หลัก */
+        .cart {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .cart span {
+            margin-left: 10px;
+            background: #dc3545;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Modal ตะกร้า */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .modal h2 {
+            color: #FFD700;
+        }
+
+        .modal table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .modal table th, .modal table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .modal table th {
+            background: #007bff;
+            color: white;
+        }
+
+        .modal button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .modal button:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+
+        .modal .close-btn {
+            background: #6c757d;
+        }
+
+        .modal .close-btn:hover {
+            background: #5a6268;
+        }
+
+        /* Card */
         .container {
-            width: 90%;
-            margin: 20px auto;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
+            padding: 20px;
         }
 
-        /* Card UI */
         .card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: hidden;
-            width: 280px;
+            width: 250px;
             text-align: center;
+            padding: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 15px;
         }
 
         .card h2 {
-            margin: 10px 0;
             font-size: 20px;
             color: #FFD700;
         }
 
         .card p {
             font-size: 16px;
-            color: #ddd;
         }
 
-        /* ปุ่มซื้อ */
-        .buy-btn {
+        .card button {
             background: #28a745;
             color: white;
-            padding: 10px;
             border: none;
+            padding: 10px;
             border-radius: 5px;
             cursor: pointer;
-            width: 80%;
-            font-size: 16px;
-            margin-top: 10px;
-            transition: background 0.3s, transform 0.3s;
         }
 
-        .buy-btn:hover {
+        .card button:hover {
             background: #218838;
-            transform: scale(1.1);
         }
-
-        /* Dropdown เลือกการชำระเงิน */
-        .payment-select {
-            width: 80%;
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            margin-top: 10px;
-        }
-
     </style>
 </head>
 <body>
-
     <!-- Navbar -->
     <div class="navbar">
         <div>🎮 Game Store</div>
-        <div>
-            <a href="home.php">Home</a>
-            <a href="purchase.php">Buy Games</a>
-            <a href="edit_product.php">Edit Products</a>
+        <div class="cart" onclick="toggleModal()">
+            🛒 ตะกร้า
+            <span id="cart-count"><?php echo count($_SESSION['cart']); ?></span>
         </div>
     </div>
 
-    <h1>🕹️ ซื้อเกมที่คุณต้องการ 🕹️</h1>
+    <!-- Modal ตะกร้า -->
+    <div class="modal" id="cart-modal">
+        <h2>🛒 ตะกร้าสินค้าของคุณ</h2>
+        <?php if (!empty($_SESSION['cart'])): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Game ID</th>
+                        <th>Account ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($_SESSION['cart'] as $item): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($item['game_id']); ?></td>
+                            <td><?php echo htmlspecialchars($item['account_id']); ?></td>
+                            <td>
+                                <form method="POST" action="purchase.php" style="display:inline;">
+                                    <input type="hidden" name="account_id" value="<?php echo htmlspecialchars($item['account_id']); ?>">
+                                    <button type="submit" name="remove_from_cart">ลบ</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <form method="POST" action="purchase.php">
+                <button type="submit" name="purchase">ชำระเงิน</button>
+            </form>
+        <?php else: ?>
+            <p>ไม่มีสินค้าในตะกร้า</p>
+        <?php endif; ?>
+        <button class="close-btn" onclick="toggleModal()">ปิด</button>
+    </div>
 
+    <!-- Container -->
     <div class="container">
-        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+        <?php while ($row = mysqli_fetch_assoc($result)): ?>
             <div class="card">
-                <?php 
-                    // ตรวจสอบว่ามีภาพเกมไหม ถ้าไม่มีให้ใช้ภาพ default
-                    $image_path = !empty($row['game_image']) ? "game_images/" . $row['game_image'] : "img/valorant.png";
-                ?>
-                <img src="<?php echo $image_path; ?>" alt="Game Image">
-                <div class="card-content">
-                    <h2><?php echo htmlspecialchars($row['username']); ?></h2>
-                    <p><?php echo htmlspecialchars($row['details']); ?></p>
-                    <p><strong>💰 ราคา:</strong> <?php echo number_format($row['price'], 2); ?> บาท</p>
-
-                    <!-- ฟอร์มทำรายการซื้อ -->
-                    <form method="POST" action="purchase.php">
-                        <input type="hidden" name="account_id" value="<?php echo htmlspecialchars($row['account_id']); ?>">
-                        
-                        <select name="payment_method" class="payment-select" required>
-                            <option value="">เลือกวิธีชำระเงิน</option>
-                            <option value="credit_card">💳 บัตรเครดิต</option>
-                            <option value="paypal">💰 PayPal</option>
-                            <option value="bank_transfer">🏦 โอนเงินธนาคาร</option>
-                        </select>
-                        
-                        <button type="submit" name="purchase" class="buy-btn">ซื้อเลย</button>
-                    </form>
-                </div>
+                <h2><?php echo htmlspecialchars($row['game_id']); ?></h2>
+                <p>ราคา: <?php echo number_format($row['price'], 2); ?> บาท</p>
+                <form method="POST" action="purchase.php">
+                    <input type="hidden" name="account_id" value="<?php echo htmlspecialchars($row['account_id']); ?>">
+                    <input type="hidden" name="game_id" value="<?php echo htmlspecialchars($row['game_id']); ?>">
+                    <button type="submit" name="add_to_cart">เพิ่มในตะกร้า</button>
+                </form>
             </div>
         <?php endwhile; ?>
     </div>
 
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
 </body>
 </html>
