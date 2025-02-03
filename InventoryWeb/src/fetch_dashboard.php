@@ -11,21 +11,42 @@ if (!$conn) {
 }
 mysqli_set_charset($conn, "utf8");
 
-// ดึงข้อมูลยอดขายจากฐานข้อมูล
-$query = "SELECT game_id, COUNT(*) as sales_count, SUM(price) as total_sales FROM Accounts WHERE status = 'sold' GROUP BY game_id ORDER BY total_sales DESC";
+// ดึงข้อมูลยอดขายรวม
+$query_total = "SELECT SUM(price) as total_revenue FROM Accounts WHERE status = 'sold'";
+$result_total = mysqli_query($conn, $query_total);
+$total_revenue = mysqli_fetch_assoc($result_total)['total_revenue'] ?? 0;
+
+// ดึงข้อมูลเกมที่ขายดีที่สุด
+$query_top = "SELECT game_id, COUNT(*) as sales_count, SUM(price) as total_sales 
+              FROM Accounts WHERE status = 'sold' 
+              GROUP BY game_id 
+              ORDER BY total_sales DESC 
+              LIMIT 1";
+$result_top = mysqli_query($conn, $query_top);
+$top_game = mysqli_fetch_assoc($result_top) ?? ["game_id" => "ไม่มีข้อมูล", "sales_count" => 0, "total_sales" => 0];
+
+// ดึงข้อมูลสถิติยอดขายเกมทั้งหมด
+$query = "SELECT game_id, COUNT(*) as sales_count, SUM(price) as total_sales 
+          FROM Accounts WHERE status = 'sold' 
+          GROUP BY game_id 
+          ORDER BY total_sales DESC";
 $result = mysqli_query($conn, $query);
 
 $game_sales = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $game_sales[] = [
         "game_id" => $row['game_id'],
-        "sales_count" => $row['sales_count'],
-        "total_sales" => $row['total_sales'],
+        "sales_count" => (int)$row['sales_count'],
+        "total_sales" => (float)$row['total_sales'],
     ];
 }
 
 mysqli_close($conn);
 
-// ส่งข้อมูลกลับเป็น JSON
-echo json_encode($game_sales);
+// ส่ง JSON กลับไปที่ client
+echo json_encode([
+    "total_revenue" => (float)$total_revenue,
+    "top_game" => $top_game,
+    "game_sales" => $game_sales
+]);
 ?>

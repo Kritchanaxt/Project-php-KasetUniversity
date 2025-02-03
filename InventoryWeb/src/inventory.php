@@ -24,6 +24,24 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
+// คำนวณสถิติยอดขายเกมตาม game_id
+$query = "SELECT game_id, COUNT(*) as sales_count, SUM(price) as total_sales FROM Accounts WHERE status = 'sold' GROUP BY game_id ORDER BY total_sales DESC";
+$result = mysqli_query($conn, $query);
+
+$game_sales = [];
+$top_game = null;
+$total_revenue = 0;
+$max_sales = 0;
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $game_sales[] = $row;
+    $total_revenue += $row['total_sales'];
+
+    if ($row['total_sales'] > $max_sales) {
+        $max_sales = $row['total_sales'];
+        $top_game = $row;
+    }
+}
 mysqli_close($conn);
 ?>
 
@@ -524,6 +542,14 @@ mysqli_close($conn);
   background: radial-gradient(circle farthest-corner at 10% 20%, rgba(255,94,247,1) 17.8%, rgba(2,245,255,1) 100.2%);
   transition: 0.5s;
 }
+.game-icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    border-radius: 10px;
+    object-fit: cover; /* ให้รูปภาพถูกปรับขนาดพอดี */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 
 
 
@@ -535,7 +561,7 @@ mysqli_close($conn);
 <nav class="navbar">
     <div class="nav-logo">📦 Inventory</div>
     <ul class="nav-links">
-        <li><a href="#">🏪 Store</a></li>
+        <li><a href="purchase.php">🏪 Store</a></li>
         <li><a href="showproduct.php">📦 ShowProducts</a></li>
         <li><a href="edit_product.php">📂 EditProduct</a></li>
         <li><a href="#">💰 Statistic</a></li>
@@ -563,24 +589,22 @@ mysqli_close($conn);
                 </button>
             </div>
             
-    
-    
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>จำนวนเกมทั้งหมด</h3>
-                <div class="value">6</div>
-            </div>
-            <div class="stat-card">
-                <h3>ยอดขายรวม</h3>
-                <div class="value">263,500 บาท</div>
-            </div>
-            <div class="stat-card">
-                <h3>ผู้เล่นทั้งหมด</h3>
-                <div class="value">204 ID</div>
-            </div>
-        </div>
-
+            <div class="stats-grid">
+    <div class="stat-card">
+        <h3>จำนวนเกมทั้งหมด</h3>
+        <div class="value" id="totalGames">6</div>
+    </div>
+    <div class="stat-card">
+        <h3>ยอดขายรวม</h3>
+        <div class="value" id="totalRevenue">0 บาท</div>
+    </div>
+    <div class="stat-card">
+        <h3>เกมที่ขายดีที่สุด</h3>
+        <div class="value" id="topGame">-</div>
+        <p>ยอดขาย: <span id="topGameSales">-</span> บาท</p>
+        <p>จำนวนที่ขายได้: <span id="topGameCount">-</span> ชิ้น</p>
+    </div>
+</div>
         <div class="chart-container">
             <canvas id="salesChart"></canvas>
         </div>
@@ -672,7 +696,7 @@ function logout() {
 // ตัวแปร global สำหรับ Chart.js
 let salesChart;
 
-// อัปเดตข้อมูล dashboard จากฐานข้อมูล
+// อัปเดตข้อมูล Dashboard
 function updateDashboard() {
     fetch("fetch_dashboard.php")
         .then(response => response.json())
@@ -684,12 +708,25 @@ function updateDashboard() {
 
             console.log("Fetched Data:", data);
 
-            updateChart(data);
-            updateMarketShare(data);
-            updateTable(data);
+            // อัปเดตยอดขายรวม
+            document.querySelector('.stat-card:nth-child(2) .value').innerText = `${data.total_revenue.toLocaleString()} บาท`;
+
+            // อัปเดตเกมที่ขายดีที่สุด (แทน "ผู้เล่นทั้งหมด")
+            const topGameCard = document.querySelector('.stat-card:nth-child(3)');
+            topGameCard.innerHTML = `
+                <h3>เกมที่ขายดีที่สุด</h3>
+                <div class="value">Game ID: ${data.top_game.game_id}</div>
+                <p>ยอดขาย: ${data.top_game.total_sales.toLocaleString()} บาท</p>
+                <p>จำนวนที่ขายได้: ${data.top_game.sales_count} ชิ้น</p>
+            `;
+
+            updateChart(data.game_sales);
+            updateMarketShare(data.game_sales);
+            updateTable(data.game_sales);
         })
         .catch(error => console.error("Error fetching data:", error));
 }
+
 
 // อัปเดต Chart.js
 function updateChart(data) {
@@ -731,21 +768,28 @@ function updateChart(data) {
         }
     });
 }
-
-// อัปเดตส่วนแบ่งการตลาด
 function updateMarketShare(data) {
     const shareContainer = document.getElementById('shareContainer');
-    shareContainer.innerHTML = ""; // ล้างค่าก่อนอัปเดตใหม่
+    const gameImageMap = {
+        "LOL": "src/img/LOL.png",
+        "TFT": "src/img/TFT.png",
+        "ROV": "src/img/rov.png",
+        "Valorant": "src/img/valorant.png",
+        "CallOfDuty": "src/img/callofduty.jpg",
+        "Default": "src/img/default.png"
+    };
 
-    const totalRevenue = data.reduce((sum, game) => sum + game.total_sales, 0); // คำนวณยอดขายรวม
+    shareContainer.innerHTML = "";
+
+    const totalRevenue = data.reduce((sum, game) => sum + game.total_sales, 0);
 
     data.forEach(game => {
         const sharePercentage = ((game.total_sales / totalRevenue) * 100).toFixed(1);
-        const gameIcon = `img/${game.game_id}.png`;
+        const gameIcon = gameImageMap[game.game_id] || gameImageMap["Default"];
 
         shareContainer.innerHTML += `
             <div class="game-share">
-                <img src="${gameIcon}" class="game-icon" alt="Game ID ${game.game_id}">
+                <img src="${gameIcon}" class="game-icon" alt="Game ID ${game.game_id}" onerror="this.src='img/default.png';">
                 <span>Game ID: ${game.game_id}</span>
                 <div class="share-bar">
                     <div class="share-value" style="width: ${sharePercentage}%"></div>
