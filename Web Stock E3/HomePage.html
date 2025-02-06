@@ -6,148 +6,339 @@
 		<link href="src/output.css" rel="stylesheet" />
 		<title>Home</title>
 		<script src="https://cdn.tailwindcss.com"></script>
+		<!-- CSS -->
+		<style>
+			.dark-mode {
+				background-color: #10142b; /* พื้นหลังเว็บ */
+				color: white; /* สีข้อความ */
+			}
+
+			.dark-mode header {
+				background-color: #1a1f36; /* พื้นหลัง Navbar */
+			}
+
+			.dark-mode .bg-indigo-600 {
+				background-color: #232c58 !important; /* พื้นหลัง Login Section */
+			}
+
+			/* ป้องกันปุ่มเปลี่ยนสีในโหมดสีเข้ม */
+			.dark-mode .bg-blue-600 {
+				background-color: #2563eb !important; /* สีเดิมของปุ่ม Discord */
+				color: white !important;
+			}
+
+			.dark-mode .bg-red-600 {
+				background-color: #dc2626 !important; /* สีเดิมของปุ่ม Google */
+				color: white !important;
+			}
+
+			.dark-mode .bg-green-500 {
+				background-color: #22c55e !important; /* สีเดิมของปุ่มเข้าสู่ระบบ */
+				color: white !important;
+			}
+
+			.dark-mode .bg-red-500 {
+				background-color: #ef4444 !important; /* สีเดิมของปุ่มสมัครสมาชิก */
+				color: white !important;
+			}
+		</style>
 	</head>
 	<body class="bg-gray-100">
 		<!-- Header -->
 		<header class="bg-purple-600 text-white">
+			<!-- Navbar -->
 			<div
-				class="container mx-auto flex items-center justify-between py-4 px-6"
+				class="container mx-auto flex items-center justify-between py-0 px-4"
 			>
-				<div class="text-2xl font-bold">PLAYERHAVEN</div>
+				<div class="text-2xl font-bold inline">
+					<img
+						id="logo"
+						src="image/logo_player/light_logo.png"
+						alt="light_logo"
+						class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90"
+					/>
+
+					PLAYERHAVEN
+				</div>
 				<nav class="flex space-x-4">
 					<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
 					<a href="#" class="hover:text-indigo-300">ไอดีเกมออนไลน์</a>
 					<a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
 					<a href="#" class="hover:text-indigo-300">บัตรเติมเกมออนไลน์</a>
-					<a href="#" class="hover:text-indigo-300">เติมเกมออนไลน์</a>
+					<a href="HomePage.html" class="hover:text-indigo-300"
+						>เติมเกมออนไลน์</a
+					>
 					<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
 				</nav>
 				<div class="space-x-4">
-					<button class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800" onclick="location.href='Login.html'">
+					<button
+						class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+						onclick="location.href='Login.html'"
+					>
 						เข้าสู่ระบบ
 					</button>
 					<button
-						class="border border-white px-4 py-2 rounded hover:bg-indigo-700" onclick="location.href='Register.html'"
+						class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+						onclick="location.href='Register.html'"
 					>
 						สมัครสมาชิก
+					</button>
+					<button
+						onclick="toggleTheme()"
+						class="p-2 rounded bg-gray-300 dark:bg-gray-600"
+					>
+						🌙 / ☀️
 					</button>
 				</div>
 			</div>
 		</header>
 
-		<!-- Menu Section -->
-		<section class="bg-indigo-800 text-white py-6">
-			<div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div class="flex items-center justify-center bg-indigo-700 p-6 rounded">
-					<div>
-						<img src="https://s.isanook.com/ga/0/ud/236/1183866/batch_thai-1624x1216px.jpg?ip/resize/w728/q80/jpg" alt="" class="w-auto h-16 mx-3 mb-2 inline">
-						<h2 class="text-xl font-bold inline">บริการซื้อขายไอดีเกม</h2>
-						
-					</div>
-				</div>
-				<div class="flex items-center justify-center bg-indigo-700 p-6 rounded">
-					<div>
-						<img src="https://ahaslides.com/wp-content/uploads/2022/05/Group-2642.png" alt="" class="w-auto h-16 mx-3 mb-2 inline">
-						<h2 class="text-xl font-bold inline">บริการสุ่มไอดีเกม</h2>
-				
-					</div>
-				</div>
-			</div>
-		</section>
+		<!-- Section -->
+		<section
+			class="bg-indigo-700 text-white py-0 text-center flex justify-center"
+		>
+			<!-- Profile -->
+			<div class="bg-indigo-700 text-white py-3 flex justify-center">
+				<div
+					class="flex flex-row items-center w-full max-w-screen-xl px-8 space-x-6"
+				>
+					<div
+						class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 flex flex-row w-full"
+					>
+						<!-- Profile & Balance Section -->
+						<div
+							class="flex-1 flex flex-col items-center text-center border-r pr-6"
+						>
+							<div class="flex flex-col items-center pb-4 border-b w-full">
+								<div
+									class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="1.5"
+										stroke="currentColor"
+										class="w-10 h-10 text-gray-600"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M15.75 14.25a4.5 4.5 0 01-7.5 0M12 3.75a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z"
+										/>
+									</svg>
+								</div>
+								<p class="font-semibold text-gray-900 text-lg mt-2">BakWave</p>
+								<a href="#" class="text-sm text-blue-500 hover:underline"
+									>ดูโปรไฟล์ของคุณ</a
+								>
+							</div>
+							<div class="py-4 w-full">
+								<p class="text-lg text-gray-600">
+									คงเหลือ
+									<span class="font-bold text-gray-900">0.00</span> เครดิต
+								</p>
+								<button
+									class="mt-2 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
+								>
+									เติมเครดิต
+								</button>
+							</div>
+						</div>
 
-		<!-- Recommend Menu -->
-		<section class="container mx-auto py-8">
-			<h2 class="text-2xl font-bold text-center mb-6">เมนูแนะนำ</h2>
-			<div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-				<div
-					class="bg-yellow-400 text-center p-4 rounded shadow hover:bg-yellow-500"
-				>
-					<p>บัตรเติมเงิน</p>
-				</div>
-				<div
-					class="bg-yellow-400 text-center p-4 rounded shadow hover:bg-yellow-500"
-				>
-					<p>สุ่มไอดีเกม</p>
-				</div>
-				<div
-					class="bg-yellow-400 text-center p-4 rounded shadow hover:bg-yellow-500"
-				>
-					<p>ซื้อไอดีเกม</p>
-				</div>
-				<div
-					class="bg-yellow-400 text-center p-4 rounded shadow hover:bg-yellow-500"
-				>
-					<p>เติมเกม</p>
-				</div>
-				<div
-					class="bg-yellow-400 text-center p-4 rounded shadow hover:bg-yellow-500"
-				>
-					<p>ปั้มแรงค์</p>
-				</div>
-				<div
-					class="bg-yellow-400 text-center p-4 rounded shadow hover:bg-yellow-500"
-				>
-					<p>เติมเงินมือถือ</p>
+						<!-- Actions Section -->
+						<div
+							class="flex-1 flex flex-wrap justify-center items-center gap-4 pl-6"
+						>
+							<button
+								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
+							>
+								<span class="text-2xl">📜</span>
+								<span class="text-sm mt-1">ประวัติเติมเงิน</span>
+							</button>
+							<button
+								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
+							>
+								<span class="text-2xl">📦</span>
+								<span class="text-sm mt-1">ประวัติการสั่งซื้อ</span>
+							</button>
+							<button
+								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
+							>
+								<span class="text-2xl">💳</span>
+								<span class="text-sm mt-1">กล่องบัตรเติมเงิน</span>
+							</button>
+							<button
+								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
+							>
+								<span class="text-2xl">📩</span>
+								<span class="text-sm mt-1">กล่องจดหมาย</span>
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
 
 		<!-- Game Online Topup -->
 		<section class="container mx-auto py-8">
-			<h2 class="text-2xl font-bold text-center mb-6">เติมเกมออนไลน์</h2>
-			<div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-				<!-- Valorant -->
-				<div class="text-center">
-					<img src="https://cdn2.downdetector.com/static/uploads/c/300/f8762/val.png" alt="Valorant" class="w-16 h-16 mx-auto mb-2" />
-					<p>Valorant</p>
+			<h2
+				class="text-3xl font-bold text-center mb-1 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600 decoration-4 underline underline-offset-8 decoration-blue-400"
+			>
+				เติมเกมออนไลน์
+			</h2>
+			<!-- container และจัดให้อยู่ตรงกลาง -->
+			<div class="container mx-auto px-4 py-8">
+				<!-- Grid Layout - ปรับขนาดตามหน้าจอ -->
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					<!-- Valorant -->
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+					>
+						<div class="aspect-video overflow-hidden">
+							<img
+								src="image/game_pic/valorant_pic.jpg"
+								alt="Valorant"
+								class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+							/>
+						</div>
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+						>
+							<div class="absolute bottom-0 left-0 right-0 p-4">
+								<h3 class="text-white text-lg font-bold">Valorant</h3>
+							</div>
+						</div>
+					</div>
+
+					<!-- TFT -->
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+					>
+						<div class="aspect-video overflow-hidden">
+							<img
+								src="image/game_pic/TFT_pic.jpg"
+								alt="TFT"
+								class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+							/>
+						</div>
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+						>
+							<div class="absolute bottom-0 left-0 right-0 p-4">
+								<h3 class="text-white text-lg font-bold">TFT</h3>
+							</div>
+						</div>
+					</div>
+
+					<!-- LoL -->
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+					>
+						<div class="aspect-video overflow-hidden">
+							<img
+								src="image/game_pic/lol_pic.jpg"
+								alt="LoL"
+								class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+							/>
+						</div>
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+						>
+							<div class="absolute bottom-0 left-0 right-0 p-4">
+								<h3 class="text-white text-lg font-bold">LoL</h3>
+							</div>
+						</div>
+					</div>
+
+					<!-- Golden spatula -->
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+					>
+						<div class="aspect-video overflow-hidden">
+							<img
+								src="image/game_pic/golden_pic.jpg"
+								alt="Golden spatula"
+								class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+							/>
+						</div>
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+						>
+							<div class="absolute bottom-0 left-0 right-0 p-4">
+								<h3 class="text-white text-lg font-bold">Golden spatula</h3>
+							</div>
+						</div>
+					</div>
+
+					<!-- RoV -->
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+					>
+						<div class="aspect-video overflow-hidden">
+							<img
+								src="image/game_pic/rov_pic.jpg"
+								alt="RoV"
+								class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+							/>
+						</div>
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+						>
+							<div class="absolute bottom-0 left-0 right-0 p-4">
+								<h3 class="text-white text-lg font-bold">RoV</h3>
+							</div>
+						</div>
+					</div>
+
+					<!-- Call of Duty: Mobile -->
+					<div
+						class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+					>
+						<div class="aspect-video overflow-hidden">
+							<img
+								src="image/game_pic/CODM.jpg"
+								alt="Call of Duty: Mobile"
+								class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+							/>
+						</div>
+						<div
+							class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+						>
+							<div class="absolute bottom-0 left-0 right-0 p-4">
+								<h3 class="text-white text-lg font-bold">
+									Call of Duty: Mobile
+								</h3>
+							</div>
+						</div>
+					</div>
 				</div>
-				<!-- TFT -->
-				<div class="text-center">
-					<img src="https://play-lh.googleusercontent.com/WrUHJkkuS-jHTLtUXw_Mz30HWUjCWMKgUOeVmx8IR4-xl1L5xy634e_Bh0BnTYhKc1A" alt="TFT" class="w-16 h-16 mx-auto mb-2" />
-					<p>TFT</p>
-				</div>
-				<!-- Golden Spatula -->
-				<div class="text-center">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRE9zVpN7-a7ngX1czZjdbFZKPk7mKwjslcQ&s" alt="Golden Spatula" class="w-16 h-16 mx-auto mb-2" />
-					<p>Golden Spatula</p>
-				</div>
-				<!-- League of legends -->
-				<div class="text-center">
-					<img src="https://d3kjluh73b9h9o.cloudfront.net/optimized/4X/d/8/9/d89b58688e2b1b0d8fc256a4cdd6a454e49ac2a2_2_476x500.png" alt="League of legends" class="w-16 h-16 mx-auto mb-2" />
-					<p>League of legends</p>
-				</div>
-				<!-- RoV -->
-				<div class="text-center">
-					<img src="https://img.online-station.net/gamewiki/game/main/1/70_logo.png" alt="RoV" class="w-16 h-16 mx-auto mb-2" />
-					<p>RoV</p>
-				</div>
-				<!-- Call of duty mobile -->
-				<div class="text-center">
-					<img src="https://cdn-webth.garenanow.com/webth/cdn/codm/mainsite/83f50d49fbdc195b252606b3dccee731.png" alt="Call of duty mobile" class="w-16 h-16 mx-auto mb-2" />
-					<p>Call of duty mobile</p>
-				</div>
-				<!-- game
-				<!-- <div class="text-center">
-					<img src="" alt="game" class="w-16 h-16 mx-auto mb-2" />
-					<p>game</p>
-				</div>
-				<!-- game -->
-				<!-- <div class="text-center">
-					<img src="" alt="game" class="w-16 h-16 mx-auto mb-2" />
-					<p>game</p>
-				</div> -->
-				<!-- game -->
-				<!-- <div class="text-center">
-					<img src="" alt="game" class="w-16 h-16 mx-auto mb-2" />
-					<p>game</p>
-				</div>
-				<!-- game -->
-				<!-- <div class="text-center">
-					<img src="" alt="game" class="w-16 h-16 mx-auto mb-2" />
-					<p>game</p>
-				</div> --> 
-				
 			</div>
 		</section>
+		<!--? JS toggle button -->
+		<script>
+			function toggleTheme() {
+				const body = document.body;
+				const navbar = document.querySelector("header");
+				const loginSection = document.querySelector(".bg-indigo-600");
+				const logo = document.getElementById("logo");
+				const isDarkMode = body.classList.toggle("dark-mode");
+
+				// เปลี่ยนโลโก้ตามโหมด
+				if (isDarkMode) {
+					logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
+					body.style.backgroundColor = "#10142b";
+					navbar.style.backgroundColor = "#1a1f36";
+					loginSection.style.backgroundColor = "#232c58";
+				} else {
+					logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติโหมดสว่าง
+					body.style.backgroundColor = "";
+					navbar.style.backgroundColor = "";
+					loginSection.style.backgroundColor = "";
+				}
+
+				localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+			}
+		</script>
 	</body>
 </html>
