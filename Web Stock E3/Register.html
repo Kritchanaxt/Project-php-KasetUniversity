@@ -6,8 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dark-mode {
+            background-color: #10142b;
+            color: white;
+        }
+        .dark-mode header {
+            background-color: #1a1f36;
+        }
+        .dark-mode .bg-indigo-600 {
+            background-color: #232c58 !important;
+        }
+        .dark-mode .bg-green-500 {
+            background-color: #22c55e !important;
+            color: white !important;
+        }
+        .dark-mode .bg-gray-500 {
+            background-color: #374151 !important;
+            color: white !important;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
+
     <!-- Header -->
     <header class="bg-purple-600 text-white">
         <div class="container mx-auto flex items-center justify-between py-4 px-6">
@@ -25,6 +46,10 @@
                     onclick="location.href='Login.html'">เข้าสู่ระบบ</button>
                 <button class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
                     onclick="location.href='Register.html'">สมัครสมาชิก</button>
+                <button onclick="toggleTheme()"
+                    class="p-2 rounded bg-gray-300 dark:bg-gray-600">
+                    🌙 / ☀️
+                </button>
             </div>
         </div>
     </header>
@@ -90,5 +115,35 @@
             </form>
         </div>
     </section>
+
+    <!-- Dark Mode Toggle -->
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const navbar = document.querySelector("header");
+            const registerSection = document.querySelector(".bg-indigo-600");
+            const isDarkMode = body.classList.toggle("dark-mode");
+
+            if (isDarkMode) {
+                body.style.backgroundColor = "#10142b";
+                navbar.style.backgroundColor = "#1a1f36";
+                registerSection.style.backgroundColor = "#232c58";
+            } else {
+                body.style.backgroundColor = "";
+                navbar.style.backgroundColor = "";
+                registerSection.style.backgroundColor = "";
+            }
+
+            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        }
+
+        window.onload = function () {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                toggleTheme();
+            }
+        };
+    </script>
+
 </body>
 </html>

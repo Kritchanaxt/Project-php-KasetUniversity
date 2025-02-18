@@ -71,26 +71,30 @@
 					<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
 				</nav>
 				<div class="space-x-4">
-					<button
-						class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
-						onclick="location.href='Login.html'"
-					>
+					<!-- ปุ่มเข้าสู่ระบบ -->
+					<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+						onclick="location.href='Login.html'">
 						เข้าสู่ระบบ
 					</button>
-					<button
-						class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
-						onclick="location.href='Register.html'"
-					>
+				
+					<!-- ปุ่มสมัครสมาชิก -->
+					<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+						onclick="location.href='Register.html'">
 						สมัครสมาชิก
 					</button>
-					<button
-						onclick="toggleTheme()"
-						class="p-2 rounded bg-gray-300 dark:bg-gray-600"
-					>
+				
+					<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
+					<button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+						onclick="logout()">
+						ออกจากระบบ
+					</button>
+				
+					<!-- ปุ่มเปลี่ยนธีม -->
+					<button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
 						🌙 / ☀️
 					</button>
 				</div>
-			</div>
+				
 		</header>
 
 		<!-- Section -->
@@ -106,75 +110,55 @@
 						class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 flex flex-row w-full"
 					>
 						<!-- Profile & Balance Section -->
-						<div
-							class="flex-1 flex flex-col items-center text-center border-r pr-6"
-						>
-							<div class="flex flex-col items-center pb-4 border-b w-full">
-								<div
-									class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										stroke="currentColor"
-										class="w-10 h-10 text-gray-600"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M15.75 14.25a4.5 4.5 0 01-7.5 0M12 3.75a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z"
-										/>
-									</svg>
-								</div>
-								<p class="font-semibold text-gray-900 text-lg mt-2">BakWave</p>
-								<a href="#" class="text-sm text-blue-500 hover:underline"
-									>ดูโปรไฟล์ของคุณ</a
-								>
-							</div>
-							<div class="py-4 w-full">
-								<p class="text-lg text-gray-600">
-									คงเหลือ
-									<span class="font-bold text-gray-900">0.00</span> เครดิต
-								</p>
-								<button
-									class="mt-2 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
-								>
-									เติมเครดิต
-								</button>
-							</div>
-						</div>
+<div class="flex-1 flex flex-col items-center text-center border-r pr-6 hidden" id="profileSection">
+    <div class="flex flex-col items-center pb-4 border-b w-full">
+        <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-600">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 14.25a4.5 4.5 0 01-7.5 0M12 3.75a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z" />
+            </svg>
+        </div>
+        <!-- อัปเดตชื่อผู้ใช้ที่ล็อกอิน -->
+        <p id="usernameDisplay" class="font-semibold text-gray-900 text-lg mt-2">Guest</p>
+        <a href="#" class="text-sm text-blue-500 hover:underline">ดูโปรไฟล์ของคุณ</a>
+    </div>
+    <div class="py-4 w-full">
+        <p class="text-lg text-gray-600">
+            คงเหลือ <span class="font-bold text-gray-900">0.00</span> เครดิต
+        </p>
+        <button class="mt-2 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800">
+            เติมเครดิต
+        </button>
+    </div>
+</div>
 
-						<!-- Actions Section -->
-						<div
-							class="flex-1 flex flex-wrap justify-center items-center gap-4 pl-6"
-						>
-							<button
-								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
-							>
-								<span class="text-2xl">📜</span>
-								<span class="text-sm mt-1">ประวัติเติมเงิน</span>
-							</button>
-							<button
-								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
-							>
-								<span class="text-2xl">📦</span>
-								<span class="text-sm mt-1">ประวัติการสั่งซื้อ</span>
-							</button>
-							<button
-								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
-							>
-								<span class="text-2xl">💳</span>
-								<span class="text-sm mt-1">กล่องบัตรเติมเงิน</span>
-							</button>
-							<button
-								class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold"
-							>
-								<span class="text-2xl">📩</span>
-								<span class="text-sm mt-1">กล่องจดหมาย</span>
-							</button>
-						</div>
+<!-- Actions Section -->
+<div class="flex-1 flex flex-wrap justify-center items-center gap-4 pl-6 hidden" id="actionSection">
+    <button id="topupHistory"
+        class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold hidden">
+        <span class="text-2xl">📜</span>
+        <span class="text-sm mt-1">ประวัติเติมเงิน</span>
+    </button>
+    <button id="purchaseHistory"
+        class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold hidden">
+        <span class="text-2xl">📦</span>
+        <span class="text-sm mt-1">ประวัติการสั่งซื้อ</span>
+    </button>
+    <button id="giftCardBox"
+        class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold hidden">
+        <span class="text-2xl">💳</span>
+        <span class="text-sm mt-1">กล่องบัตรเติมเงิน</span>
+    </button>
+    <button id="mailbox"
+        class="flex flex-col items-center bg-gray-100 hover:bg-gray-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold hidden">
+        <span class="text-2xl">📩</span>
+        <span class="text-sm mt-1">กล่องจดหมาย</span>
+    </button>
+</div>
+
+
+
 					</div>
 				</div>
 			</div>
@@ -315,30 +299,80 @@
 				</div>
 			</div>
 		</section>
-		<!--? JS toggle button -->
-		<script>
+		  <!-- Script -->
+		  <script>
 			function toggleTheme() {
 				const body = document.body;
 				const navbar = document.querySelector("header");
 				const loginSection = document.querySelector(".bg-indigo-600");
-				const logo = document.getElementById("logo");
 				const isDarkMode = body.classList.toggle("dark-mode");
-
-				// เปลี่ยนโลโก้ตามโหมด
+	
 				if (isDarkMode) {
-					logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
 					body.style.backgroundColor = "#10142b";
 					navbar.style.backgroundColor = "#1a1f36";
 					loginSection.style.backgroundColor = "#232c58";
 				} else {
-					logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติโหมดสว่าง
 					body.style.backgroundColor = "";
 					navbar.style.backgroundColor = "";
 					loginSection.style.backgroundColor = "";
 				}
-
+	
 				localStorage.setItem("theme", isDarkMode ? "dark" : "light");
 			}
+	
+			window.onload = function () {
+    const username = localStorage.getItem("username");
+    const profileSection = document.getElementById("profileSection");
+    const usernameDisplay = document.getElementById("usernameDisplay");
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // กล่อง Action Buttons
+    const actionSection = document.getElementById("actionSection");
+    const purchaseHistory = document.getElementById("purchaseHistory");
+    const topupHistory = document.getElementById("topupHistory");
+    const giftCardBox = document.getElementById("giftCardBox");
+    const mailbox = document.getElementById("mailbox");
+
+    if (username) {
+        usernameDisplay.textContent = username; // อัปเดตชื่อบัญชี
+        profileSection.classList.remove("hidden"); // แสดงโปรไฟล์
+        actionSection.classList.remove("hidden"); // แสดงปุ่มต่างๆ
+        logoutBtn.classList.remove("hidden"); // แสดงปุ่มออกจากระบบ
+        loginBtn.classList.add("hidden"); // ซ่อนปุ่มเข้าสู่ระบบ
+        registerBtn.classList.add("hidden"); // ซ่อนปุ่มสมัครสมาชิก
+
+        // แสดงปุ่มประวัติการทำรายการ
+        purchaseHistory.classList.remove("hidden");
+        topupHistory.classList.remove("hidden");
+        giftCardBox.classList.remove("hidden");
+        mailbox.classList.remove("hidden");
+
+    } else {
+        usernameDisplay.textContent = "Guest"; // แสดง "Guest" ถ้าไม่ล็อกอิน
+        profileSection.classList.add("hidden"); // ซ่อนโปรไฟล์
+        actionSection.classList.add("hidden"); // ซ่อนกล่อง Action
+        logoutBtn.classList.add("hidden"); // ซ่อนปุ่มออกจากระบบ
+        loginBtn.classList.remove("hidden"); // แสดงปุ่มเข้าสู่ระบบ
+        registerBtn.classList.remove("hidden"); // แสดงปุ่มสมัครสมาชิก
+
+        // ซ่อนปุ่มประวัติการทำรายการ
+        purchaseHistory.classList.add("hidden");
+        topupHistory.classList.add("hidden");
+        giftCardBox.classList.add("hidden");
+        mailbox.classList.add("hidden");
+    }
+};
+
+// ฟังก์ชัน Logout
+function logout() {
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    window.location.href = "Login.html";
+}
+
+
 		</script>
 	</body>
-</html>
+	</html>
