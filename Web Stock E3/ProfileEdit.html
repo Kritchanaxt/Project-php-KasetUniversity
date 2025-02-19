@@ -1,478 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Profile Setting</title>
-		<script src="https://cdn.tailwindcss.com"></script>
-		<style>
-			body {
-				background-color: #10142b; /* สีพื้นหลัง */
-				font-family: "Inter", sans-serif;
-			}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("profile.php") // เรียก API ดึงข้อมูลจากฐานข้อมูล
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        document.getElementById("username").value = data.username;
+                        document.getElementById("email").value = data.email;
+                        document.getElementById("phone").value = data.phone;
+                        document.getElementById("profileSection").classList.remove("hidden");
+                        document.getElementById("logoutBtn").classList.remove("hidden");
+                        document.getElementById("loginBtn").classList.add("hidden");
+                        document.getElementById("registerBtn").classList.add("hidden");
 
-			.navbar {
-				background-color: #1a1f36; /* พื้นหลังแท็บบน */
-			}
+                        // แสดง Sidebar ที่เกี่ยวข้องกับผู้ใช้ที่ล็อกอินแล้ว
+                        document.querySelectorAll(".sidebar-item").forEach(item => {
+                            item.classList.remove("hidden");
+                        });
+                    } else {
+                        document.getElementById("profileSection").classList.add("hidden");
+                        document.getElementById("logoutBtn").classList.add("hidden");
+                        document.getElementById("loginBtn").classList.remove("hidden");
+                        document.getElementById("registerBtn").classList.remove("hidden");
 
-			.sidebar {
-				background-color: #ececff; /* พื้นหลัง Sidebar */
-			}
+                        // ซ่อน Sidebar ถ้ายังไม่ล็อกอิน
+                        document.querySelectorAll(".sidebar-item").forEach(item => {
+                            item.classList.add("hidden");
+                        });
+                    }
+                })
+                .catch(error => console.log("Error loading profile data: ", error));
+        });
 
-			.sidebar-item {
-				color: #6c61ec; /* สีข้อความใน Sidebar */
-				background-color: #ffffff; /* สีพื้นหลังไอเท็ม */
-			}
+        function logout() {
+            fetch("logout.php")
+                .then(() => {
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("email");
+                    window.location.href = "login.html";
+                });
+        }
+    </script>
+	<style>
+		body {
+			background-color: #10142b; /* สีพื้นหลัง */
+			font-family: "Inter", sans-serif;
+		}
 
-			.sidebar-item:hover {
-				background-color: #f3f1ff; /* สีพื้นหลังเมื่อโฮเวอร์ */
-			}
+		.navbar {
+			background-color: #1a1f36; /* พื้นหลังแท็บบน */
+		}
 
-			.content {
-				background-color: #ececff; /* พื้นหลังเนื้อหา */
-				color: #000000; /* สีข้อความในเนื้อหา */
-				max-width: 70%; /* ย่อขนาด Main Section */
-			}
+		.sidebar {
+			background-color: #ececff; /* พื้นหลัง Sidebar */
+		}
 
-			.btn-primary {
-				background-color: #7f56d9; /* ปุ่มหลัก */
-				color: #ffffff;
-			}
+		.sidebar-item {
+			color: #6c61ec; /* สีข้อความใน Sidebar */
+			background-color: #ffffff; /* สีพื้นหลังไอเท็ม */
+		}
 
-			.btn-primary:hover {
-				background-color: #6844b1; /* ปุ่มเมื่อโฮเวอร์ */
-			}
-			/* แทบด้านบนเว็บ */
-			.w-full.text-2xl.font-bold.text-left {
-				font-family: "Russo One", sans-serif; /* ฟอนต์ที่เข้ากับธีม Cyberpunk */
-				color: #00ffff; /* สีฟ้านีออน */
-				font-size: 2rem; /* ขนาดตัวอักษร */
-				text-shadow: 0 0 5px #00ffff, /* เรืองแสงฟ้ารอบๆ */ 0 0 10px #00ffff,
-					0 0 20px #00ffff, 0 0 30px #ff00ff,
-					/* เพิ่มแสงชมพู */ 0 0 80px #ff00ff;
-				letter-spacing: 2px; /* เพิ่มช่องว่างระหว่างตัวอักษร */
-				text-transform: uppercase; /* ทำให้ตัวอักษรเป็นตัวพิมพ์ใหญ่ทั้งหมด */
-				margin-left: -80px; /* เว้นระยะจากขอบซ้าย */
-			}
+		.sidebar-item:hover {
+			background-color: #f3f1ff; /* สีพื้นหลังเมื่อโฮเวอร์ */
+		}
 
-			header {
-				background: linear-gradient(
-					to right,
-					#070f1f,
-					#0c1326
-				); /* ไล่สีจากน้ำเงินเข้มไปเข้มขึ้น */
-				color: #ffffff; /* ข้อความสีขาว */
-				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-				padding: 20px 30px; /* เพิ่ม padding ด้านบนและด้านล่าง */
-			}
-			/* General Styles */
-			body,
-			html {
-				margin: 0;
-				padding: 0;
-				height: 100%;
-				overflow: hidden; /* Prevent scrolling during loading */
-				font-family: "Arial", sans-serif;
-				background-color: #0c1326; /* Default background */
-			}
+		.content {
+			background-color: #ececff; /* พื้นหลังเนื้อหา */
+			color: #000000; /* สีข้อความในเนื้อหา */
+			max-width: 70%; /* ย่อขนาด Main Section */
+		}
 
-			/* Fullscreen Loading Container */
-			.loading-screen {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background-color: #0c1326; /* Dark background */
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				flex-direction: row;
-				z-index: 9999;
-			}
+		.btn-primary {
+			background-color: #7f56d9; /* ปุ่มหลัก */
+			color: #ffffff;
+		}
 
-			/* Background Animation Split */
-			.background {
-				position: absolute;
-				width: 100%;
+		.btn-primary:hover {
+			background-color: #6844b1; /* ปุ่มเมื่อโฮเวอร์ */
+		}
+		/* แทบด้านบนเว็บ */
+		.w-full.text-2xl.font-bold.text-left {
+			font-family: "Russo One", sans-serif; /* ฟอนต์ที่เข้ากับธีม Cyberpunk */
+			color: #00ffff; /* สีฟ้านีออน */
+			font-size: 2rem; /* ขนาดตัวอักษร */
+			text-shadow: 0 0 5px #00ffff, /* เรืองแสงฟ้ารอบๆ */ 0 0 10px #00ffff,
+				0 0 20px #00ffff, 0 0 30px #ff00ff,
+				/* เพิ่มแสงชมพู */ 0 0 80px #ff00ff;
+			letter-spacing: 2px; /* เพิ่มช่องว่างระหว่างตัวอักษร */
+			text-transform: uppercase; /* ทำให้ตัวอักษรเป็นตัวพิมพ์ใหญ่ทั้งหมด */
+			margin-left: -80px; /* เว้นระยะจากขอบซ้าย */
+		}
+
+		header {
+			background: linear-gradient(
+				to right,
+				#070f1f,
+				#0c1326
+			); /* ไล่สีจากน้ำเงินเข้มไปเข้มขึ้น */
+			color: #ffffff; /* ข้อความสีขาว */
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+			padding: 20px 30px; /* เพิ่ม padding ด้านบนและด้านล่าง */
+		}
+		/* General Styles */
+		body,
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: hidden; /* Prevent scrolling during loading */
+			font-family: "Arial", sans-serif;
+			background-color: #0c1326; /* Default background */
+		}
+
+		/* Fullscreen Loading Container */
+		.loading-screen {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #0c1326; /* Dark background */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: row;
+			z-index: 9999;
+		}
+
+		/* Background Animation Split */
+		.background {
+			position: absolute;
+			width: 100%;
+			height: 50%;
+			background-color: #070f1f;
+			z-index: 1;
+		}
+		.background.top {
+			top: 0;
+			animation: slide-out-top 1.5s ease 2.5s forwards;
+		}
+		.background.bottom {
+			bottom: 0;
+			animation: slide-out-bottom 1.5s ease 2.5s forwards;
+		}
+
+		/* Text Animation */
+		.loading-text-container {
+			position: relative;
+			display: flex;
+			align-items: center;
+			z-index: 2;
+		}
+
+		.loading-text-store {
+			font-size: 2rem;
+			font-weight: bold;
+			font-family: "Arial", sans-serif;
+			color: #ffffff;
+			letter-spacing: 3px;
+			writing-mode: vertical-rl; /* แสดงข้อความเป็นแนวตั้ง */
+			transform: rotate(180deg) translateX(-100%); /* หมุนกลับหัว */
+			animation: slide-in-left 1.5s ease forwards;
+			margin-right: 10px;
+		}
+
+		.loading-text-game {
+			font-size: 2.5rem;
+			font-weight: bold;
+			font-family: "Arial", sans-serif;
+			color: #ffffff;
+			letter-spacing: 3px;
+			opacity: 0; /* เริ่มต้นซ่อน */
+			transform: translateY(100%); /* เลื่อนออกไปด้านล่าง */
+			animation: slide-in-up 1.5s ease 1.5s forwards;
+		}
+
+		/* Animations */
+		@keyframes slide-out-top {
+			0% {
 				height: 50%;
-				background-color: #070f1f;
-				z-index: 1;
 			}
-			.background.top {
-				top: 0;
-				animation: slide-out-top 1.5s ease 2.5s forwards;
+			100% {
+				height: 0%;
 			}
-			.background.bottom {
-				bottom: 0;
-				animation: slide-out-bottom 1.5s ease 2.5s forwards;
+		}
+
+		@keyframes slide-out-bottom {
+			0% {
+				height: 50%;
 			}
-
-			/* Text Animation */
-			.loading-text-container {
-				position: relative;
-				display: flex;
-				align-items: center;
-				z-index: 2;
+			100% {
+				height: 0%;
 			}
+		}
 
-			.loading-text-store {
-				font-size: 2rem;
-				font-weight: bold;
-				font-family: "Arial", sans-serif;
-				color: #ffffff;
-				letter-spacing: 3px;
-				writing-mode: vertical-rl; /* แสดงข้อความเป็นแนวตั้ง */
-				transform: rotate(180deg) translateX(-100%); /* หมุนกลับหัว */
-				animation: slide-in-left 1.5s ease forwards;
-				margin-right: 10px;
+		@keyframes slide-in-left {
+			0% {
+				transform: rotate(180deg) translateX(-100%);
+				opacity: 0;
 			}
-
-			.loading-text-game {
-				font-size: 2.5rem;
-				font-weight: bold;
-				font-family: "Arial", sans-serif;
-				color: #ffffff;
-				letter-spacing: 3px;
-				opacity: 0; /* เริ่มต้นซ่อน */
-				transform: translateY(100%); /* เลื่อนออกไปด้านล่าง */
-				animation: slide-in-up 1.5s ease 1.5s forwards;
+			100% {
+				transform: rotate(180deg) translateX(0);
+				opacity: 1;
 			}
+		}
 
-			/* Animations */
-			@keyframes slide-out-top {
-				0% {
-					height: 50%;
-				}
-				100% {
-					height: 0%;
-				}
+		@keyframes slide-in-up {
+			0% {
+				transform: translateY(100%);
+				opacity: 0;
 			}
-
-			@keyframes slide-out-bottom {
-				0% {
-					height: 50%;
-				}
-				100% {
-					height: 0%;
-				}
+			100% {
+				transform: translateY(0);
+				opacity: 1;
 			}
+		}
 
-			@keyframes slide-in-left {
-				0% {
-					transform: rotate(180deg) translateX(-100%);
-					opacity: 0;
-				}
-				100% {
-					transform: rotate(180deg) translateX(0);
-					opacity: 1;
-				}
-			}
+		/* CSS toggle button */
 
-			@keyframes slide-in-up {
-				0% {
-					transform: translateY(100%);
-					opacity: 0;
-				}
-				100% {
-					transform: translateY(0);
-					opacity: 1;
-				}
-			}
+		/* ToggleButton */
+		:root {
+			--bg-dark: #10142b;
+			--navbar-dark: #1a1f36;
+			--sidebar-dark: #ececff;
+			--sidebar-item-dark: #ffffff;
+			--sidebar-item-hover-dark: #f3f1ff;
+			--content-dark: #ececff;
+			--text-dark: #ffffff;
+		}
 
-			/* CSS toggle button */
+		.light {
+			--bg-dark: #ffffff;
+			--navbar-dark: #6b46c1; /* bg-purple-600 */
+			--sidebar-dark: #f9f9f9;
+			--sidebar-item-dark: #e5e5e5;
+			--sidebar-item-hover-dark: #dadada;
+			--content-dark: #ffffff;
+			--text-dark: #000000;
+			--navbar-text: #ffffff;
+		}
 
-			/* ToggleButton */
-			:root {
-				--bg-dark: #10142b;
-				--navbar-dark: #1a1f36;
-				--sidebar-dark: #ececff;
-				--sidebar-item-dark: #ffffff;
-				--sidebar-item-hover-dark: #f3f1ff;
-				--content-dark: #ececff;
-				--text-dark: #ffffff;
-			}
+		body {
+			background-color: var(--bg-dark);
+			font-family: "Inter", sans-serif;
+			color: var(--text-dark);
+		}
+		.navbar {
+			background-color: var(--navbar-dark);
+			color: var(--text-dark);
+		}
+		.light .navbar {
+			color: var(--navbar-text);
+		}
+		.sidebar {
+			background-color: var(--sidebar-dark);
+		}
+		.sidebar-item {
+			background-color: var(--sidebar-item-dark);
+		}
+		.sidebar-item:hover {
+			background-color: var(--sidebar-item-hover-dark);
+		}
+		.content {
+			background-color: var(--content-dark);
+		}
+	</style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Navbar -->
+    <nav class="navbar p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">PLAYER HAVEN</h1>
+            <div class="space-x-4">
+                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+                    onclick="location.href='Login.html'">
+                    เข้าสู่ระบบ
+                </button>
+                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+                    onclick="location.href='Register.html'">
+                    สมัครสมาชิก
+                </button>
+                <button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+                    onclick="logout()">
+                    ออกจากระบบ
+                </button>
+                <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
+                    🌙 / ☀️
+                </button>
+            </div>
+        </div>
+    </nav>
 
-			.light {
-				--bg-dark: #ffffff;
-				--navbar-dark: #6b46c1; /* bg-purple-600 */
-				--sidebar-dark: #f9f9f9;
-				--sidebar-item-dark: #e5e5e5;
-				--sidebar-item-hover-dark: #dadada;
-				--content-dark: #ffffff;
-				--text-dark: #000000;
-				--navbar-text: #ffffff;
-			}
+    <!-- Main Section -->
+    <div class="flex justify-center py-8">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 p-6 rounded-lg shadow-md">
+            <ul class="space-y-4">
+                <li class="sidebar-item hidden">
+                    <a href="TopUpHistory.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                        <span class="font-semibold">Top-Up History</span>
+                    </a>
+                </li>
+                <li class="sidebar-item hidden">
+                    <a href="PurchaseHistory.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                        <span class="font-semibold">Purchase History</span>
+                    </a>
+                </li>
+                <li class="sidebar-item hidden">
+                    <a href="GameCardBox.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                        <span class="font-semibold">Game Card Box</span>
+                    </a>
+                </li>
+                <li class="sidebar-item hidden">
+                    <a href="Mailbox.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+                        <span class="font-semibold">Mailbox</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-			body {
-				background-color: var(--bg-dark);
-				font-family: "Inter", sans-serif;
-				color: var(--text-dark);
-			}
-			.navbar {
-				background-color: var(--navbar-dark);
-				color: var(--text-dark);
-			}
-			.light .navbar {
-				color: var(--navbar-text);
-			}
-			.sidebar {
-				background-color: var(--sidebar-dark);
-			}
-			.sidebar-item {
-				background-color: var(--sidebar-item-dark);
-			}
-			.sidebar-item:hover {
-				background-color: var(--sidebar-item-hover-dark);
-			}
-			.content {
-				background-color: var(--content-dark);
-			}
-		</style>
-	</head>
-	<body class="full-page-gradient text-white">
-		<!-- Loading Screen -->
-		<div class="loading-screen">
-			<!-- Loading Text -->
-			<div class="loading-text-container">
-				<div class="loading-text-store">STORE</div>
-				<div class="loading-text-game">GAME ONLINE</div>
-			</div>
-
-			<!-- Background Split -->
-			<div class="background top"></div>
-			<div class="background bottom"></div>
-		</div>
-
-		<!-- Navbar -->
-		<nav class="navbar p-4 shadow-md">
-			<div class="container mx-auto flex justify-between items-center">
-				<div class="text-2xl font-bold text-white">PLAYER HAVEN</div>
-				<div class="flex space-x-6">
-					<a href="HomePage.html" class="text-gray-300 hover:text-white"
-						>Home</a
-					>
-					<a href="#" class="text-gray-300 hover:text-white">Online Game IDs</a>
-					<a href="#" class="text-gray-300 hover:text-white">Random Game IDs</a>
-					<a href="#" class="text-gray-300 hover:text-white">Game Cards</a>
-					<a href="#" class="text-gray-300 hover:text-white">Top-Up</a>
-					<a href="#" class="text-gray-300 hover:text-white">Contact Us</a>
-				</div>
-				<div class="flex items-center space-x-4">
-					<div class="relative">
-						<button
-							class="flex items-center text-gray-300 hover:text-white focus:outline-none"
-						>
-							<img
-								src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-								alt="Profile"
-								class="w-8 h-8 rounded-full mr-2"
-							/>
-							<span>Profile</span>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-5 w-5 ml-1"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-						</button>
-						<button
-							onclick="toggleTheme()"
-							class="p-2 rounded bg-gray-300 dark:bg-gray-600"
-						>
-							🌙 / ☀️
-						</button>
-					</div>
-				</div>
-			</div>
-		</nav>
-
-		<!-- Main Section -->
-		<div class="flex justify-center py-8">
-			<!-- Sidebar -->
-			<aside class="sidebar w-64 p-6 rounded-lg shadow-md">
-				<ul class="space-y-4">
-					<!-- Tab: Top-Up History -->
-					<li>
-						<a
-							href="TopUpHistory.html"
-							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-						>
-							<img
-								src="https://media.discordapp.net/attachments/1333465176686723124/1333739459614736384/DALL_E-2025-01-28-17.03.01-A-sleek_-cyberpunk-themed-icon-for-a-top-up-system-removebg-preview.png?ex=6799fd2a&is=6798abaa&hm=fbde12851b4d3ea71daf8da35159cd7ef2efa8487b837884adc619f22b9b4bc3&=&format=webp&quality=lossless"
-								alt="Top-Up History"
-								class="w-6 h-6"
-							/>
-							<span class="font-semibold">Top-Up History</span>
-						</a>
-					</li>
-					<!-- Tab: Purchase History -->
-					<li>
-						<a
-							href="PurchaseHistory.html"
-							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-						>
-							<img
-								src="https://media.discordapp.net/attachments/1333465176686723124/1333739998385541130/DALL_E-2025-01-28-17.05.44-A-sleek_-cyberpunk-themed-icon-representing-_Purchase-History-removebg-preview.png?ex=6799fdab&is=6798ac2b&hm=a3b32dbb7886fde1bda3390c45602621a78ad3e4530ee65b3ad8d7ffd7aa97bb&=&format=webp&quality=lossless"
-								alt="Purchase History"
-								class="w-6 h-6"
-							/>
-							<span class="font-semibold">Purchase History</span>
-						</a>
-					</li>
-					<!-- Tab: Game Card Box -->
-					<li>
-						<a
-							href="GameCardBox.html"
-							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-						>
-							<img
-								src="https://media.discordapp.net/attachments/1333465176686723124/1333740853314846761/DALL_E-2025-01-28-17.07.50-A-sleek_-cyberpunk-themed-icon-representing-a-_Game-Card-Box-removebg-preview.png?ex=6799fe77&is=6798acf7&hm=4ae528f0d59da29747f16afa9202b8c08b45ebd8c83fc4167027e30f5f342609&=&format=webp&quality=lossless"
-								alt="Game Card Box"
-								class="w-6 h-6"
-							/>
-							<span class="font-semibold">Game Card Box</span>
-						</a>
-					</li>
-					<!-- Tab: Mailbox -->
-					<li>
-						<a
-							href="Mailbox.html"
-							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-						>
-							<img
-								src="https://media.discordapp.net/attachments/1333465176686723124/1333743617851789323/DALL_E-2025-01-28-17.18-removebg-preview-removebg-preview.png?ex=679a010a&is=6798af8a&hm=b5cb791be5f1e80650f1ecf31a34d6cb8d598c28377213873e5ee6d2a1b9fa21&=&format=webp&quality=lossless"
-								alt="Mailbox"
-								class="w-6 h-6"
-							/>
-							<span class="font-semibold">Mailbox</span>
-						</a>
-					</li>
-					<!-- Tab: Log Out -->
-					<li>
-						<a
-							href="Logout.html"
-							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-						>
-							<img
-								src="https://media.discordapp.net/attachments/1333465176686723124/1333741803706384394/DALL_E-2025-01-28-17.11.30-A-sleek_-cyberpunk-themed-icon-representing-_Log-Out-removebg-preview.png?ex=6799ff59&is=6798add9&hm=136cdf858304ea5aecb6ac9bae7bc8b4345f600a1069446b0bd150a343261c76&=&format=webp&quality=lossless"
-								alt="Log Out"
-								class="w-6 h-6"
-							/>
-							<span class="font-semibold">Log Out</span>
-						</a>
-					</li>
-				</ul>
-			</aside>
-
-			<!-- Content -->
-			<main class="content flex-1 p-6 rounded-lg shadow-md ml-6">
-				<h2 class="text-2xl font-bold mb-6">Personal Information</h2>
-				<form>
-					<div class="mb-4">
-						<label for="first-name" class="block text-gray-600 font-semibold"
-							>First Name</label
-						>
-						<input
-							type="text"
-							id="first-name"
-							class="w-full p-2 rounded bg-white border border-gray-300"
-							placeholder="Enter Your first name"
-						/>
-					</div>
-					<div class="mb-4">
-						<label for="last-name" class="block text-gray-600 font-semibold"
-							>Last Name</label
-						>
-						<input
-							type="text"
-							id="last-name"
-							class="w-full p-2 rounded bg-white border border-gray-300"
-							placeholder="Enter Your last name"
-						/>
-					</div>
-					<div class="mb-4">
-						<label for="email" class="block text-gray-600 font-semibold"
-							>Email</label
-						>
-						<input
-							type="email"
-							id="email"
-							class="w-full p-2 rounded bg-white border border-gray-300"
-							placeholder="Enter Your email"
-						/>
-					</div>
-					<div class="mb-4">
-						<label for="revenue" class="block text-gray-600 font-semibold"
-							>Time</label
-						>
-						<input
-							type="text"
-							id="revenue"
-							class="w-full p-2 rounded bg-white border border-gray-300"
-							readonly
-						/>
-					</div>
-					<button class="btn-primary py-2 px-4 rounded font-bold">
-						Save Profile
-					</button>
-				</form>
-			</main>
-		</div>
-
-		<script>
-			// ฟังก์ชันสำหรับอัปเดตเวลา
-			function updateTime() {
-				const timeInput = document.getElementById("revenue"); // เลือก input
-				const now = new Date(); // เวลาปัจจุบัน
-				// รูปแบบเวลา: HH:MM:SS
-				const timeString = now.toLocaleTimeString("en-US", { hour12: false });
-				timeInput.value = timeString; // อัปเดตค่าใน input
-			}
-
-			// เรียกใช้งานทุก ๆ 1 วินาที
-			setInterval(updateTime, 1000);
-
-			// เรียกใช้งานทันทีเมื่อโหลดหน้า
-			updateTime();
-			document.addEventListener("DOMContentLoaded", () => {
-				const explosionGif = document.querySelector(".explosion-gif");
-				const explosionText = document.getElementById("explosion-text");
-
-				// Add an event listener to detect when the fade-out animation ends
-				explosionGif.addEventListener("animationend", () => {
-					explosionText.classList.remove("hidden"); // Show the text
-				});
-			});
-			document.addEventListener("DOMContentLoaded", () => {
-				const loadingScreen = document.querySelector(".loading-screen");
-
-				setTimeout(() => {
-					loadingScreen.style.display = "none";
-				}, 4000);
-			});
-
-			// JS toggleTheme
-			function toggleTheme() {
-				const html = document.documentElement;
-				html.classList.toggle("light");
-				localStorage.setItem(
-					"theme",
-					html.classList.contains("light") ? "light" : "dark"
-				);
-			}
-
-			document.addEventListener("DOMContentLoaded", () => {
-				if (localStorage.getItem("theme") === "light") {
-					document.documentElement.classList.add("light");
-				}
-			});
-		</script>
-	</body>
+        <!-- Content -->
+        <main class="content flex-1 p-6 rounded-lg shadow-md ml-6">
+            <h2 class="text-2xl font-bold mb-6">Personal Information</h2>
+            <form action="update_profile.php" method="POST">
+                <div class="mb-4">
+                    <label class="block text-gray-400">Username</label>
+                    <input type="text" name="username" id="username" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-400">Email</label>
+                    <input type="email" name="email" id="email" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-400">Phone</label>
+                    <input type="text" name="phone" id="phone" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+                </div>
+                <button type="submit" class="btn-primary py-2 px-4 rounded font-bold bg-blue-500 hover:bg-blue-600">
+                    Save Profile
+                </button>
+            </form>
+        </main>
+    </div>
+</body>
 </html>

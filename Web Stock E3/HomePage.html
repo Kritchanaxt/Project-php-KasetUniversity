@@ -121,7 +121,7 @@
         </div>
         <!-- อัปเดตชื่อผู้ใช้ที่ล็อกอิน -->
         <p id="usernameDisplay" class="font-semibold text-gray-900 text-lg mt-2">Guest</p>
-        <a href="#" class="text-sm text-blue-500 hover:underline">ดูโปรไฟล์ของคุณ</a>
+        <a href="ProfileEdit.html" class="text-sm text-blue-500 hover:underline">ดูโปรไฟล์ของคุณ</a>
     </div>
     <div class="py-4 w-full">
         <p class="text-lg text-gray-600">
@@ -305,17 +305,23 @@
 				const body = document.body;
 				const navbar = document.querySelector("header");
 				const loginSection = document.querySelector(".bg-indigo-600");
+				const logo = document.getElementById("logo");
 				const isDarkMode = body.classList.toggle("dark-mode");
+
+				// เปลี่ยนโลโก้ตามโหมด
 	
 				if (isDarkMode) {
+					logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
 					body.style.backgroundColor = "#10142b";
 					navbar.style.backgroundColor = "#1a1f36";
 					loginSection.style.backgroundColor = "#232c58";
 				} else {
+					logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติโหมดสว่าง
 					body.style.backgroundColor = "";
 					navbar.style.backgroundColor = "";
 					loginSection.style.backgroundColor = "";
 				}
+
 	
 				localStorage.setItem("theme", isDarkMode ? "dark" : "light");
 			}
@@ -371,6 +377,7 @@ function logout() {
     localStorage.removeItem("email");
     window.location.href = "Login.html";
 }
+
 
 
 		</script>
