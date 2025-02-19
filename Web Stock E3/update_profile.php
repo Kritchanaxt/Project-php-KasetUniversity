@@ -1,27 +1,45 @@
 <?php
 session_start();
-include 'db_connection.php';
+require 'db_connection.php'; // เชื่อมต่อฐานข้อมูล
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-    $email = trim($_POST["email"]);
-    $phone = trim($_POST["phone"]);
+header("Content-Type: application/json");
+$response = [];
 
-    // ตรวจสอบว่ามีค่ามาก่อนอัปเดต
-    if (!empty($email) && !empty($phone)) {
-        $query = "UPDATE Users SET email = ?, phone = ? WHERE user_id = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "ssi", $email, $phone, $user_id);
-        if (mysqli_stmt_execute($stmt)) {
-            echo json_encode(["success" => true, "message" => "Profile updated successfully."]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Update failed."]);
-        }
-        mysqli_stmt_close($stmt);
-    } else {
-        echo json_encode(["success" => false, "message" => "Please fill all fields."]);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = $_SESSION['username'] ?? null;
+    $email = $_POST['email'] ?? null;
+    $phone = $_POST['phone'] ?? null;
+
+    if (!$username) {
+        $response["success"] = false;
+        $response["message"] = "คุณยังไม่ได้ล็อกอิน";
+        echo json_encode($response);
+        exit;
     }
+
+    // ตรวจสอบ SQL Statement
+    $stmt = $conn->prepare("UPDATE Users SET email = ?, phone = ? WHERE username = ?");
+    if (!$stmt) {
+        echo json_encode(["success" => false, "message" => "SQL Error: " . $conn->error]);
+        exit;
+    }
+
+    $stmt->bind_param("sss", $email, $phone, $username);
+
+    if ($stmt->execute()) {
+        $_SESSION["email"] = $email; // อัปเดต session
+        $response["success"] = true;
+        $response["message"] = "บันทึกสำเร็จ!";
+    } else {
+        $response["success"] = false;
+        $response["message"] = "ไม่สามารถบันทึกข้อมูลได้: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+} else {
+    $response["success"] = false;
+    $response["message"] = "ไม่รองรับเมธอดนี้";
 }
 
-mysqli_close($conn);
-?>
+echo json_encode($response);

@@ -6,57 +6,77 @@
     <title>Profile Setting</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch("profile.php") // เรียก API ดึงข้อมูลจากฐานข้อมูล
-                .then(response => response.json())
-                .then(data => {
-                    if (data.logged_in) {
-                        document.getElementById("username").value = data.username;
-                        document.getElementById("email").value = data.email;
-                        document.getElementById("phone").value = data.phone;
-                        document.getElementById("profileSection").classList.remove("hidden");
-                        document.getElementById("logoutBtn").classList.remove("hidden");
-                        document.getElementById("loginBtn").classList.add("hidden");
-                        document.getElementById("registerBtn").classList.add("hidden");
+       document.addEventListener("DOMContentLoaded", function () {
+    const username = localStorage.getItem("username");
+    const email = localStorage.getItem("email");
 
-                        // แสดง Sidebar ที่เกี่ยวข้องกับผู้ใช้ที่ล็อกอินแล้ว
-                        document.querySelectorAll(".sidebar-item").forEach(item => {
-                            item.classList.remove("hidden");
-                        });
-                    } else {
-                        document.getElementById("profileSection").classList.add("hidden");
-                        document.getElementById("logoutBtn").classList.add("hidden");
-                        document.getElementById("loginBtn").classList.remove("hidden");
-                        document.getElementById("registerBtn").classList.remove("hidden");
+    if (!username) {
+        window.location.href = "Login.html"; // ส่งไปหน้า Login ถ้าไม่ได้ล็อกอิน
+        return;
+    }
 
-                        // ซ่อน Sidebar ถ้ายังไม่ล็อกอิน
-                        document.querySelectorAll(".sidebar-item").forEach(item => {
-                            item.classList.add("hidden");
-                        });
-                    }
-                })
-                .catch(error => console.log("Error loading profile data: ", error));
-        });
+    document.getElementById("username").value = username;
+    document.getElementById("email").value = email || "";
 
-        function logout() {
-            fetch("logout.php")
-                .then(() => {
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("email");
-                    window.location.href = "login.html";
+    fetch("get_profile.php")
+        .then(response => response.json())
+        .then(data => {
+            console.log("Profile Data:", data); // Debug ดูค่าที่ได้
+            if (data.logged_in) {
+                document.getElementById("username").value = data.user.username;
+                document.getElementById("email").value = data.user.email;
+                document.getElementById("phone").value = data.user.phone;
+
+                // 🔥 แสดง Sidebar
+                document.querySelectorAll(".sidebar-item").forEach(item => {
+                    item.classList.remove("hidden");
+                    item.style.display = "block"; // เผื่อ Tailwind ไม่ทำงาน
                 });
-        }
+
+                // 🔥 แสดงปุ่มออกจากระบบ
+                document.getElementById("logoutBtn").classList.remove("hidden");
+                document.getElementById("loginBtn").classList.add("hidden");
+                document.getElementById("registerBtn").classList.add("hidden");
+            } else {
+                console.warn("User not logged in.");
+            }
+        })
+        .catch(error => console.error("Error loading profile data:", error));
+
+    document.getElementById("profileForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+
+        const formData = new FormData(this);
+
+        fetch("update_profile.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message); // แจ้งเตือนผลลัพธ์
+            if (data.success) {
+                localStorage.setItem("email", formData.get("email"));
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    // 🔥 ตรวจสอบธีมตอนโหลดหน้า
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+        document.documentElement.classList.add("light");
+    }
+});
+
     </script>
 	<style>
 		body {
-			background-color: #10142b; /* สีพื้นหลัง */
+			background-color: #9a24c9; /* สีพื้นหลัง */
 			font-family: "Inter", sans-serif;
 		}
 
-		.navbar {
-			background-color: #1a1f36; /* พื้นหลังแท็บบน */
-		}
-
+		
 		.sidebar {
 			background-color: #ececff; /* พื้นหลัง Sidebar */
 		}
@@ -272,80 +292,172 @@
 		}
 	</style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-100">
+	<header class="bg-purple-600 text-white">
     <!-- Navbar -->
-    <nav class="navbar p-4 shadow-md">
+    
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">PLAYER HAVEN</h1>
+            <div class="text-2xl font-bold inline">
+				<img
+					id="logo"
+					src="image/logo_player/light_logo.png"
+					alt="light_logo"
+					class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90"
+				/>
+
+				PLAYERHAVEN
+			</div>
             <div class="space-x-4">
-                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
-                    onclick="location.href='Login.html'">
-                    เข้าสู่ระบบ
-                </button>
-                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
-                    onclick="location.href='Register.html'">
-                    สมัครสมาชิก
-                </button>
-                <button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600"
-                    onclick="logout()">
-                    ออกจากระบบ
-                </button>
-                <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
-                    🌙 / ☀️
-                </button>
-            </div>
+				<!-- ปุ่มเข้าสู่ระบบ -->
+				<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+					onclick="location.href='Login.html'">
+					เข้าสู่ระบบ
+				</button>
+			
+				<!-- ปุ่มสมัครสมาชิก -->
+				<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+					onclick="location.href='Register.html'">
+					สมัครสมาชิก
+				</button>
+			
+				<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
+				<button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+					onclick="logout()">
+					ออกจากระบบ
+				</button>
+			
+				<!-- ปุ่มเปลี่ยนธีม -->
+				<button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
+					🌙 / ☀️
+				</button>
+			</div>
         </div>
     </nav>
-
+</header>
     <!-- Main Section -->
-    <div class="flex justify-center py-8">
-        <!-- Sidebar -->
-        <aside class="sidebar w-64 p-6 rounded-lg shadow-md">
-            <ul class="space-y-4">
-                <li class="sidebar-item hidden">
-                    <a href="TopUpHistory.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Top-Up History</span>
-                    </a>
-                </li>
-                <li class="sidebar-item hidden">
-                    <a href="PurchaseHistory.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Purchase History</span>
-                    </a>
-                </li>
-                <li class="sidebar-item hidden">
-                    <a href="GameCardBox.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Game Card Box</span>
-                    </a>
-                </li>
-                <li class="sidebar-item hidden">
-                    <a href="Mailbox.html" class="flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Mailbox</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
+		<div class="flex justify-center py-8">
+			<!-- Sidebar -->
+			<aside class="sidebar w-64 p-6 rounded-lg shadow-md">
+				<ul class="space-y-4">
+					<!-- Tab: Top-Up History -->
+					<li>
+						<a
+							href="TopUpHistory.html"
+							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
+						>
+							<img
+								src="https://media.discordapp.net/attachments/1333465176686723124/1333739459614736384/DALL_E-2025-01-28-17.03.01-A-sleek_-cyberpunk-themed-icon-for-a-top-up-system-removebg-preview.png?ex=6799fd2a&is=6798abaa&hm=fbde12851b4d3ea71daf8da35159cd7ef2efa8487b837884adc619f22b9b4bc3&=&format=webp&quality=lossless"
+								alt="Top-Up History"
+								class="w-6 h-6"
+							/>
+							<span class="font-semibold">Top-Up History</span>
+						</a>
+					</li>
+					<!-- Tab: Purchase History -->
+					<li>
+						<a
+							href="PurchaseHistory.html"
+							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
+						>
+							<img
+								src="https://media.discordapp.net/attachments/1333465176686723124/1333739998385541130/DALL_E-2025-01-28-17.05.44-A-sleek_-cyberpunk-themed-icon-representing-_Purchase-History-removebg-preview.png?ex=6799fdab&is=6798ac2b&hm=a3b32dbb7886fde1bda3390c45602621a78ad3e4530ee65b3ad8d7ffd7aa97bb&=&format=webp&quality=lossless"
+								alt="Purchase History"
+								class="w-6 h-6"
+							/>
+							<span class="font-semibold">Purchase History</span>
+						</a>
+					</li>
+					<!-- Tab: Game Card Box -->
+					<li>
+						<a
+							href="GameCardBox.html"
+							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
+						>
+							<img
+								src="https://media.discordapp.net/attachments/1333465176686723124/1333740853314846761/DALL_E-2025-01-28-17.07.50-A-sleek_-cyberpunk-themed-icon-representing-a-_Game-Card-Box-removebg-preview.png?ex=6799fe77&is=6798acf7&hm=4ae528f0d59da29747f16afa9202b8c08b45ebd8c83fc4167027e30f5f342609&=&format=webp&quality=lossless"
+								alt="Game Card Box"
+								class="w-6 h-6"
+							/>
+							<span class="font-semibold">Game Card Box</span>
+						</a>
+					</li>
+					<!-- Tab: Mailbox -->
+					<li>
+						<a
+							href="Mailbox.html"
+							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
+						>
+							<img
+								src="https://media.discordapp.net/attachments/1333465176686723124/1333743617851789323/DALL_E-2025-01-28-17.18-removebg-preview-removebg-preview.png?ex=679a010a&is=6798af8a&hm=b5cb791be5f1e80650f1ecf31a34d6cb8d598c28377213873e5ee6d2a1b9fa21&=&format=webp&quality=lossless"
+								alt="Mailbox"
+								class="w-6 h-6"
+							/>
+							<span class="font-semibold">Mailbox</span>
+						</a>
+					</li>
+					<!-- Tab: Log Out -->
+					<li>
+						<a
+							href="Logout.html"
+							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
+						>
+							<img
+								src="https://media.discordapp.net/attachments/1333465176686723124/1333741803706384394/DALL_E-2025-01-28-17.11.30-A-sleek_-cyberpunk-themed-icon-representing-_Log-Out-removebg-preview.png?ex=6799ff59&is=6798add9&hm=136cdf858304ea5aecb6ac9bae7bc8b4345f600a1069446b0bd150a343261c76&=&format=webp&quality=lossless"
+								alt="Log Out"
+								class="w-6 h-6"
+							/>
+							<span class="font-semibold">Log Out</span>
+						</a>
+					</li>
+				</ul>
+			</aside>
 
         <!-- Content -->
         <main class="content flex-1 p-6 rounded-lg shadow-md ml-6">
             <h2 class="text-2xl font-bold mb-6">Personal Information</h2>
-            <form action="update_profile.php" method="POST">
-                <div class="mb-4">
-                    <label class="block text-gray-400">Username</label>
-                    <input type="text" name="username" id="username" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-400">Email</label>
-                    <input type="email" name="email" id="email" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-400">Phone</label>
-                    <input type="text" name="phone" id="phone" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
-                </div>
-                <button type="submit" class="btn-primary py-2 px-4 rounded font-bold bg-blue-500 hover:bg-blue-600">
-                    Save Profile
-                </button>
-            </form>
+			<form id="profileForm">
+				<div class="mb-4">
+					<label class="block text-gray-300">ชื่อผู้ใช้</label>
+					<input type="text" name="username" id="username" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+				</div>
+				<div class="mb-4">
+					<label class="block text-gray-300">อีเมล</label>
+					<input type="email" name="email" id="email" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+				</div>
+				<div class="mb-4">
+					<label class="block text-gray-300">เบอร์โทรศัพท์</label>
+					<input type="text" name="phone" id="phone" class="w-full p-2 rounded bg-gray-700 border border-gray-600 text-white">
+				</div>
+				<button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 py-2 rounded text-white font-bold">บันทึกการเปลี่ยนแปลง</button>
+			</form>
+			
         </main>
     </div>
+	<script>
+		function toggleTheme() {
+				const body = document.body;
+				const navbar = document.querySelector("header");
+				const loginSection = document.querySelector(".bg-indigo-600");
+				const logo = document.getElementById("logo");
+				const isDarkMode = body.classList.toggle("dark-mode");
+
+				// เปลี่ยนโลโก้ตามโหมด
+	
+				if (isDarkMode) {
+					logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
+					body.style.backgroundColor = "#10142b";
+					navbar.style.backgroundColor = "#1a1f36";
+					loginSection.style.backgroundColor = "#232c58";
+				} else {
+					logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติโหมดสว่าง
+					body.style.backgroundColor = "";
+					navbar.style.backgroundColor = "";
+					loginSection.style.backgroundColor = "";
+				}
+
+	
+				localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+			}
+	</script>
 </body>
 </html>

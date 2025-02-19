@@ -108,14 +108,34 @@
 
             localStorage.setItem("theme", isDarkMode ? "dark" : "light");
         }
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // ป้องกันการรีเฟรชหน้า
 
-        window.onload = function () {
-            const savedTheme = localStorage.getItem("theme");
-            if (savedTheme === "dark") {
-                toggleTheme();
-            }
-        };
-    </script>
+    const formData = new FormData(this);
+
+    fetch("login.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // บันทึกค่าใน LocalStorage
+            localStorage.setItem("username", data.username);
+            localStorage.setItem("email", data.email);
+            localStorage.setItem("role", data.role);
+            localStorage.setItem("isLoggedIn", "true");
+
+            // ไปหน้า HomePage
+            window.location.href = "HomePage.html";
+        } else {
+            alert(data.message); // แจ้งเตือนถ้าล็อกอินไม่สำเร็จ
+        }
+    })
+    .catch(error => console.error("Error:", error));
+});
+</script>
+
 
 </body>
 </html>
