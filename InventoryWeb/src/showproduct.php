@@ -1,9 +1,27 @@
+<?php
+require 'db_connection.php';
+
+// คำสั่ง SQL ดึงข้อมูลสินค้า
+$query = "SELECT game_id, 
+                 COUNT(*) AS total_accounts, 
+                 SUM(CASE WHEN status != 'sold' OR status IS NULL THEN 1 ELSE 0 END) AS available_accounts
+          FROM Accounts
+          GROUP BY game_id
+          ORDER BY available_accounts DESC";
+
+$result = $conn->query($query);
+
+if (!$result) {
+    die("❌ SQL Error: " . $conn->error);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Hover Card with Animated Border</title>
+    <title>📦 Show Products</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -19,110 +37,87 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .card-container {
             display: flex;
+            flex-wrap: wrap;
             gap: 2rem;
-            position: relative;
-            z-index: 1;
+            justify-content: center;
+            max-width: 90%;
         }
 
         .card {
             position: relative;
-            width: 300px;
-            height: 400px;
+            width: 280px;
+            height: 380px;
             background: linear-gradient(135deg, #1a1a40, #2c2c54);
             border-radius: 20px;
-            overflow: visible; /* อนุญาตให้ตัวละครทะลุออกมา */
+            overflow: hidden;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
             transition: transform 0.6s ease, box-shadow 0.6s ease;
+            text-align: center;
+            padding: 20px;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            width: calc(100% + 4px);
-            height: calc(100% + 4px);
-            border-radius: 20px;
-            background: linear-gradient(90deg, rgba(255, 0, 0, 0.5), rgba(255, 140, 0, 0.5), rgba(255, 0, 0, 0.5));
-            z-index: -1;
-            animation: borderRun 2s linear infinite; /* เปลี่ยนเป็นไฟวิ่งรอบ */
-        }
-
-        @keyframes borderRun {
-            0% {
-                background-position: 0% 0%;
-            }
-            100% {
-                background-position: 200% 0%;
-            }
-        }
-
-        .card .wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 255, 255, 0.5);
         }
 
         .card img {
             width: 100%;
-            height: 100%;
+            height: 200px;
             object-fit: cover;
-            border-radius: 20px;
+            border-radius: 10px;
         }
 
-        .card .character {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 150%;
-            height: auto;
-            transition: transform 0.6s ease-in-out;
-            z-index: 2;
-        }
-
-        .card:hover .character {
-            transform: translate(-50%, -70%) scale(1.2); /* ตัวละครทะลุออกจากการ์ด */
-        }
-
-        .card .info {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: #fff;
-            z-index: 3;
-        }
-
-        .card .info h3 {
+        .card h3 {
             font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            color: white;
+            margin: 10px 0;
         }
 
-        .card .info span {
+        .card span {
             font-size: 1rem;
             color: #bbb;
+            font-weight: bold;
+        }
+
+        .stock-value {
+            font-size: 1.5rem;
+            color: cyan;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="card-container">
-        <!-- Card 1 -->
-        <div class="card">
-            <div class="wrapper">
-                <img src="img/lol.jpg" alt="League of Legends">
-                <img class="character" src="img/jinx.png" alt="LOL Character">
-                <div class="info">
-                    <h3>League of Legends</h3>
-                    <span>198 in stock</span>
-                </div>
-            </div>
-        </div>
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // ตั้งค่าพาธรูปของเกมโดยใช้ game_id เช่น "img/LOL.png"
+                $imagePath = "img/" . strtolower($row['game_id']) . "TFT.png";
+                
+                // ตรวจสอบว่ารูปภาพมีอยู่จริง ถ้าไม่มีให้ใช้ default image
+                if (!file_exists($imagePath)) {
+                    $imagePath = "img/LOL.png"; // ตั้งค่ารูปภาพเริ่มต้นถ้าไม่มีรูปของเกม
+                }
+
+                echo '<div class="card">
+                        <img src="' . $imagePath . '" alt="' . $row['game_id'] . '">
+                        <h3>' . $row['game_id'] . '</h3>
+                        <span>🎮 In Stock</span>
+                        <div class="stock-value">' . $row['available_accounts'] . '</div>
+                      </div>';
+            }
+        } else {
+            echo "<p>❌ ไม่มีสินค้าในระบบ</p>";
+        }
+        ?>
     </div>
 </body>
 </html>

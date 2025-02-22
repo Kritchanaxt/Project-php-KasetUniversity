@@ -609,53 +609,6 @@ mysqli_close($conn);
             <canvas id="salesChart"></canvas>
         </div>
 
-        <div class="market-share">
-            <h2>ส่วนแบ่งการตลาด</h2>
-            <div id="shareContainer"></div>
-        </div>
-
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ชื่อเกม</th>
-                    <th>ยอดขาย</th>
-                    <th>จำนวน(ID)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>League of Legends</td>
-                    <td>38,000 บาท</td>
-                    <td>27</td>
-                </tr>
-                <tr>
-                    <td>Realm of Valor</td>
-                    <td>53,500 บาท</td>
-                    <td>54</td>
-                </tr>
-                <tr>
-                    <td>Valorant</td>
-                    <td>65,200 บาท</td>
-                    <td>48</td>
-                </tr>
-                <tr>
-                    <td>Teamfight Tactics</td>
-                    <td>26,400 บาท</td>
-                    <td>18</td>
-                </tr>
-                <tr>
-                    <td>Golden Spatula</td>
-                    <td>47,800 บาท</td>
-                    <td>29</td>
-                </tr>
-                <tr>
-                    <td>Call of Duty</td>
-                    <td>32,600 บาท</td>
-                    <td>28</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
     <script>
       // ฟังก์ชันล็อคอิน
@@ -711,7 +664,6 @@ function updateDashboard() {
             // อัปเดตยอดขายรวม
             document.querySelector('.stat-card:nth-child(2) .value').innerText = `${data.total_revenue.toLocaleString()} บาท`;
 
-            // อัปเดตเกมที่ขายดีที่สุด (แทน "ผู้เล่นทั้งหมด")
             const topGameCard = document.querySelector('.stat-card:nth-child(3)');
             topGameCard.innerHTML = `
                 <h3>เกมที่ขายดีที่สุด</h3>
@@ -766,37 +718,6 @@ function updateChart(data) {
                 }
             }
         }
-    });
-}
-function updateMarketShare(data) {
-    const shareContainer = document.getElementById('shareContainer');
-    const gameImageMap = {
-        "LOL": "src/img/LOL.png",
-        "TFT": "src/img/TFT.png",
-        "ROV": "src/img/rov.png",
-        "Valorant": "src/img/valorant.png",
-        "CallOfDuty": "src/img/callofduty.jpg",
-        "Default": "src/img/default.png"
-    };
-
-    shareContainer.innerHTML = "";
-
-    const totalRevenue = data.reduce((sum, game) => sum + game.total_sales, 0);
-
-    data.forEach(game => {
-        const sharePercentage = ((game.total_sales / totalRevenue) * 100).toFixed(1);
-        const gameIcon = gameImageMap[game.game_id] || gameImageMap["Default"];
-
-        shareContainer.innerHTML += `
-            <div class="game-share">
-                <img src="${gameIcon}" class="game-icon" alt="Game ID ${game.game_id}" onerror="this.src='img/default.png';">
-                <span>Game ID: ${game.game_id}</span>
-                <div class="share-bar">
-                    <div class="share-value" style="width: ${sharePercentage}%"></div>
-                </div>
-                <span class="share-percent">${sharePercentage}%</span>
-            </div>
-        `;
     });
 }
 
