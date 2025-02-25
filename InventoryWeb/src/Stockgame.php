@@ -51,7 +51,6 @@ body {
 }
 
 
-
 /* 🌟 Navbar (เมนูด้านบน) */
 .navbar {
     position: fixed;
@@ -278,7 +277,7 @@ $result = $conn->query($query);
  <nav class="navbar">
     <div class="nav-logo">📦 Inventory</div>
     <ul class="nav-links">
-        <li><a href="purchase.php">Store</a></li>
+        <li><a href="inventory.php">Store</a></li>
         <li><a href="showproduct.php">ShowProducts</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>
         <li><a href="#Stockgame.php">Stockgame</a></li>

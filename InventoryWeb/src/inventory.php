@@ -561,10 +561,10 @@ mysqli_close($conn);
 <nav class="navbar">
     <div class="nav-logo">📦 Inventory</div>
     <ul class="nav-links">
-        <li><a href="purchase.php">🏪 Store</a></li>
-        <li><a href="showproduct.php">📦 ShowProducts</a></li>
-        <li><a href="edit_product.php">📂 EditProduct</a></li>
-        <li><a href="#">💰 Statistic</a></li>
+        <li><a href="inventory.php">Store</a></li>
+        <li><a href="showproduct.php">ShowProducts</a></li>
+        <li><a href="edit_product.php">EditProduct</a></li>
+        <li><a href="Stockgame.php">StockGame</a></li>
         <li><a href="add_product.php" class="add-product-btn">➕ Add Product</a></li>
     </ul>
 </nav>
