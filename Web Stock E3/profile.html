@@ -1,69 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Setting</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Setting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
 
-    <!-- Profile Form -->
-    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-10">
-        <h2 class="text-2xl font-bold text-center mb-4">Edit Profile</h2>
+  <!-- Profile Form -->
+  <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-10">
+    <h2 class="text-2xl font-bold text-center mb-4">Edit Profile</h2>
 
-        <form id="profileForm">
-            <div class="mb-4">
-                <label for="username" class="block text-gray-700">Username</label>
-                <input type="text" id="username" class="w-full border px-3 py-2 rounded bg-gray-200" readonly>
-            </div>
+    <form id="profileForm">
+      <div class="mb-4">
+        <label for="username" class="block text-gray-700">Username</label>
+        <!-- ลบ readonly เพื่อให้สามารถแก้ไขได้ -->
+        <input type="text" id="username" name="username" class="w-full border px-3 py-2 rounded">
+      </div>
 
-            <div class="mb-4">
-                <label for="email" class="block text-gray-700">Email</label>
-                <input type="email" id="email" name="email" class="w-full border px-3 py-2 rounded" required>
-            </div>
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700">Email</label>
+        <input type="email" id="email" name="email" class="w-full border px-3 py-2 rounded" required>
+      </div>
 
-            <div class="mb-4">
-                <label for="phone" class="block text-gray-700">Phone</label>
-                <input type="tel" id="phone" name="phone" class="w-full border px-3 py-2 rounded" required>
-            </div>
+      <div class="mb-4">
+        <label for="phone" class="block text-gray-700">Phone</label>
+        <input type="tel" id="phone" name="phone" class="w-full border px-3 py-2 rounded" required>
+      </div>
 
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-                Save Changes
-            </button>
-        </form>
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+        Save Changes
+      </button>
+    </form>
 
-        <button onclick="logout()" class="mt-4 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
-            Logout
-        </button>
-    </div>
+    <button onclick="logout()" class="mt-4 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
+      Logout
+    </button>
+  </div>
 
-    <script>
-        // ✅ โหลดข้อมูลโปรไฟล์เมื่อเปิดหน้า
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch("get_profile.php")
-                .then(response => response.json())
-                .then(data => {
-                    if (data.logged_in) {
-                        document.getElementById("username").value = data.user.username;
-                        document.getElementById("email").value = data.user.email;
-                        document.getElementById("phone").value = data.user.phone;
-                    } else {
-                        alert("กรุณาเข้าสู่ระบบก่อน");
-                        window.location.href = "login.html";
-                    }
-                })
-                .catch(error => console.error("Error fetching profile:", error));
+  <script>
+    // โหลดข้อมูลโปรไฟล์เมื่อเปิดหน้า
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("get_profile.php")
+        .then(response => response.json())
+        .then(data => {
+          if (data.logged_in) {
+            document.getElementById("username").value = data.user.username;
+            document.getElementById("email").value = data.user.email;
+            document.getElementById("phone").value = data.user.phone;
+          } else {
+            alert("กรุณาเข้าสู่ระบบก่อน");
+            window.location.href = "login.html";
+          }
+        })
+        .catch(error => console.error("Error fetching profile:", error));
+
+      // จัดการ submit ฟอร์มเพื่อส่งข้อมูลไป update_profile.php
+      document.getElementById("profileForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("update_profile.php", {
+          method: "POST",
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          if (data.success) {
+            // รีเฟรชหน้าเพื่อดึงข้อมูลล่าสุดจากฐานข้อมูล
+            window.location.reload();
+          }
+        })
+        .catch(error => console.error("Error updating profile:", error));
+      });
+    });
+
+    // Logout function
+    function logout() {
+      fetch("logout.php")
+        .then(() => {
+          window.location.href = "login.html";
         });
-
-        // ✅ Logout function
-        function logout() {
-            fetch("logout.php")
-                .then(() => {
-                    window.location.href = "login.html";
-                });
-        }
-    </script>
+    }
+  </script>
 
 </body>
 </html>

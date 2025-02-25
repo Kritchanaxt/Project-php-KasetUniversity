@@ -6,28 +6,34 @@ header("Content-Type: application/json");
 $response = [];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_SESSION['username'] ?? null;
+    // รับค่าเก่า (จาก session) และค่าสำหรับอัปเดตใหม่ (จาก POST)
+    $oldUsername = $_SESSION['username'] ?? null;
+    $newUsername = $_POST['username'] ?? null;
     $email = $_POST['email'] ?? null;
     $phone = $_POST['phone'] ?? null;
 
-    if (!$username) {
+    if (!$oldUsername) {
         $response["success"] = false;
         $response["message"] = "คุณยังไม่ได้ล็อกอิน";
         echo json_encode($response);
         exit;
     }
 
-    // ตรวจสอบ SQL Statement
-    $stmt = $conn->prepare("UPDATE Users SET email = ?, phone = ? WHERE username = ?");
+    // เตรียมคำสั่ง SQL สำหรับอัปเดตข้อมูล
+    $stmt = $conn->prepare("UPDATE Users SET username = ?, email = ?, phone = ? WHERE username = ?");
     if (!$stmt) {
         echo json_encode(["success" => false, "message" => "SQL Error: " . $conn->error]);
         exit;
     }
 
-    $stmt->bind_param("sss", $email, $phone, $username);
+    $stmt->bind_param("ssss", $newUsername, $email, $phone, $oldUsername);
 
     if ($stmt->execute()) {
-        $_SESSION["email"] = $email; // อัปเดต session
+        // อัปเดต session ด้วยข้อมูลใหม่
+        $_SESSION["username"] = $newUsername;
+        $_SESSION["email"] = $email;
+        $_SESSION["phone"] = $phone;
+
         $response["success"] = true;
         $response["message"] = "บันทึกสำเร็จ!";
     } else {
@@ -43,3 +49,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 echo json_encode($response);
+?>

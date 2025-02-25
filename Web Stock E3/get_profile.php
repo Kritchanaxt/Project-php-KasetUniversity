@@ -2,11 +2,25 @@
 session_start();
 include 'db_connection.php';
 
+// กำหนดค่า DEBUG (เปลี่ยนเป็น false ใน production)
+define('DEBUG', true);
+
+// ป้องกันการแคชที่ฝั่ง client และ server
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
 header("Content-Type: application/json");
 
-$response = ["logged_in" => false];
+// ตรวจสอบการเชื่อมต่อฐานข้อมูล
+if (!$conn) {
+    if (DEBUG) {
+        error_log("Database connection failed");
+    }
+    echo json_encode(["logged_in" => false, "message" => "Database connection failed"]);
+    exit;
+}
 
-// 🔥 ตรวจสอบว่าผู้ใช้ล็อกอินหรือยัง
+// ตรวจสอบว่าเข้าสู่ระบบหรือไม่
 if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     echo json_encode(["logged_in" => false, "message" => "Not logged in"]);
     exit;
@@ -14,28 +28,35 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// 🔍 ถ้า session มีข้อมูลครบ ให้ดึงจาก session
-if (isset($_SESSION["username"], $_SESSION["email"], $_SESSION["phone"])) {
-    $response = [
-        "logged_in" => true,
-        "user" => [
-            "username" => $_SESSION["username"],
-            "email" => $_SESSION["email"],
-            "phone" => $_SESSION["phone"]
-        ]
-    ];
-} else {
-    // 🔥 ถ้า session ไม่มี email และ phone ให้ดึงจากฐานข้อมูล
+// Debug: ตรวจสอบค่า user_id (เฉพาะในโหมด DEBUG)
+if (DEBUG) {
+    error_log("User ID: " . $user_id);
+}
+
+try {
+    // ดึงข้อมูลล่าสุดจากฐานข้อมูล
     $stmt = $conn->prepare("SELECT username, email, phone FROM Users WHERE user_id = ?");
-    $stmt->bind_param("s", $user_id);
+    if (!$stmt) {
+        throw new Exception("Prepare failed: " . $conn->error);
+    }
+
+    // ใช้ "i" ถ้า user_id เป็น integer, เปลี่ยนเป็น "s" ถ้าเป็น string
+    $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($row = $result->fetch_assoc()) {
+        // อัปเดตเซสชันด้วยข้อมูลล่าสุด
         $_SESSION["username"] = $row["username"];
         $_SESSION["email"] = $row["email"];
         $_SESSION["phone"] = $row["phone"];
 
+        // Debug: ตรวจสอบข้อมูลที่ดึงจากฐานข้อมูล (เฉพาะในโหมด DEBUG)
+        if (DEBUG) {
+            error_log("DB Data: " . print_r($row, true));
+        }
+
+        // ส่งข้อมูลกลับไปในรูปแบบ JSON
         $response = [
             "logged_in" => true,
             "user" => [
@@ -44,12 +65,20 @@ if (isset($_SESSION["username"], $_SESSION["email"], $_SESSION["phone"])) {
                 "phone" => $row["phone"]
             ]
         ];
+        echo json_encode($response);
     } else {
-        $response["message"] = "User not found";
+        // กรณีไม่พบข้อมูลผู้ใช้ แต่ยัง logged in
+        echo json_encode(["logged_in" => true, "message" => "User data not found in database"]);
     }
 
     $stmt->close();
+} catch (Exception $e) {
+    // กรณีเกิดข้อผิดพลาดกับฐานข้อมูล
+    if (DEBUG) {
+        error_log("Error: " . $e->getMessage() . " in " . $e->getFile() . " at line " . $e->getLine());
+    }
+    echo json_encode(["logged_in" => false, "message" => "An error occurred"]);
 }
 
-echo json_encode($response);
+$conn->close();
 ?>
