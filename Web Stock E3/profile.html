@@ -15,7 +15,6 @@
     <form id="profileForm">
       <div class="mb-4">
         <label for="username" class="block text-gray-700">Username</label>
-        <!-- ลบ readonly เพื่อให้สามารถแก้ไขได้ -->
         <input type="text" id="username" name="username" class="w-full border px-3 py-2 rounded">
       </div>
 
@@ -29,9 +28,14 @@
         <input type="tel" id="phone" name="phone" class="w-full border px-3 py-2 rounded" required>
       </div>
 
-      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-        Save Changes
-      </button>
+      <div class="flex gap-2">
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+          Save Changes
+        </button>
+        <button type="button" onclick="cancelEdit()" class="w-full bg-gray-400 text-white py-2 rounded hover:bg-gray-500">
+          Cancel
+        </button>
+      </div>
     </form>
 
     <button onclick="logout()" class="mt-4 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
@@ -39,8 +43,12 @@
     </button>
   </div>
 
+  <!-- แสดงข้อความแจ้งเตือน -->
+  <div id="alertBox" class="hidden fixed bottom-5 right-5 bg-green-500 text-white p-3 rounded shadow-lg"></div>
+
   <script>
-    // โหลดข้อมูลโปรไฟล์เมื่อเปิดหน้า
+    let originalData = {}; // เก็บค่าดั้งเดิมเผื่อยกเลิกการแก้ไข
+
     document.addEventListener("DOMContentLoaded", function () {
       fetch("get_profile.php")
         .then(response => response.json())
@@ -49,6 +57,8 @@
             document.getElementById("username").value = data.user.username;
             document.getElementById("email").value = data.user.email;
             document.getElementById("phone").value = data.user.phone;
+            // เก็บค่าเดิม
+            originalData = { ...data.user };
           } else {
             alert("กรุณาเข้าสู่ระบบก่อน");
             window.location.href = "login.html";
@@ -56,25 +66,48 @@
         })
         .catch(error => console.error("Error fetching profile:", error));
 
-      // จัดการ submit ฟอร์มเพื่อส่งข้อมูลไป update_profile.php
+      // จัดการ submit ฟอร์มเพื่ออัปเดตข้อมูล
       document.getElementById("profileForm").addEventListener("submit", function(e) {
         e.preventDefault();
         const formData = new FormData(this);
+        
         fetch("update_profile.php", {
           method: "POST",
           body: formData
         })
         .then(response => response.json())
         .then(data => {
-          alert(data.message);
+          showAlert(data.message, data.success ? "green" : "red");
           if (data.success) {
-            // รีเฟรชหน้าเพื่อดึงข้อมูลล่าสุดจากฐานข้อมูล
-            window.location.reload();
+            originalData = {
+              username: document.getElementById("username").value,
+              email: document.getElementById("email").value,
+              phone: document.getElementById("phone").value,
+            };
           }
         })
         .catch(error => console.error("Error updating profile:", error));
       });
     });
+
+    // ยกเลิกการแก้ไขและคืนค่าดั้งเดิม
+    function cancelEdit() {
+      document.getElementById("username").value = originalData.username;
+      document.getElementById("email").value = originalData.email;
+      document.getElementById("phone").value = originalData.phone;
+    }
+
+    // ฟังก์ชันแจ้งเตือน
+    function showAlert(message, color) {
+      const alertBox = document.getElementById("alertBox");
+      alertBox.textContent = message;
+      alertBox.classList.remove("hidden");
+      alertBox.classList.add(`bg-${color}-500`);
+
+      setTimeout(() => {
+        alertBox.classList.add("hidden");
+      }, 3000);
+    }
 
     // Logout function
     function logout() {

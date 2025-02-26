@@ -9,6 +9,7 @@
        document.addEventListener("DOMContentLoaded", function () {
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
+    const phone = localStorage.getItem("phone"); // ดึงค่าเบอร์โทรศัพท์จาก localStorage
 
     if (!username) {
         window.location.href = "Login.html"; // ส่งไปหน้า Login ถ้าไม่ได้ล็อกอิน
@@ -17,6 +18,7 @@
 
     document.getElementById("username").value = username;
     document.getElementById("email").value = email || "";
+    document.getElementById("phone").value = phone || ""; // แสดงค่าเบอร์โทรศัพท์จาก localStorage (ถ้ามี)
 
     fetch("get_profile.php")
         .then(response => response.json())
@@ -25,7 +27,7 @@
             if (data.logged_in) {
                 document.getElementById("username").value = data.user.username;
                 document.getElementById("email").value = data.user.email;
-                document.getElementById("phone").value = data.user.phone;
+                document.getElementById("phone").value = data.user.phone || ""; // แสดงเบอร์โทรศัพท์จากข้อมูลเซิร์ฟเวอร์
 
                 // 🔥 แสดง Sidebar
                 document.querySelectorAll(".sidebar-item").forEach(item => {
@@ -56,7 +58,9 @@
         .then(data => {
             alert(data.message); // แจ้งเตือนผลลัพธ์
             if (data.success) {
+				localStorage.setItem("username", formData.get("username"));
                 localStorage.setItem("email", formData.get("email"));
+                localStorage.setItem("phone", formData.get("phone")); // บันทึกค่าเบอร์โทรศัพท์ใน localStorage
             }
         })
         .catch(error => console.error("Error:", error));
@@ -294,34 +298,31 @@
 </head>
 <body class="bg-gray-100">
 	<header class="bg-purple-600 text-white">
-    <!-- Navbar -->
-    
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="text-2xl font-bold inline">
+		<div class="container mx-auto flex justify-between items-center">
+			<div class="text-2xl font-bold inline">
 				<img
 					id="logo"
 					src="image/logo_player/light_logo.png"
 					alt="light_logo"
 					class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90"
 				/>
-
 				PLAYERHAVEN
 			</div>
-            <div class="space-x-4">
-				<!-- ปุ่มเข้าสู่ระบบ -->
-				<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+			<div class="space-x-4">
+				<!-- ปุ่มเข้าสู่ระบบ (ซ่อนเริ่มต้นเมื่อล็อกอิน) -->
+				<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800 hidden"
 					onclick="location.href='Login.html'">
 					เข้าสู่ระบบ
 				</button>
 			
-				<!-- ปุ่มสมัครสมาชิก -->
-				<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+				<!-- ปุ่มสมัครสมาชิก (ซ่อนเริ่มต้นเมื่อล็อกอิน) -->
+				<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden"
 					onclick="location.href='Register.html'">
 					สมัครสมาชิก
 				</button>
 			
-				<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
-				<button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+				<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้นเมื่อไม่ได้ล็อกอิน) -->
+				<button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 hidden"
 					onclick="logout()">
 					ออกจากระบบ
 				</button>
@@ -331,14 +332,24 @@
 					🌙 / ☀️
 				</button>
 			</div>
-        </div>
-    </nav>
-</header>
+		</div>
+	</header>
     <!-- Main Section -->
 		<div class="flex justify-center py-8">
 			<!-- Sidebar -->
 			<aside class="sidebar w-64 p-6 rounded-lg shadow-md">
 				<ul class="space-y-4">
+					<a
+							href="ProfileEdit.html"
+							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
+						>
+							<img
+								src="https://media.discordapp.net/attachments/1333465176686723124/1333740853314846761/DALL_E-2025-01-28-17.07.50-A-sleek_-cyberpunk-themed-icon-representing-a-_Game-Card-Box-removebg-preview.png?ex=6799fe77&is=6798acf7&hm=4ae528f0d59da29747f16afa9202b8c08b45ebd8c83fc4167027e30f5f342609&=&format=webp&quality=lossless"
+								alt="Game Card Box"
+								class="w-6 h-6"
+							/>
+							<span class="font-semibold">ProfileEdit</span>
+						</a>
 					<!-- Tab: Top-Up History -->
 					<li>
 						<a
@@ -395,19 +406,8 @@
 							<span class="font-semibold">Mailbox</span>
 						</a>
 					</li>
-					<!-- Tab: Log Out -->
-					<li>
-						<a
-							href="Logout.html"
-							class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-						>
-							<img
-								src="https://media.discordapp.net/attachments/1333465176686723124/1333741803706384394/DALL_E-2025-01-28-17.11.30-A-sleek_-cyberpunk-themed-icon-representing-_Log-Out-removebg-preview.png?ex=6799ff59&is=6798add9&hm=136cdf858304ea5aecb6ac9bae7bc8b4345f600a1069446b0bd150a343261c76&=&format=webp&quality=lossless"
-								alt="Log Out"
-								class="w-6 h-6"
-							/>
-							<span class="font-semibold">Log Out</span>
 						</a>
+					</li>
 					</li>
 				</ul>
 			</aside>
