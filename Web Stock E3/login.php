@@ -18,12 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // เช็คว่า password ตรงกันหรือไม่
         if (password_verify($password, $user["password"])) {
+            // เซ็ต session สำหรับ username, email, และ user_id
             $_SESSION["username"] = $user["username"];
             $_SESSION["email"] = $user["email"];
+            $_SESSION["user_id"] = $user["user_id"]; // เพิ่มการเซ็ต user_id
 
+            // เซ็ตค่าใน localStorage ด้วย JavaScript
             echo "<script>
-                localStorage.setItem('username', '{$user['username']}');
-                localStorage.setItem('email', '{$user['email']}');
+                localStorage.setItem('username', '" . addslashes($user['username']) . "');
+                localStorage.setItem('email', '" . addslashes($user['email']) . "');
                 window.location.href = 'HomePage.html';
             </script>";
         } else {

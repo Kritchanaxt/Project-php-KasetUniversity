@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เติมเครดิต - PLAYERHAVEN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .red-envelope {
+            background-color: #ff4444; /* สีแดงสดใสเหมือนอังเปา */
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .red-envelope:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode .red-envelope {
+            background-color: #dc2626; /* สีแดงเข้มในโหมดมืด */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-purple-600 text-white">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <div class="text-2xl font-bold">
+                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo" class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
+                PLAYERHAVEN
+            </div>
+            <div class="space-x-4">
+                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800 hidden" onclick="location.href='Login.html'">
+                    เข้าสู่ระบบ
+                </button>
+                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden" onclick="location.href='Register.html'">
+                    สมัครสมาชิก
+                </button>
+                <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 hidden" onclick="logout()">
+                    ออกจากระบบ
+                </button>
+                <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
+                    🌙 / ☀️
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">เติมเครดิตด้วยอังเปา</h1>
+        
+        <!-- แสดงยอดเครดิตปัจจุบัน -->
+        <div class="text-center mb-6">
+            <p class="text-xl font-semibold text-gray-700 dark:text-gray-300">ยอดเครดิตปัจจุบัน: <span id="currentPoints">0</span> เครดิต</p>
+        </div>
+
+        <!-- รายการอังเปา -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- อังเปา 100 เครดิต (50 บาท) -->
+            <div class="red-envelope text-white text-center cursor-pointer" onclick="selectRedEnvelope(100, 50)">
+                <h2 class="text-xl font-bold">เติม 100 เครดิต</h2>
+                <p class="text-lg">ราคา: 50 บาท</p>
+            </div>
+
+            <!-- อังเปา 500 เครดิต (200 บาท) -->
+            <div class="red-envelope text-white text-center cursor-pointer" onclick="selectRedEnvelope(500, 200)">
+                <h2 class="text-xl font-bold">เติม 500 เครดิต</h2>
+                <p class="text-lg">ราคา: 200 บาท</p>
+            </div>
+
+            <!-- อังเปา 1,000 เครดิต (400 บาท) -->
+            <div class="red-envelope text-white text-center cursor-pointer" onclick="selectRedEnvelope(1000, 400)">
+                <h2 class="text-xl font-bold">เติม 1,000 เครดิต</h2>
+                <p class="text-lg">ราคา: 400 บาท</p>
+            </div>
+        </div>
+
+        <!-- ฟอร์มการชำระเงิน -->
+        <div id="paymentForm" class="mt-8 hidden bg-white p-6 rounded-lg shadow-md dark:bg-gray-800">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">ชำระเงินสำหรับอังเปา</h2>
+            <p class="mb-4 text-gray-700 dark:text-gray-300">คุณเลือกอังเปา: <span id="selectedEnvelope"></span></p>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-300">วิธีการชำระเงิน</label>
+                <select id="paymentMethod" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white">
+                    <option value="creditCard">บัตรเครดิต/เดบิต</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+            </div>
+            <div id="creditCardFields" class="mb-4 hidden">
+                <label class="block text-gray-700 dark:text-gray-300">หมายเลขบัตร</label>
+                <input type="text" id="cardNumber" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="1234 5678 9012 3456">
+                <label class="block mt-2 text-gray-700 dark:text-gray-300">วันหมดอายุ (MM/YY)</label>
+                <input type="text" id="expiryDate" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="MM/YY">
+                <label class="block mt-2 text-gray-700 dark:text-gray-300">CVV</label>
+                <input type="text" id="cvv" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="123">
+            </div>
+            <div id="paypalFields" class="mb-4 hidden">
+                <label class="block text-gray-700 dark:text-gray-300">อีเมล PayPal</label>
+                <input type="email" id="paypalEmail" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="example@paypal.com">
+            </div>
+            <button id="submitPayment" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded mt-4">ยืนยันการชำระเงิน</button>
+            <button id="cancelPayment" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded mt-2">ยกเลิก</button>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        // ฟังก์ชันตรวจสอบธีม
+        function toggleTheme() {
+            const body = document.body;
+            const navbar = document.querySelector("header");
+            const logo = document.getElementById("logo");
+            const isDarkMode = body.classList.toggle("dark-mode");
+
+            if (isDarkMode) {
+                logo.src = "image/logo_player/dark_logo.png";
+                body.style.backgroundColor = "#10142b";
+                navbar.style.backgroundColor = "#1a1f36";
+            } else {
+                logo.src = "image/logo_player/light_logo.png";
+                body.style.backgroundColor = "";
+                navbar.style.backgroundColor = "";
+            }
+
+            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        }
+
+        // ตรวจสอบธีมตอนโหลดหน้า
+        window.onload = function () {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode");
+                document.getElementById("logo").src = "image/logo_player/dark_logo.png";
+            }
+
+            // ตรวจสอบสถานะการล็อกอินและแสดงปุ่ม
+            const username = localStorage.getItem("username");
+            const loginBtn = document.getElementById("loginBtn");
+            const registerBtn = document.getElementById("registerBtn");
+            const logoutBtn = document.getElementById("logoutBtn");
+
+            if (username) {
+                logoutBtn.classList.remove("hidden");
+                loginBtn.classList.add("hidden");
+                registerBtn.classList.add("hidden");
+                fetchCurrentPoints();
+            } else {
+                logoutBtn.classList.add("hidden");
+                loginBtn.classList.remove("hidden");
+                registerBtn.classList.remove("hidden");
+                window.location.href = "Login.html";
+            }
+        };
+
+        // ฟังก์ชัน Logout
+        function logout() {
+            localStorage.removeItem("username");
+            localStorage.removeItem("email");
+            window.location.href = "Login.html";
+        }
+
+        // ฟังก์ชันเลือกอังเปา
+        function selectRedEnvelope(points, price) {
+            const paymentForm = document.getElementById("paymentForm");
+            const selectedEnvelope = document.getElementById("selectedEnvelope");
+            selectedEnvelope.textContent = `${points} เครดิต (ราคา ${price} บาท)`;
+            paymentForm.classList.remove("hidden");
+
+            // ซ่อน/แสดงฟิลด์การชำระเงินตามวิธีที่เลือก
+            const paymentMethod = document.getElementById("paymentMethod");
+            const creditCardFields = document.getElementById("creditCardFields");
+            const paypalFields = document.getElementById("paypalFields");
+
+            paymentMethod.addEventListener("change", function () {
+                if (paymentMethod.value === "creditCard") {
+                    creditCardFields.classList.remove("hidden");
+                    paypalFields.classList.add("hidden");
+                } else {
+                    creditCardFields.classList.add("hidden");
+                    paypalFields.classList.remove("hidden");
+                }
+            });
+
+            // จัดการการชำระเงิน
+            document.getElementById("submitPayment").onclick = function () {
+                const method = paymentMethod.value;
+                let isValid = false;
+
+                if (method === "creditCard") {
+                    const cardNumber = document.getElementById("cardNumber").value;
+                    const expiryDate = document.getElementById("expiryDate").value;
+                    const cvv = document.getElementById("cvv").value;
+                    isValid = cardNumber && expiryDate && cvv; // ตรวจสอบว่าฟิลด์ไม่ว่าง
+                } else if (method === "paypal") {
+                    const paypalEmail = document.getElementById("paypalEmail").value;
+                    isValid = paypalEmail; // ตรวจสอบว่าอีเมลไม่ว่าง
+                }
+
+                if (isValid) {
+                    processPayment(points, price, method);
+                } else {
+                    alert("กรุณากรอกข้อมูลการชำระเงินให้ครบถ้วน");
+                }
+            };
+
+            // ยกเลิกการชำระเงิน
+            document.getElementById("cancelPayment").onclick = function () {
+                paymentForm.classList.add("hidden");
+                creditCardFields.classList.add("hidden");
+                paypalFields.classList.add("hidden");
+            };
+        }
+
+        // ฟังก์ชันดึงยอดเครดิตปัจจุบัน
+        function fetchCurrentPoints() {
+            const username = localStorage.getItem("username");
+            if (username) {
+                fetch("get_profile.php")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.logged_in) {
+                            const points = data.user.point || 0;
+                            document.getElementById("currentPoints").textContent = points;
+                        }
+                    })
+                    .catch(error => console.error("Error fetching points:", error));
+            }
+        }
+
+        function processPayment(points, price, method) {
+    alert(`การชำระเงิน ${price} บาท สำเร็จ! คุณได้รับ ${points} เครดิต`);
+
+    // อัปเดตเครดิตในเซิร์ฟเวอร์
+    const username = localStorage.getItem("username");
+    if (username) {
+        fetch("update_points.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}&points=${points}&payment_amount=${price}&payment_method=${encodeURIComponent(method)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchCurrentPoints(); // อัปเดตยอดเครดิตปัจจุบัน
+                document.getElementById("paymentForm").classList.add("hidden");
+                document.getElementById("creditCardFields").classList.add("hidden");
+                document.getElementById("paypalFields").classList.add("hidden");
+            } else {
+                alert("การอัปเดตเครดิตล้มเหลว: " + data.message);
+            }
+        })
+        .catch(error => console.error("Error updating points:", error));
+    }
+}
+
+    </script>
+</body>
+</html>

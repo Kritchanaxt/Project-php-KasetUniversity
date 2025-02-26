@@ -34,14 +34,14 @@ if (DEBUG) {
 }
 
 try {
-    // ดึงข้อมูลล่าสุดจากฐานข้อมูล
-    $stmt = $conn->prepare("SELECT username, email, phone FROM Users WHERE user_id = ?");
+    // ดึงข้อมูลล่าสุดจากฐานข้อมูล รวมทั้ง point
+    $stmt = $conn->prepare("SELECT username, email, phone, point FROM Users WHERE user_id = ?");
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
-    // ใช้ "i" ถ้า user_id เป็น integer, เปลี่ยนเป็น "s" ถ้าเป็น string
-    $stmt->bind_param("i", $user_id);
+    // ใช้ "s" เพราะ user_id ดูเหมือนเป็น VARCHAR (เช่น 'U0204')
+    $stmt->bind_param("s", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -56,19 +56,20 @@ try {
             error_log("DB Data: " . print_r($row, true));
         }
 
-        // ส่งข้อมูลกลับไปในรูปแบบ JSON
+        // ส่งข้อมูลกลับไปในรูปแบบ JSON รวมทั้ง point
         $response = [
             "logged_in" => true,
             "user" => [
                 "username" => $row["username"],
                 "email" => $row["email"],
-                "phone" => $row["phone"]
+                "phone" => $row["phone"],
+                "point" => $row["point"] // ดึงค่า point จากฐานข้อมูล
             ]
         ];
         echo json_encode($response);
     } else {
         // กรณีไม่พบข้อมูลผู้ใช้ แต่ยัง logged in
-        echo json_encode(["logged_in" => true, "message" => "User data not found in database"]);
+        echo json_encode(["logged_in" => false, "message" => "User data not found in database"]);
     }
 
     $stmt->close();

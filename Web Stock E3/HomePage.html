@@ -109,29 +109,29 @@
 					<div
 						class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 flex flex-row w-full"
 					>
-						<!-- Profile & Balance Section -->
-<div class="flex-1 flex flex-col items-center text-center border-r pr-6 hidden" id="profileSection">
-    <div class="flex flex-col items-center pb-4 border-b w-full">
-        <div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-600">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15.75 14.25a4.5 4.5 0 01-7.5 0M12 3.75a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z" />
-            </svg>
-        </div>
-        <!-- อัปเดตชื่อผู้ใช้ที่ล็อกอิน -->
-        <p id="usernameDisplay" class="font-semibold text-gray-900 text-lg mt-2">Guest</p>
-        <a href="ProfileEdit.html" class="text-sm text-blue-500 hover:underline">ดูโปรไฟล์ของคุณ</a>
-    </div>
-    <div class="py-4 w-full">
-        <p class="text-lg text-gray-600">
-            คงเหลือ <span class="font-bold text-gray-900">0.00</span> เครดิต
-        </p>
-        <button class="mt-2 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800">
-            เติมเครดิต
-        </button>
-    </div>
-</div>
+						<!-- ใน div id="profileSection" -->
+						<div class="flex-1 flex flex-col items-center text-center border-r pr-6 hidden" id="profileSection">
+							<div class="flex flex-col items-center pb-4 border-b w-full">
+								<div class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+										stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-600">
+										<path stroke-linecap="round" stroke-linejoin="round"
+											d="M15.75 14.25a4.5 4.5 0 01-7.5 0M12 3.75a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z" />
+									</svg>
+								</div>
+								<!-- อัปเดตชื่อผู้ใช้ที่ล็อกอิน -->
+								<p id="usernameDisplay" class="font-semibold text-gray-900 text-lg mt-2">Guest</p>
+								<!-- แสดง point จากฐานข้อมูล -->
+								<p id="pointDisplay" class="text-sm text-gray-600">คงเหลือ <span class="font-bold text-gray-900">0.00</span> เครดิต</p>
+								<a href="ProfileEdit.html" class="text-sm text-blue-500 hover:underline">ดูโปรไฟล์ของคุณ</a>
+							</div>
+							<div class="py-4 w-full">
+								<a href="TopUpCredit.html" class="mt-2 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 text-center block">
+									เติมเครดิต
+								</a>
+								
+							</div>
+						</div>
 
 <!-- Actions Section -->
 <div class="flex-1 flex flex-wrap justify-center items-center gap-4 pl-6 hidden" id="actionSection">
@@ -301,35 +301,11 @@
 		</section>
 		  <!-- Script -->
 		  <script>
-			function toggleTheme() {
-				const body = document.body;
-				const navbar = document.querySelector("header");
-				const loginSection = document.querySelector(".bg-indigo-600");
-				const logo = document.getElementById("logo");
-				const isDarkMode = body.classList.toggle("dark-mode");
-
-				// เปลี่ยนโลโก้ตามโหมด
-	
-				if (isDarkMode) {
-					logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
-					body.style.backgroundColor = "#10142b";
-					navbar.style.backgroundColor = "#1a1f36";
-					loginSection.style.backgroundColor = "#232c58";
-				} else {
-					logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติโหมดสว่าง
-					body.style.backgroundColor = "";
-					navbar.style.backgroundColor = "";
-					loginSection.style.backgroundColor = "";
-				}
-
-	
-				localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-			}
-	
 			window.onload = function () {
     const username = localStorage.getItem("username");
     const profileSection = document.getElementById("profileSection");
     const usernameDisplay = document.getElementById("usernameDisplay");
+    const pointDisplay = document.getElementById("pointDisplay");
     const loginBtn = document.getElementById("loginBtn");
     const registerBtn = document.getElementById("registerBtn");
     const logoutBtn = document.getElementById("logoutBtn");
@@ -355,8 +331,25 @@
         giftCardBox.classList.remove("hidden");
         mailbox.classList.remove("hidden");
 
+        // ดึงข้อมูลจากเซิร์ฟเวอร์เพื่ออัปเดต point
+        fetch("get_profile.php")
+            .then(response => response.json())
+            .then(data => {
+                console.log("Profile Data:", data); // Debug ดูค่าที่ได้
+                if (data.logged_in) {
+                    const point = data.user.point || 0; // ดึงค่า point จากฐานข้อมูล (ถ้ามี)
+                    pointDisplay.textContent = `คงเหลือ ${point}.00 เครดิต`; // อัปเดตค่า point
+                } else {
+                    console.warn("User not logged in from server, but localStorage has username.");
+                }
+            })
+            .catch(error => {
+                console.error("Error loading profile data:", error);
+                pointDisplay.textContent = `คงเหลือ 0.00 เครดิต`;
+            });
     } else {
         usernameDisplay.textContent = "Guest"; // แสดง "Guest" ถ้าไม่ล็อกอิน
+        pointDisplay.textContent = "คงเหลือ 0.00 เครดิต"; // แสดงค่าเริ่มต้นถ้าไม่ล็อกอิน
         profileSection.classList.add("hidden"); // ซ่อนโปรไฟล์
         actionSection.classList.add("hidden"); // ซ่อนกล่อง Action
         logoutBtn.classList.add("hidden"); // ซ่อนปุ่มออกจากระบบ
@@ -378,6 +371,28 @@ function logout() {
     window.location.href = "Login.html";
 }
 
+// ฟังก์ชันเปลี่ยนธีม
+function toggleTheme() {
+    const body = document.body;
+    const navbar = document.querySelector("header");
+    const loginSection = document.querySelector(".bg-indigo-600");
+    const logo = document.getElementById("logo");
+    const isDarkMode = body.classList.toggle("dark-mode");
+
+    if (isDarkMode) {
+        logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
+        body.style.backgroundColor = "#10142b";
+        navbar.style.backgroundColor = "#1a1f36";
+        loginSection.style.backgroundColor = "#232c58";
+    } else {
+        logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
+        body.style.backgroundColor = "";
+        navbar.style.backgroundColor = "";
+        loginSection.style.backgroundColor = "";
+    }
+
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+}
 
 
 		</script>
