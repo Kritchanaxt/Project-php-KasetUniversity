@@ -11,6 +11,11 @@
     const email = localStorage.getItem("email");
     const phone = localStorage.getItem("phone"); // ดึงค่าเบอร์โทรศัพท์จาก localStorage
 
+	// แสดงปุ่มตามสถานะ (ถ้ามี username ใน localStorage แสดงว่าเข้าสู่ระบบแล้ว)
+    logoutBtn.classList.remove("hidden"); // แสดงปุ่มออกจากระบบ
+    loginBtn.classList.add("hidden"); // ซ่อนปุ่มเข้าสู่ระบบ
+    registerBtn.classList.add("hidden"); // ซ่อนปุ่มสมัครสมาชิก
+
     if (!username) {
         window.location.href = "Login.html"; // ส่งไปหน้า Login ถ้าไม่ได้ล็อกอิน
         return;
@@ -35,10 +40,6 @@
                     item.style.display = "block"; // เผื่อ Tailwind ไม่ทำงาน
                 });
 
-                // 🔥 แสดงปุ่มออกจากระบบ
-                document.getElementById("logoutBtn").classList.remove("hidden");
-                document.getElementById("loginBtn").classList.add("hidden");
-                document.getElementById("registerBtn").classList.add("hidden");
             } else {
                 console.warn("User not logged in.");
             }
@@ -72,6 +73,14 @@
         document.documentElement.classList.add("light");
     }
 });
+// ฟังก์ชัน Logout
+function logout() {
+        // ลบข้อมูลจาก localStorage
+        localStorage.removeItem("username");
+        localStorage.removeItem("email")
+        // เปลี่ยนไปหน้า Login
+        window.location.href = "Login.html";
+    }
 
     </script>
 	<style>
@@ -308,21 +317,31 @@
 				/>
 				PLAYERHAVEN
 			</div>
+			<nav class="flex space-x-4">
+				<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
+				<a href="#" class="hover:text-indigo-300">ไอดีเกมออนไลน์</a>
+				<a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
+				<a href="#" class="hover:text-indigo-300">บัตรเติมเกมออนไลน์</a>
+				<a href="HomePage.html" class="hover:text-indigo-300"
+					>เติมเกมออนไลน์</a
+				>
+				<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
+			</nav>
 			<div class="space-x-4">
-				<!-- ปุ่มเข้าสู่ระบบ (ซ่อนเริ่มต้นเมื่อล็อกอิน) -->
-				<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800 hidden"
+				<!-- ปุ่มเข้าสู่ระบบ -->
+				<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
 					onclick="location.href='Login.html'">
 					เข้าสู่ระบบ
 				</button>
 			
-				<!-- ปุ่มสมัครสมาชิก (ซ่อนเริ่มต้นเมื่อล็อกอิน) -->
-				<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden"
+				<!-- ปุ่มสมัครสมาชิก -->
+				<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
 					onclick="location.href='Register.html'">
 					สมัครสมาชิก
 				</button>
 			
-				<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้นเมื่อไม่ได้ล็อกอิน) -->
-				<button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 hidden"
+				<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
+				<button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600"
 					onclick="logout()">
 					ออกจากระบบ
 				</button>
@@ -332,7 +351,6 @@
 					🌙 / ☀️
 				</button>
 			</div>
-		</div>
 	</header>
     <!-- Main Section -->
 		<div class="flex justify-center py-8">
@@ -457,6 +475,32 @@
 
 	
 				localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+				
+				window.onload = function () {
+    const username = localStorage.getItem("username");
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (username) {
+        logoutBtn.classList.remove("hidden"); // แสดงปุ่มออกจากระบบ
+        loginBtn.classList.add("hidden"); // ซ่อนปุ่มเข้าสู่ระบบ
+        registerBtn.classList.add("hidden"); // ซ่อนปุ่มสมัครสมาชิก
+    } else {
+        logoutBtn.classList.add("hidden"); // ซ่อนปุ่มออกจากระบบ
+        loginBtn.classList.remove("hidden"); // แสดงปุ่มเข้าสู่ระบบ
+        registerBtn.classList.remove("hidden"); // แสดงปุ่มสมัครสมาชิก
+    }
+};
+
+// ฟังก์ชัน Logout
+function logout() {
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    window.location.href = "Login.html";
+}
+
+
 			}
 	</script>
 </body>
