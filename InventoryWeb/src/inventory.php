@@ -737,8 +737,8 @@ function updateTable(data) {
     });
 }
 
-// โหลดข้อมูลทุก ๆ 5 วินาที
-setInterval(updateDashboard, 5000);
+// โหลดข้อมูลทุก ๆ 15 วินาที
+setInterval(updateDashboard, 15000);
 
 // โหลดข้อมูลครั้งแรก
 updateDashboard();      
