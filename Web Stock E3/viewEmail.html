@@ -5,135 +5,261 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Email</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #10142B; /* พื้นหลัง */
-            font-family: 'Inter', sans-serif; /* ฟอนต์ */
-        }
-
-        .navbar {
-            background-color: #1A1F36; /* พื้นหลัง Navbar */
-        }
-
-        .sidebar {
-            background-color: #ECECFF; /* พื้นหลัง Sidebar */
-        }
-
-        .sidebar-item {
-            color: #6C61EC; /* สีข้อความใน Sidebar */
-            background-color: #FFFFFF; /* สีพื้นหลังไอเท็ม */
-        }
-
-        .sidebar-item:hover {
-            background-color: #F3F1FF; /* สีพื้นหลังเมื่อโฮเวอร์ */
-        }
-
-        .content {
-            background-color: #ECECFF; /* พื้นหลัง Content */
-            color: #000000; /* ข้อความ */
+        /* Base styles from Code A */
+        :root {
+            --primary: #7f56d9;
+            --primary-dark: #6844b1;
+            --accent: #00ffff;
+            --accent-secondary: #ff00ff;
+            
+            /* Light theme variables */
+            --bg-light: #f5f5ff;
+            --text-light: #2d3748;
+            --navbar-light: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%);
+            --card-light: rgba(255, 255, 255, 0.9);
+            --sidebar-light: rgba(248, 250, 252, 0.9);
+            --sidebar-item-light: rgba(255, 255, 255, 0.9);
+            --sidebar-hover-light: rgba(237, 233, 254, 0.9);
+            
+            /* Dark theme variables */
+            --bg-dark: #0f172a;
+            --text-dark: #e2e8f0;
+            --navbar-dark: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            --card-dark: rgba(30, 41, 59, 0.9);
+            --sidebar-dark: rgba(15, 23, 42, 0.8);
+            --sidebar-item-dark: rgba(30, 41, 59, 0.8);
+            --sidebar-hover-dark: rgba(30, 41, 59, 1);
         }
         
-        /* ToggleButton */
-			:root {
-				--bg-dark: #10142b;
-				--navbar-dark: #1a1f36;
-				--sidebar-dark: #ececff;
-				--sidebar-item-dark: #ffffff;
-				--sidebar-item-hover-dark: #f3f1ff;
-				--content-dark: #ececff;
-				--text-dark: #ffffff;
-			}
-
-			.light {
-				--bg-dark: #ffffff;
-				--navbar-dark: #6b46c1; /* bg-purple-600 */
-				--sidebar-dark: #f9f9f9;
-				--sidebar-item-dark: #e5e5e5;
-				--sidebar-item-hover-dark: #dadada;
-				--content-dark: #ffffff;
-				--text-dark: #000000;
-				--navbar-text: #ffffff;
-			}
-
-			body {
-				background-color: var(--bg-dark);
-				font-family: "Inter", sans-serif;
-				color: var(--text-dark);
-			}
-			.navbar {
-				background-color: var(--navbar-dark);
-				color: var(--text-dark);
-			}
-			.light .navbar {
-				color: var(--navbar-text);
-			}
-			.sidebar {
-				background-color: var(--sidebar-dark);
-			}
-			.sidebar-item {
-				background-color: var(--sidebar-item-dark);
-			}
-			.sidebar-item:hover {
-				background-color: var(--sidebar-item-hover-dark);
-			}
-			.content {
-				background-color: var(--content-dark);
-			}
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow-x: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .theme-transition {
+            animation: themeTransition 1s ease;
+        }
+        
+        @keyframes themeTransition {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .light {
+            --bg: var(--bg-light);
+            --text: var(--text-light);
+            --navbar: var(--navbar-light);
+            --card: var(--card-light);
+            --sidebar: var(--sidebar-light);
+            --sidebar-item: var(--sidebar-item-light);
+            --sidebar-hover: var(--sidebar-hover-light);
+        }
+        
+        :root:not(.light) {
+            --bg: var(--bg-dark);
+            --text: var(--text-dark);
+            --navbar: var(--navbar-dark);
+            --card: var(--card-dark);
+            --sidebar: var(--sidebar-dark);
+            --sidebar-item: var(--sidebar-item-dark);
+            --sidebar-hover: var(--sidebar-hover-dark);
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+        
+        header {
+            background: var(--navbar);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 20;
+        }
+        
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        .sidebar {
+            background: var(--sidebar);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-item {
+            background: var(--sidebar-item);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .sidebar-item:hover {
+            background: var(--sidebar-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .content {
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn:hover:before {
+            left: 100%;
+        }
+        
+        #logo {
+            transition: all 0.5s ease;
+        }
+        
+        #logo:hover {
+            transform: scale(1.05) rotate(2deg);
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+        }
+        
+        .theme-toggle {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .theme-toggle:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(0);
+            transition: 0.5s;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .theme-toggle:hover:before {
+            transform: scale(2);
+        }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="text-2xl font-bold text-white">PLAYER HAVEN</div>
-            <div class="flex space-x-6">
-                <a href="HomePage.html" class="text-gray-300 hover:text-white">Home</a>
-                <a href="ProfileEdit.html" class="text-gray-300 hover:text-white">Profile Edit</a>
-                <a href="#" class="text-gray-300 hover:text-white">Online Game IDs</a>
-                <a href="#" class="text-gray-300 hover:text-white">Random Game IDs</a>
-                <a href="#" class="text-gray-300 hover:text-white">Game Cards</a>
-                <a href="#" class="text-gray-300 hover:text-white">Top-Up</a>
+    <!-- Particles Background -->
+    <canvas id="particles"></canvas>
+    
+    <!-- Header/Navbar -->
+    <header class="text-white shadow-lg">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <div class="flex items-center">
+                <img id="logo" src="image/logo_player/light_logo.png" alt="logo" 
+                    class="w-auto h-16 mr-3 transition-all duration-500 hover:scale-105 filter" />
+                <span class="text-2xl font-bold logo-text">PLAYER HAVEN</span>
             </div>
-            <button
-							onclick="toggleTheme()"
-							class="p-2 rounded bg-gray-300 dark:bg-gray-600"
-						>
-							🌙 / ☀️
-						</button>
+            
+            <nav class="hidden md:flex space-x-6 text-lg">
+                <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">หน้าแรก</a>
+                <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">ซื้อไอดีเกม</a>
+                <a href="#" class="nav-link hover:text-indigo-300 transition-all">สุ่มไอดีเกม</a>
+                <a href="TopUpCredit.html" class="nav-link hover:text-indigo-300 transition-all">เติม Points</a>
+                <a href="ProfileEdit.html" class="nav-link hover:text-indigo-300 transition-all">ดูโปรไฟล์</a>
+                <a href="#" class="nav-link hover:text-indigo-300 transition-all">ติดต่อเรา</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleTheme()" class="theme-toggle p-3 rounded-full bg-gray-700 hover:bg-gray-600 shadow-md transition-all">
+                    <span id="themeIcon" class="text-lg">🌙</span>
+                </button>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Main Section -->
-    <div class="flex justify-center py-8">
+    <div class="container mx-auto flex flex-col md:flex-row justify-center py-8 px-4 gap-6">
         <!-- Sidebar -->
-        <aside class="sidebar w-64 p-6 rounded-lg shadow-md">
+        <aside class="sidebar w-full md:w-64 p-6 rounded-xl shadow-lg">
             <ul class="space-y-4">
-                <!-- Tab: Mailbox -->
-            <li>
-                <a href="Mailbox.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                    <img src="https://media.discordapp.net/attachments/1333465176686723124/1333743617851789323/DALL_E-2025-01-28-17.18-removebg-preview-removebg-preview.png?ex=679a010a&is=6798af8a&hm=b5cb791be5f1e80650f1ecf31a34d6cb8d598c28377213873e5ee6d2a1b9fa21&=&format=webp&quality=lossless" alt="Mailbox" class="w-6 h-6">
-                    <span class="font-semibold">Mailbox</span>
-                </a>
-            </li>
-            <!-- Tab: Log Out -->
-            <li>
-                <a href="Logout.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                    <img src="https://media.discordapp.net/attachments/1333465176686723124/1333741803706384394/DALL_E-2025-01-28-17.11.30-A-sleek_-cyberpunk-themed-icon-representing-_Log-Out-removebg-preview.png?ex=6799ff59&is=6798add9&hm=136cdf858304ea5aecb6ac9bae7bc8b4345f600a1069446b0bd150a343261c76&=&format=webp&quality=lossless" alt="Log Out" class="w-6 h-6">
-                    <span class="font-semibold">Log Out</span>
-                </a>
-            </li>
+                <li>
+                    <a href="Mailbox.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
+                        <span class="font-semibold">Mailbox</span>
+                    </a>
+                </li>
             </ul>
         </aside>
 
         <!-- Content -->
-        <main class="content w-[850px] p-8 rounded-lg shadow-md ml-6">
+        <main class="content flex-1 p-6 rounded-xl shadow-lg border">
             <h2 class="text-2xl font-bold mb-6">View Email</h2>
-
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-opacity-50 p-6 rounded-lg shadow-inner">
                 <h3 class="text-xl font-bold mb-4">Welcome to PLAYER HAVEN</h3>
-                <p class="text-gray-600 mb-2">From: admin@playerhaven.com</p>
-                <p class="text-gray-600 mb-6">Date: 2025-01-01</p>
-                <p class="text-gray-800 mb-6">
+                <p class="mb-2">From: admin@playerhaven.com</p>
+                <p class="mb-6">Date: 2025-01-01</p>
+                <p class="mb-6">
                     Dear Player,
                     <br><br>
                     Welcome to PLAYER HAVEN! We’re excited to have you join our gaming community. Explore our features, enjoy amazing deals, and connect with other players worldwide.
@@ -144,27 +270,102 @@
                     The PLAYER HAVEN Team
                 </p>
                 <div class="flex space-x-4">
-                    <button onclick="location.href='Mailbox.html'" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Back to Inbox</button>
+                    <button onclick="location.href='Mailbox.html'" class="btn bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 shadow-md">Back to Inbox</button>
                 </div>
             </div>
         </main>
     </div>
-    <!--? JS toggleTheme -->
-		<script>
-			function toggleTheme() {
-				const html = document.documentElement;
-				html.classList.toggle("light");
-				localStorage.setItem(
-					"theme",
-					html.classList.contains("light") ? "light" : "dark"
-				);
-			}
 
-			document.addEventListener("DOMContentLoaded", () => {
-				if (localStorage.getItem("theme") === "light") {
-					document.documentElement.classList.add("light");
-				}
-			});
-		</script>
+    <script>
+        // Particle animation from Code A
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particleCount = 50;
+            const particles = [];
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 1,
+                    color: `rgba(${Math.floor(Math.random() * 100 + 150)}, ${Math.floor(Math.random() * 100 + 150)}, 255, ${Math.random() * 0.5 + 0.3})`,
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25
+                });
+            }
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    ctx.beginPath();
+                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = particle.color;
+                    ctx.fill();
+                    
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+                    
+                    if (particle.x < 0 || particle.x > canvas.width) {
+                        particle.speedX = -particle.speedX;
+                    }
+                    if (particle.y < 0 || particle.y > canvas.height) {
+                        particle.speedY = -particle.speedY;
+                    }
+                });
+            }
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            
+            animate();
+        }
+
+        // Theme toggle function from Code B with Code A's enhancements
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById("themeIcon");
+            const logo = document.getElementById("logo");
+            
+            html.classList.toggle("light");
+            const isLight = html.classList.contains("light");
+            
+            localStorage.setItem("theme", isLight ? "light" : "dark");
+            themeIcon.textContent = isLight ? "☀️" : "🌙";
+            logo.src = isLight ? "image/logo_player/light_logo.png" : "image/logo_player/dark_logo.png";
+            
+            document.body.classList.add('theme-transition');
+            setTimeout(() => {
+                document.body.classList.remove('theme-transition');
+            }, 1000);
+        }
+
+        // DOM Content Loaded handler
+        document.addEventListener("DOMContentLoaded", () => {
+            initParticles();
+            
+            const savedTheme = localStorage.getItem("theme") || "dark";
+            const themeIcon = document.getElementById("themeIcon");
+            const logo = document.getElementById("logo");
+            
+            if (savedTheme === "light") {
+                document.documentElement.classList.add("light");
+                themeIcon.textContent = "☀️";
+                logo.src = "image/logo_player/light_logo.png";
+            } else {
+                themeIcon.textContent = "🌙";
+                logo.src = "image/logo_player/dark_logo.png";
+            }
+        });
+    </script>
 </body>
 </html>
