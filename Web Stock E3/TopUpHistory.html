@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -122,57 +123,79 @@
     </script>
     <style>
         body {
-            background-color: #9a24c9; /* สีพื้นหลังเริ่มต้น */
+            background-color: #9a24c9;
+            /* สีพื้นหลังเริ่มต้น */
             font-family: "Inter", sans-serif;
         }
 
         .sidebar {
-            background-color: #ececff; /* พื้นหลัง Sidebar */
-            width: 20%; /* กำหนดความกว้างเมนูด้านข้างให้เหมาะสม */
-            min-width: 200px; /* ความกว้างขั้นต่ำ */
+            background-color: #ececff;
+            /* พื้นหลัง Sidebar */
+            width: 20%;
+            /* กำหนดความกว้างเมนูด้านข้างให้เหมาะสม */
+            min-width: 200px;
+            /* ความกว้างขั้นต่ำ */
         }
 
         .sidebar-item {
-            color: #6c61ec; /* สีข้อความใน Sidebar */
-            background-color: #ffffff; /* สีพื้นหลังไอเท็ม */
+            color: #6c61ec;
+            /* สีข้อความใน Sidebar */
+            background-color: #ffffff;
+            /* สีพื้นหลังไอเท็ม */
         }
 
         .sidebar-item:hover {
-            background-color: #f3f1ff; /* สีพื้นหลังเมื่อโฮเวอร์ */
+            background-color: #f3f1ff;
+            /* สีพื้นหลังเมื่อโฮเวอร์ */
         }
 
         .content {
-            background-color: #ececff; /* พื้นหลังเนื้อหา */
-            color: #000000; /* สีข้อความในเนื้อหา */
-            max-width: 75%; /* กำหนดความกว้างเนื้อหาให้เหมาะสมกับเมนู */
-            margin-left: 2%; /* ระยะห่างจากเมนูด้านซ้าย */
+            background-color: #ececff;
+            /* พื้นหลังเนื้อหา */
+            color: #000000;
+            /* สีข้อความในเนื้อหา */
+            max-width: 75%;
+            /* กำหนดความกว้างเนื้อหาให้เหมาะสมกับเมนู */
+            margin-left: 2%;
+            /* ระยะห่างจากเมนูด้านซ้าย */
         }
 
         .btn-primary {
-            background-color: #7f56d9; /* ปุ่มหลัก */
+            background-color: #7f56d9;
+            /* ปุ่มหลัก */
             color: #ffffff;
         }
 
         .btn-primary:hover {
-            background-color: #6844b1; /* ปุ่มเมื่อโฮเวอร์ */
+            background-color: #6844b1;
+            /* ปุ่มเมื่อโฮเวอร์ */
         }
 
         /* แทบด้านบนเว็บ */
         .w-full.text-2xl.font-bold.text-left {
-            font-family: "Russo One", sans-serif; /* ฟอนต์ที่เข้ากับธีม Cyberpunk */
-            color: #00ffff; /* สีฟ้านีออน */
-            font-size: 2rem; /* ขนาดตัวอักษร */
+            font-family: "Russo One", sans-serif;
+            /* ฟอนต์ที่เข้ากับธีม Cyberpunk */
+            color: #00ffff;
+            /* สีฟ้านีออน */
+            font-size: 2rem;
+            /* ขนาดตัวอักษร */
             text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #ff00ff, 0 0 80px #ff00ff;
-            letter-spacing: 2px; /* เพิ่มช่องว่างระหว่างตัวอักษร */
-            text-transform: uppercase; /* ทำให้ตัวอักษรเป็นตัวพิมพ์ใหญ่ทั้งหมด */
-            margin-left: -80px; /* เว้นระยะจากขอบซ้าย */
+            letter-spacing: 2px;
+            /* เพิ่มช่องว่างระหว่างตัวอักษร */
+            text-transform: uppercase;
+            /* ทำให้ตัวอักษรเป็นตัวพิมพ์ใหญ่ทั้งหมด */
+            margin-left: -80px;
+            /* เว้นระยะจากขอบซ้าย */
         }
 
         header {
-            background: linear-gradient(to right, #070f1f, #0c1326); /* ไล่สีจากน้ำเงินเข้มไปเข้มขึ้น */
-            color: #ffffff; /* ข้อความสีขาว */
+            background: linear-gradient(to right, #070f1f, #0c1326);
+            /* ไล่สีจากน้ำเงินเข้มไปเข้มขึ้น */
+            color: #ffffff;
+            /* ข้อความสีขาว */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            padding: 20px 30px; /* เพิ่ม padding ด้านบนและด้านล่าง */
+            padding: 20px 30px;
+            /* เพิ่ม padding ด้านบนและด้านล่าง */
         }
 
         /* General Styles */
@@ -181,9 +204,11 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Prevent scrolling during loading */
+            overflow: hidden;
+            /* Prevent scrolling during loading */
             font-family: "Arial", sans-serif;
-            background-color: #0c1326; /* Default background */
+            background-color: #0c1326;
+            /* Default background */
         }
 
         /* Table Styles */
@@ -194,12 +219,15 @@
             border: 1px solid #e5e5e5;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #e5e5e5;
             padding: 12px 16px;
             text-align: left;
-            background-color: #4a5568; /* สีพื้นหลังกล่องข้อมูล */
-            color: #ffffff; /* สีข้อความในกล่อง */
+            background-color: #4a5568;
+            /* สีพื้นหลังกล่องข้อมูล */
+            color: #ffffff;
+            /* สีข้อความในกล่อง */
         }
 
         th {
@@ -270,23 +298,22 @@
             color: var(--text-dark);
         }
 
-        th, td {
+        th,
+        td {
             border-color: var(--sidebar-dark);
             color: var(--text-dark);
-            background-color: #e5e7eb; /* สีพื้นหลังกล่องในโหมดสว่าง */
+            background-color: #e5e7eb;
+            /* สีพื้นหลังกล่องในโหมดสว่าง */
         }
     </style>
 </head>
+
 <body class="bg-gray-100">
     <header class="bg-purple-600 text-white">
         <div class="container mx-auto flex justify-between items-center">
             <div class="text-2xl font-bold inline">
-                <img
-                    id="logo"
-                    src="image/logo_player/light_logo.png"
-                    alt="light_logo"
-                    class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90"
-                />
+                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo"
+                    class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
                 PLAYERHAVEN
             </div>
             <nav class="flex space-x-4">
@@ -303,111 +330,81 @@
                     onclick="location.href='Login.html'">
                     เข้าสู่ระบบ
                 </button>
-            
+
                 <!-- ปุ่มสมัครสมาชิก -->
                 <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden"
                     onclick="location.href='Register.html'">
                     สมัครสมาชิก
                 </button>
-            
+
                 <!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
-                <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600"
-                    onclick="logout()">
+                <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600" onclick="logout()">
                     ออกจากระบบ
                 </button>
-            
+
                 <!-- ปุ่มเปลี่ยนธีม -->
                 <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
                     🌙 / ☀️
                 </button>
             </div>
-        </header>
-    
-        <!-- Main Section -->
-        <div class="flex justify-center py-8">
-            <!-- Sidebar -->
-            <aside class="sidebar w-64 p-6 rounded-lg shadow-md">
-                <ul class="space-y-4">
-                    <a
-                        href="ProfileEdit.html"
-                        class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-                    >
-                        <img
-                            src="https://media.discordapp.net/attachments/1333465176686723124/1333740853314846761/DALL_E-2025-01-28-17.07.50-A-sleek_-cyberpunk-themed-icon-representing-a-_Game-Card-Box-removebg-preview.png?ex=6799fe77&is=6798acf7&hm=4ae528f0d59da29747f16afa9202b8c08b45ebd8c83fc4167027e30f5f342609&=&format=webp&quality=lossless"
-                            alt="Profile Edit"
-                            class="w-6 h-6"
-                        />
-                        <span class="font-semibold">ProfileEdit</span>
+    </header>
+
+    <!-- Main Section -->
+    <div class="flex justify-center py-8">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 p-6 rounded-lg shadow-md">
+            <ul class="space-y-4">
+                <a href="ProfileEdit.html"
+                    class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+
+                    <span class="font-semibold">ProfileEdit</span>
+                </a>
+                <!-- Tab: Top-Up History -->
+                <li>
+                    <a href="TopUpHistory.html"
+                        class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+
+                        <span class="font-semibold">Top-Up History</span>
                     </a>
-                    <!-- Tab: Top-Up History -->
-                    <li>
-                        <a
-                            href="TopUpHistory.html"
-                            class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-                        >
-                            <img
-                                src="https://media.discordapp.net/attachments/1333465176686723124/1333739459614736384/DALL_E-2025-01-28-17.03.01-A-sleek_-cyberpunk-themed-icon-for-a-top-up-system-removebg-preview.png?ex=6799fd2a&is=6798abaa&hm=fbde12851b4d3ea71daf8da35159cd7ef2efa8487b837884adc619f22b9b4bc3&=&format=webp&quality=lossless"
-                                alt="Top-Up History"
-                                class="w-6 h-6"
-                            />
-                            <span class="font-semibold">Top-Up History</span>
-                        </a>
-                    </li>
-                    <!-- Tab: Purchase History -->
-                    <li>
-                        <a
-                            href="PurchaseHistory.html"
-                            class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-                        >
-                            <img
-                                src="https://media.discordapp.net/attachments/1333465176686723124/1333739998385541130/DALL_E-2025-01-28-17.05.44-A-sleek_-cyberpunk-themed-icon-representing-_Purchase-History-removebg-preview.png?ex=6799fdab&is=6798ac2b&hm=a3b32dbb7886fde1bda3390c45602621a78ad3e4530ee65b3ad8d7ffd7aa97bb&=&format=webp&quality=lossless"
-                                alt="Purchase History"
-                                class="w-6 h-6"
-                            />
-                            <span class="font-semibold">Purchase History</span>
-                        </a>
-                    </li>
-                    <!-- Tab: Game Card Box -->
-                    <li>
-                        <a
-                            href="GameCardBox.html"
-                            class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-                        >
-                            <img
-                                src="https://media.discordapp.net/attachments/1333465176686723124/1333740853314846761/DALL_E-2025-01-28-17.07.50-A-sleek_-cyberpunk-themed-icon-representing-a-_Game-Card-Box-removebg-preview.png?ex=6799fe77&is=6798acf7&hm=4ae528f0d59da29747f16afa9202b8c08b45ebd8c83fc4167027e30f5f342609&=&format=webp&quality=lossless"
-                                alt="Game Card Box"
-                                class="w-6 h-6"
-                            />
-                            <span class="font-semibold">Game Card Box</span>
-                        </a>
-                    </li>
-                    <!-- Tab: Mailbox -->
-                    <li>
-                        <a
-                            href="Mailbox.html"
-                            class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md"
-                        >
-                            <img
-                                src="https://media.discordapp.net/attachments/1333465176686723124/1333743617851789323/DALL_E-2025-01-28-17.18-removebg-preview-removebg-preview.png?ex=679a010a&is=6798af8a&hm=b5cb791be5f1e80650f1ecf31a34d6cb8d598c28377213873e5ee6d2a1b9fa21&=&format=webp&quality=lossless"
-                                alt="Mailbox"
-                                class="w-6 h-6"
-                            />
-                            <span class="font-semibold">Mailbox</span>
-                        </a>
-                    </li>
-                </ul>
-            </aside>
+                </li>
+                <!-- Tab: Purchase History -->
+                <li>
+                    <a href="PurchaseHistory.html"
+                        class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
 
-            <!-- Content -->
-            <main class="content flex-1 p-6 rounded-lg shadow-md ml-6">
-                <h2 class="text-2xl font-bold mb-6">TopupHistory</h2>
-                <table id="historyTable" class="w-full border-collapse border border-gray-300">
-                    <tbody class="text-gray-700"></tbody>
-                </table>
-                <p id="noHistory" class="mt-4 text-gray-500 hidden">ไม่มีประวัติการเติมเงิน</p>
+                        <span class="font-semibold">Purchase History</span>
+                    </a>
+                </li>
+                <!-- Tab: Game Card Box -->
+                <li>
+                    <a href="GameCardBox.html"
+                        class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
 
-                </div>
-            </main>
-        </div>
-    </body>
+                        <span class="font-semibold">Game Card Box</span>
+                    </a>
+                </li>
+                <!-- Tab: Mailbox -->
+                <li>
+                    <a href="Mailbox.html"
+                        class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
+
+                        <span class="font-semibold">Mailbox</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Content -->
+        <main class="content flex-1 p-6 rounded-lg shadow-md ml-6">
+            <h2 class="text-2xl font-bold mb-6">TopupHistory</h2>
+            <table id="historyTable" class="w-full border-collapse border border-gray-300">
+                <tbody class="text-gray-700"></tbody>
+            </table>
+            <p id="noHistory" class="mt-4 text-gray-500 hidden">ไม่มีประวัติการเติมเงิน</p>
+
+    </div>
+    </main>
+    </div>
+</body>
+
 </html>
