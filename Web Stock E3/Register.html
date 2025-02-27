@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,223 +8,246 @@
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- CSS -->
-	<style>
-		/* อนิเมชันพื้นหลังสำหรับโหมดสว่าง (เพชรฟ้าขาวระยิบ) */
-		body {
-			position: relative;
-			background: linear-gradient(45deg, #e6f3ff, #b3d4ff, #e6f3ff);
-			transition: background 0.5s ease, background-color 0.5s ease;
-		}
+    <style>
+        /* อนิเมชันพื้นหลังสำหรับโหมดสว่าง (เพชรฟ้าขาวระยิบ) */
+        body {
+            position: relative;
+            background: linear-gradient(45deg, #e6f3ff, #b3d4ff, #e6f3ff);
+            transition: background 0.5s ease, background-color 0.5s ease;
+        }
 
-		body::before {
-			content: '';
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="50" cy="50" r="2" fill="rgba(100, 200, 255, 0.8)" /%3E%3C/svg%3E') repeat;
-			animation: sparkleLight 3s infinite;
-			pointer-events: none;
-			z-index: -1;
-			/* อยู่ใต้เนื้อหา */
-		}
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="50" cy="50" r="2" fill="rgba(100, 200, 255, 0.8)" /%3E%3C/svg%3E') repeat;
+            animation: sparkleLight 3s infinite;
+            pointer-events: none;
+            z-index: -1;
+            /* อยู่ใต้เนื้อหา */
+        }
 
-		/* อนิเมชันพื้นหลังสำหรับโหมดมืด (เพชรฟ้าดำครึ้มระยิบ) */
-		body.dark-mode {
-			background: linear-gradient(45deg, #0a1a2f, #1a3b5d, #0a1a2f);
-		}
+        /* อนิเมชันพื้นหลังสำหรับโหมดมืด (เพชรฟ้าดำครึ้มระยิบ) */
+        body.dark-mode {
+            background: linear-gradient(45deg, #0a1a2f, #1a3b5d, #0a1a2f);
+        }
 
-		body.dark-mode::before {
-			content: '';
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="50" cy="50" r="1" fill="rgba(0, 100, 200, 0.7)" /%3E%3C/svg%3E') repeat;
-			animation: sparkleDark 3s infinite;
-			pointer-events: none;
-			z-index: -1;
-			/* อยู่ใต้เนื้อหา */
-		}
+        body.dark-mode::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="50" cy="50" r="1" fill="rgba(0, 100, 200, 0.7)" /%3E%3C/svg%3E') repeat;
+            animation: sparkleDark 3s infinite;
+            pointer-events: none;
+            z-index: -1;
+            /* อยู่ใต้เนื้อหา */
+        }
 
-		@keyframes sparkleLight {
-			0% {
-				opacity: 0.3;
-			}
+        @keyframes sparkleLight {
+            0% {
+                opacity: 0.3;
+            }
 
-			50% {
-				opacity: 0.8;
-			}
+            50% {
+                opacity: 0.8;
+            }
 
-			100% {
-				opacity: 0.3;
-			}
-		}
+            100% {
+                opacity: 0.3;
+            }
+        }
 
-		@keyframes sparkleDark {
-			0% {
-				opacity: 0.2;
-			}
+        @keyframes sparkleDark {
+            0% {
+                opacity: 0.2;
+            }
 
-			50% {
-				opacity: 0.7;
-			}
+            50% {
+                opacity: 0.7;
+            }
 
-			100% {
-				opacity: 0.2;
-			}
-		}
+            100% {
+                opacity: 0.2;
+            }
+        }
 
-		/* Theme mode */
-		.dark-mode {
-			background-color: #0a1a2f;
-			/* เปลี่ยนเป็นสีพื้นหลังหลักของโモードมืด */
-			color: white;
-		}
+        /* Theme mode */
+        .dark-mode {
+            background-color: #0a1a2f;
+            /* เปลี่ยนเป็นสีพื้นหลังหลักของโモードมืด */
+            color: white;
+        }
 
-		.dark-mode header {
-			background-color: #1a3b5d;
-		}
+        .dark-mode header {
+            background-color: #1a3b5d;
+        }
 
-		.dark-mode .bg-indigo-600 {
-			background-color: #1a3b5d !important;
-		}
+        .dark-mode .bg-indigo-600 {
+            background-color: #1a3b5d !important;
+        }
 
-		/* ป้องกันปุ่มเปลี่ยนสีในโหมดสีเข้ม */
-		.dark-mode .bg-blue-600 {
-			background-color: #2563eb !important;
-			color: white !important;
-		}
+        /* ป้องกันปุ่มเปลี่ยนสีในโหมดสีเข้ม */
+        .dark-mode .bg-blue-600 {
+            background-color: #2563eb !important;
+            color: white !important;
+        }
 
-		.dark-mode .bg-red-600 {
-			background-color: #dc2626 !important;
-			color: white !important;
-		}
+        .dark-mode .bg-red-600 {
+            background-color: #dc2626 !important;
+            color: white !important;
+        }
 
-		.dark-mode .bg-green-500 {
-			background-color: #22c55e !important;
-			color: white !important;
-		}
+        .dark-mode .bg-green-500 {
+            background-color: #22c55e !important;
+            color: white !important;
+        }
 
-		.dark-mode .bg-red-500 {
-			background-color: #ef4444 !important;
-			color: white !important;
-		}
+        .dark-mode .bg-red-500 {
+            background-color: #ef4444 !important;
+            color: white !important;
+        }
 
-		/* Switch Toggle Button (ยังคงเหมือนเดิม) */
-		.theme-toggle {
-			position: relative;
-			display: inline-block;
-			width: 60px;
-			height: 34px;
-		}
+        /* Switch Toggle Button (ยังคงเหมือนเดิม) */
+        .theme-toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
 
-		.theme-toggle input {
-			opacity: 0;
-			width: 0;
-			height: 0;
-		}
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-		.slider {
-			position: absolute;
-			cursor: pointer;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background-color: #ccc;
-			transition: background-color 0.4s ease;
-			border-radius: 34px;
-			box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-		}
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: background-color 0.4s ease;
+            border-radius: 34px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-		.slider:before {
-			position: absolute;
-			content: "";
-			height: 30px;
-			width: 30px;
-			left: 2px;
-			bottom: 2px;
-			background-color: white;
-			transition: transform 0.4s ease;
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-		}
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 30px;
+            width: 30px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: transform 0.4s ease;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-		.slider:after {
-			content: " ";
-			font-size: 18px;
-			color: #f1c40f;
-			transition: opacity 0.3s ease, content 0.3s ease;
+        .slider:after {
+            content: " ";
+            font-size: 18px;
+            color: #f1c40f;
+            transition: opacity 0.3s ease, content 0.3s ease;
 
-		}
+        }
 
-		input:checked+.slider {
-			background-color: #2c3e50;
-		}
+        input:checked+.slider {
+            background-color: #2c3e50;
+        }
 
-		input:checked+.slider:before {
-			transform: translateX(26px);
-		}
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
 
-		input:checked+.slider:after {
-			content: "🌙";
-			color: #fff;
-		}
-	</style>
+        input:checked+.slider:after {
+            content: "🌙";
+            color: #fff;
+        }
+
+        /* กำหนดสีข้อความใน input เป็นสีดำตลอดเวลา */
+        input[type="text"],
+        input[type="password"] {
+            color: #000000 !important;
+            /* สีดำตลอดเวลา */
+        }
+
+        /* ป้องกันการเปลี่ยนสีข้อความในโหมดมืด */
+        .dark-mode input[type="text"],
+        .dark-mode input[type="password"] {
+            color: #000000 !important;
+            /* สีดำในโหมดมืด */
+        }
+
+        /* รักษาสไตล์การโฟกัสของ input */
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            color: #000000;
+            /* สีดำเมื่อโฟกัส */
+        }
+    </style>
 </head>
 </head>
+
 <body class="bg-gray-100">
 
     <!-- Header -->
-	<header class="bg-purple-600 text-white">
-		<!-- Navbar -->
-		<div class="container mx-auto flex items-center justify-between py-0 px-4">
-			<div class="text-2xl font-bold inline">
-				<img id="logo" src="image/logo_player/light_logo.png" alt="light_logo"
-					class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
+    <header class="bg-purple-600 text-white">
+        <!-- Navbar -->
+        <div class="container mx-auto flex items-center justify-between py-0 px-4">
+            <div class="text-2xl font-bold inline">
+                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo"
+                    class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
 
-				PLAYERHAVEN
-			</div>
-			<nav class="flex space-x-4 text-lg font-semibold">
-				<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
-				<a href="#" class="hover:text-indigo-300">ไอดีเกมออนไลน์</a>
-				<a href="#" class="hover:text-indigo-300">เติมเครดิต</a>
-				<a href="HomePage.html" class="hover:text-indigo-300">ซื้อไอดีเกมออนไลน์</a>
-				<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
-			</nav>
-			<!-- แทนที่ปุ่มเก่าในส่วนนี้ -->
-			<div class="space-x-4">
-				<!-- ปุ่มเข้าสู่ระบบ -->
-				<button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
-					onclick="location.href='Login.html'">
-					เข้าสู่ระบบ
-				</button>
+                PLAYERHAVEN
+            </div>
+            <nav class="flex space-x-4 text-lg font-semibold">
+                <a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
+                <a href="HomePage.html" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
+                <a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
+                <a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
+                <a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
+                <a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
+            </nav>
+            <!-- แทนที่ปุ่มเก่าในส่วนนี้ -->
+            <div class="space-x-4">
+                <!-- ปุ่มเข้าสู่ระบบ -->
+                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+                    onclick="location.href='Login.html'">
+                    เข้าสู่ระบบ
+                </button>
 
-				<!-- ปุ่มสมัครสมาชิก -->
-				<button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
-					onclick="location.href='Register.html'">
-					สมัครสมาชิก
-				</button>
+                <!-- ปุ่มสมัครสมาชิก -->
+                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+                    onclick="location.href='Register.html'">
+                    สมัครสมาชิก
+                </button>
 
-				<!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
-				<button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600" onclick="logout()">
-					ออกจากระบบ
-				</button>
+                <!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
+                <button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600" onclick="logout()">
+                    ออกจากระบบ
+                </button>
 
-				<!-- ปุ่มเปลี่ยนธีมแบบสไลด์ท็อกเกิล -->
-				<label class="theme-toggle">
-					<input type="checkbox" id="themeToggle" onchange="toggleTheme()">
-					<span class="slider"></span>
-				</label>
-			</div>
+                <!-- ปุ่มเปลี่ยนธีมแบบสไลด์ท็อกเกิล -->
+                <label class="theme-toggle">
+                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                    <span class="slider"></span>
+                </label>
+            </div>
 
-	</header>
+    </header>
 
     <!-- Register Section -->
     <section class="bg-indigo-600 text-white py-6">
@@ -242,7 +266,7 @@
                 <p class="text-gray-600">GAME ONLINE STORE CENTER</p>
             </div>
             <p class="text-center text-gray-600 mb-4 font-medium">สมัครสมาชิก</p>
-            
+
             <!-- Register Form -->
             <form action="register.php" method="POST">
                 <div class="mb-4">
@@ -278,8 +302,7 @@
                         class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 w-full">
                         สมัครสมาชิก
                     </button>
-                    <button type="reset"
-                        class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 w-full">
+                    <button type="reset" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 w-full">
                         ล้างข้อมูล
                     </button>
                 </div>
@@ -290,56 +313,57 @@
     <!-- Dark Mode Toggle -->
     <script>
         // ฟังก์ชันเปลี่ยนธีม
-		function toggleTheme() {
-			const body = document.body;
-			const navbar = document.querySelector("header");
-			const loginSection = document.querySelector(".bg-indigo-600");
-			const logo = document.getElementById("logo");
-			const toggle = document.getElementById("themeToggle");
-			const isDarkMode = toggle.checked;
+        function toggleTheme() {
+            const body = document.body;
+            const navbar = document.querySelector("header");
+            const loginSection = document.querySelector(".bg-indigo-600");
+            const logo = document.getElementById("logo");
+            const toggle = document.getElementById("themeToggle");
+            const isDarkMode = toggle.checked;
 
-			if (isDarkMode) {
-				logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
-				body.classList.add("dark-mode");
-				body.style.backgroundColor = "#10142b"; // ยังคงไว้เพื่อความเข้ากันกับ CSS เดิม
-				navbar.style.backgroundColor = "#1a1f36";
-				loginSection.style.backgroundColor = "#232c58";
-			} else {
-				logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
-				body.classList.remove("dark-mode");
-				body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
-				navbar.style.backgroundColor = "";
-				loginSection.style.backgroundColor = "";
-			}
+            if (isDarkMode) {
+                logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
+                body.classList.add("dark-mode");
+                body.style.backgroundColor = "#10142b"; // ยังคงไว้เพื่อความเข้ากันกับ CSS เดิม
+                navbar.style.backgroundColor = "#1a1f36";
+                loginSection.style.backgroundColor = "#232c58";
+            } else {
+                logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
+                body.classList.remove("dark-mode");
+                body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
+                navbar.style.backgroundColor = "";
+                loginSection.style.backgroundColor = "";
+            }
 
-			localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-		}
+            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        }
 
-		// โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
-		window.onload = function () {
-			const savedTheme = localStorage.getItem("theme");
-			const toggle = document.getElementById("themeToggle");
-			const body = document.body;
-			const navbar = document.querySelector("header");
-			const loginSection = document.querySelector(".bg-indigo-600");
-			const logo = document.getElementById("logo");
+        // โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
+        window.onload = function () {
+            const savedTheme = localStorage.getItem("theme");
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const navbar = document.querySelector("header");
+            const loginSection = document.querySelector(".bg-indigo-600");
+            const logo = document.getElementById("logo");
 
-			if (savedTheme === "dark") {
-				toggle.checked = true;
-				body.classList.add("dark-mode");
-				logo.src = "image/logo_player/dark_logo.png";
-				body.style.backgroundColor = "#10142b";
-				navbar.style.backgroundColor = "#1a1f36";
-				loginSection.style.backgroundColor = "#232c58";
-			} else {
-				body.classList.remove("dark-mode");
-				logo.src = "image/logo_player/light_logo.png";
-				body.style.backgroundColor = "";
-				navbar.style.backgroundColor = "";
-				loginSection.style.backgroundColor = "";
-			}
-		};
+            if (savedTheme === "dark") {
+                toggle.checked = true;
+                body.classList.add("dark-mode");
+                logo.src = "image/logo_player/dark_logo.png";
+                body.style.backgroundColor = "#10142b";
+                navbar.style.backgroundColor = "#1a1f36";
+                loginSection.style.backgroundColor = "#232c58";
+            } else {
+                body.classList.remove("dark-mode");
+                logo.src = "image/logo_player/light_logo.png";
+                body.style.backgroundColor = "";
+                navbar.style.backgroundColor = "";
+                loginSection.style.backgroundColor = "";
+            }
+        };
     </script>
 
 </body>
+
 </html>
