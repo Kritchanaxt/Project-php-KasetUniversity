@@ -15,6 +15,7 @@
             const logoutBtn = document.getElementById("logoutBtn");
             const loginBtn = document.getElementById("loginBtn");
             const registerBtn = document.getElementById("registerBtn");
+            const cartModal = document.getElementById("cart-modal");
 
             errorMessage.className = "mt-4 text-red-500 text-center";
             errorMessage.id = "errorMessage";
@@ -24,40 +25,49 @@
             const username = localStorage.getItem("username");
             updateLoginUI(username);
 
-            // Fetch game IDs
-            fetch("get_game_ids.php")
-                .then(response => {
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("API Response:", data);
-                    displayGameIds(data);
-                })
-                .catch(error => {
-                    console.error("Error fetching game IDs:", error);
-                    errorMessage.textContent = "เกิดข้อผิดพลาดในการโหลดไอดีเกม กรุณาลองใหม่!";
-                    errorMessage.style.display = "block";
-                    gameIdContainer.innerHTML = "";
-                    noGameId.classList.remove("hidden");
-                });
+            // Fetch game IDs and initialize points
+            fetchGameIdsAndPoints();
+
+            function fetchGameIdsAndPoints() {
+                // Fetch game IDs
+                fetch("get_game_ids.php")
+                    .then(response => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("API Response (Game IDs):", data);
+                        displayGameIds(data);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching game IDs:", error);
+                        errorMessage.textContent = "เกิดข้อผิดพลาดในการโหลดไอดีเกม กรุณาลองใหม่!";
+                        errorMessage.style.display = "block";
+                        gameIdContainer.innerHTML = "";
+                        noGameId.classList.remove("hidden");
+                    });
+
+                // Fetch and update points
+                if (username) {
+                    fetchProfileData(username);
+                }
+            }
 
             function updateLoginUI(username) {
                 if (!username) {
-                    // User not logged in
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-block";
                     if (registerBtn) registerBtn.style.display = "inline-block";
                     if (pointsDisplay) pointsDisplay.style.display = "none";
-                    cartCount.textContent = "0"; // Reset cart count
+                    cartCount.textContent = "0";
+                    localStorage.removeItem("points");
+                    localStorage.removeItem("user_id");
                 } else {
-                    // User logged in
                     if (logoutBtn) logoutBtn.style.display = "inline-block";
                     if (loginBtn) loginBtn.style.display = "none";
                     if (registerBtn) registerBtn.style.display = "none";
-                    if (pointsDisplay) {
-                        fetchProfileData(username); // Fetch profile data including points
-                    }
+                    if (pointsDisplay) pointsDisplay.style.display = "inline-block";
+                    fetchProfileData(username);
                 }
             }
 
@@ -67,25 +77,50 @@
                     .then(data => {
                         console.log("Profile Data:", data); // Debug log
                         if (data.logged_in) {
-                            const point = data.user.point || 0; // Match HomePage.html structure
+                            const point = data.user.point || 0;
+                            const user_id = data.user.user_id || ''; // Assuming get_profile.php returns user_id
                             pointsDisplay.textContent = `คงเหลือ ${point}.00 เครดิต`;
                             pointsDisplay.style.display = "inline-block";
+                            localStorage.setItem("points", point);
+                            localStorage.setItem("user_id", user_id);
+                            localStorage.setItem("username", username);
+                            syncPointsWithSession(point, user_id); // Sync points with session
                         } else {
-                            console.warn("User not logged in from server, but localStorage has username.");
                             pointsDisplay.textContent = `คงเหลือ 0.00 เครดิต`;
                             pointsDisplay.style.display = "inline-block";
+                            localStorage.removeItem("points");
+                            localStorage.removeItem("user_id");
+                            localStorage.removeItem("username");
                         }
                     })
                     .catch(error => {
                         console.error("Error loading profile data:", error);
                         pointsDisplay.textContent = `คงเหลือ 0.00 เครดิต`;
                         pointsDisplay.style.display = "inline-block";
+                        localStorage.removeItem("points");
+                        localStorage.removeItem("user_id");
+                        localStorage.removeItem("username");
                     });
+            }
+
+            function syncPointsWithSession(points, user_id) {
+                fetch('sync_points.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ points: points, user_id: user_id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        console.error("Error syncing points:", data.message);
+                    }
+                })
+                .catch(error => console.error("Error syncing points:", error));
             }
 
             function displayGameIds(data) {
                 if (!data.success || !data.gameIds || data.gameIds.length === 0) {
-                    errorMessage.textContent = data.message || "ไม่มีไอดีゲームที่พร้อมขาย!";
+                    errorMessage.textContent = "ไม่มีไอดีゲームที่พร้อมขาย!";
                     errorMessage.style.display = "block";
                     gameIdContainer.innerHTML = "";
                     noGameId.classList.remove("hidden");
@@ -112,11 +147,11 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             ${games.map(game => `
-                                <div class="game-card ${game.status === 'available' ? '' : 'sold'} transform transition-transform duration-300 hover:scale-105" data-id="${game.account_id}">
+                                <div class="game-card ${game.status === 'available' ? '' : 'sold'} transform transition-transform duration-300 hover:scale-105" data-id="${game.account_id || ''}">
                                     <div class="game-card-inner">
                                         <div class="game-card-front p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
                                             <div class="card-content text-center">
-                                                <h4 class="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">#${game.account_id}</h4>
+                                                <h4 class="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">#${game.account_id || 'N/A'}</h4>
                                                 <div class="status-badge inline-block px-3 py-1 rounded-full text-white text-sm font-medium ${game.status === 'available' ? 'bg-green-500' : 'bg-red-500'}">
                                                     ${game.status === 'available' ? 'Available' : 'Sold'}
                                                 </div>
@@ -126,12 +161,12 @@
                                         <div class="game-card-back p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
                                             <div class="card-content text-center">
                                                 <h4 class="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">Game ID Details</h4>
-                                                <p class="mb-2 text-gray-700 dark:text-gray-300"><span class="font-medium">Username:</span> ${game.username}</p>
-                                                <p class="mb-2 text-gray-700 dark:text-gray-300"><span class="font-medium">Details:</span> ${game.details}</p>
+                                                <p class="mb-2 text-gray-700 dark:text-gray-300"><span class="font-medium">Username:</span> ${game.username || 'N/A'}</p>
+                                                <p class="mb-2 text-gray-700 dark:text-gray-300"><span class="font-medium">Details:</span> ${game.details || 'N/A'}</p>
                                                 <p class="mb-4 text-gray-700 dark:text-gray-300"><span class="font-medium">Status:</span> ${game.status}</p>
                                                 ${game.status === 'available' ? `
                                                     <button class="buy-btn w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-300">Buy Now</button>
-                                                    <button class="cart-btn w-full mt-3 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300">Add to Cart</button>
+                                                    <button class="cart-btn w-full mt-3 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300" data-id="${game.account_id || ''}">Add to Cart</button>
                                                 ` : `<p class="sold-text text-red-500 font-semibold">Already Sold</p>`}
                                             </div>
                                         </div>
@@ -162,7 +197,9 @@
                                 alert("Please login first");
                                 return;
                             }
-                            purchaseGame(this.getAttribute('data-id'), card, 'buy_now');
+                            const accountId = this.getAttribute('data-id') || card.getAttribute('data-id');
+                            console.log("Buying with account_id:", accountId, "Points:", localStorage.getItem("points"));
+                            purchaseGame(accountId, card, 'buy_now');
                         });
                     }
 
@@ -175,9 +212,50 @@
                                 alert("Please login first");
                                 return;
                             }
-                            purchaseGame(this.getAttribute('data-id'), card, 'add_to_cart');
+                            const accountId = this.getAttribute('data-id') || card.getAttribute('data-id');
+                            console.log("Adding to cart with account_id:", accountId, "Points:", localStorage.getItem("points"));
+                            addToCart(accountId);
                         });
                     }
+                });
+            }
+
+            function addToCart(account_id) {
+                const username = localStorage.getItem("username");
+                if (!username) {
+                    alert("Please login first");
+                    return;
+                }
+
+                if (!account_id) {
+                    alert("Missing account_id for cart operation");
+                    console.error("No account_id provided for cart addition");
+                    return;
+                }
+
+                const userPoints = parseFloat(localStorage.getItem("points")) || 0;
+
+                fetch('buy_game.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: account_id, action: 'add_to_cart' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        cartCount.textContent = data.cart_count || 0;
+                        alert('เพิ่มลงตะกร้าสสำเร็จ! จำนวนในตะกร้า: ' + data.cart_count);
+                        if (data.cart_item) {
+                            console.log("Cart item added:", data.cart_item);
+                            updateCartModal();
+                        }
+                    } else {
+                        alert(data.message || 'Transaction failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Cart error:', error);
+                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
                 });
             }
 
@@ -187,6 +265,15 @@
                     alert("Please login first");
                     return;
                 }
+
+                if (!gameId) {
+                    alert("Missing account_id for purchase");
+                    console.error("No account_id provided for purchase");
+                    return;
+                }
+
+                const userPoints = parseFloat(localStorage.getItem("points")) || 0;
+                console.log("Attempting purchase with points:", userPoints, "for gameId:", gameId);
 
                 fetch('buy_game.php', {
                     method: 'POST',
@@ -207,13 +294,9 @@
                             buyBtn.outerHTML = '<p class="sold-text text-red-500 font-semibold">Already Sold</p>';
                             if (cartBtn) cartBtn.remove();
                             alert('การซื้อสำเร็จ! Points เหลือ: ' + (data.remaining_points || 'N/A'));
-                            fetchProfileData(username); // Update points display after purchase
-                        } else if (action === 'add_to_cart') {
-                            cartCount.textContent = data.cart_count || 0;
-                            alert('เพิ่มลงตะกร้าสำเร็จ! จำนวนในตะกร้า: ' + data.cart_count);
-                            if (data.cart_item) {
-                                console.log("Cart item added:", data.cart_item);
-                            }
+                            localStorage.setItem("points", data.remaining_points || 0);
+                            fetchProfileData(username); // Refresh profile data
+                            updateCartModal(); // Remove item from cart if purchased
                         }
                     } else {
                         alert(data.message || 'Transaction failed');
@@ -225,12 +308,117 @@
                 });
             }
 
+            function updateCartModal() {
+                fetch('get_cart.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: localStorage.getItem("username") })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const cartItems = data.cart || [];
+                        const cartTable = cartModal.querySelector('tbody');
+                        cartTable.innerHTML = '';
+                        cartItems.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.game_id || 'N/A'}</td>
+                                <td>${item.account_id || 'N/A'}</td>
+                                <td>
+                                    <button class="remove-btn bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors" data-id="${item.account_id || ''}">ลบ</button>
+                                </td>
+                            `;
+                            cartTable.appendChild(row);
+                        });
+                        cartCount.textContent = cartItems.length;
+                        document.querySelectorAll('.remove-btn').forEach(btn => {
+                            btn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                const accountId = this.getAttribute('data-id');
+                                if (!accountId) {
+                                    console.error("No account_id for remove operation");
+                                    alert("Missing account_id for removal");
+                                    return;
+                                }
+                                removeFromCart(accountId);
+                            });
+                        });
+                    } else {
+                        cartModal.querySelector('tbody').innerHTML = '<tr><td colspan="3">ไม่มีสินค้าในตะกร้า</td></tr>';
+                        cartCount.textContent = '0';
+                    }
+                })
+                .catch(error => console.error('Error updating cart:', error));
+            }
+
+            function removeFromCart(account_id) {
+                if (!account_id) {
+                    alert("Missing account_id for cart removal");
+                    console.error("No account_id provided for removal");
+                    return;
+                }
+
+                fetch('buy_game.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: account_id, action: 'remove_from_cart' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('ลบสินค้าออกจากตะกร้าสำเร็จ!');
+                        updateCartModal();
+                    } else {
+                        alert(data.message || 'Failed to remove item from cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Remove error:', error);
+                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+                });
+            }
+
+            function purchaseCart() {
+                const username = localStorage.getItem("username");
+                if (!username) {
+                    alert("Please login first");
+                    return;
+                }
+
+                const userPoints = parseFloat(localStorage.getItem("points")) || 0;
+                console.log("Attempting cart purchase with points:", userPoints);
+
+                fetch('buy_game.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'purchase_cart' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('การชำระเงินสำเร็จ! Points เหลือ: ' + (data.remaining_points || 'N/A'));
+                        localStorage.setItem("points", data.remaining_points || 0);
+                        fetchProfileData(username);
+                        updateCartModal();
+                    } else {
+                        alert(data.message || 'Transaction failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Purchase cart error:', error);
+                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+                });
+            }
+
             document.querySelector("main").appendChild(errorMessage);
 
             function logout() {
                 localStorage.removeItem("username");
-                localStorage.removeItem("email"); // Match HomePage.html logout behavior
-                updateLoginUI(null); // Update UI to show login and register buttons
+                localStorage.removeItem("email");
+                localStorage.removeItem("points");
+                localStorage.removeItem("user_id");
+                updateLoginUI(null);
             }
 
             function toggleTheme() {
@@ -241,12 +429,12 @@
                 const isDarkMode = body.classList.toggle("dark-mode");
 
                 if (isDarkMode) {
-                    logo.src = "image/logo_player/dark_logo.png"; // Dark mode logo
+                    logo.src = "image/logo_player/dark_logo.png";
                     body.style.backgroundColor = "#10142b";
                     navbar.style.backgroundColor = "#1a1f36";
-                    loginSection.style.background = "linear-gradient(to right, #070f1f, #0c1326)"; // Match dark mode header
+                    loginSection.style.background = "linear-gradient(to right, #070f1f, #0c1326)";
                 } else {
-                    logo.src = "image/logo_player/light_logo.png"; // Light mode logo
+                    logo.src = "image/logo_player/light_logo.png";
                     body.style.backgroundColor = "";
                     navbar.style.backgroundColor = "";
                     loginSection.style.background = "";
@@ -255,8 +443,10 @@
                 localStorage.setItem("theme", isDarkMode ? "dark" : "light");
             }
 
-            // Load initial cart count
+            // Load initial cart count and points
             cartCount.textContent = sessionStorage.getItem('cartCount') || 0;
+            updateCartModal(); // Load cart on page load
+            if (username) fetchProfileData(username); // Ensure points are loaded on page load
         });
     </script>
     <style>
@@ -309,6 +499,68 @@
         .dark-mode #registerBtn { border-color: white !important; color: white !important; }
         .dark-mode #logoutBtn { background-color: #ef4444 !important; color: white !important; }
         .dark-mode .buy-btn, .dark-mode .cart-btn { background-color: #22c55e !important; color: white !important; }
+
+        /* Cart Modal Styles */
+        #cart-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        #cart-modal h2 {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #cart-modal table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        #cart-modal table th, #cart-modal table td {
+            border: 1px solid #ccc;
+            padding: 0.75rem;
+            text-align: left;
+            color: white;
+        }
+        #cart-modal table th {
+            background: #007bff;
+            color: white;
+        }
+        #cart-modal .remove-btn, #cart-modal .purchase-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        #cart-modal .remove-btn:hover, #cart-modal .purchase-btn:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
+        #cart-modal .close-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        #cart-modal .close-btn:hover {
+            background: #5a6268;
+            transform: scale(1.05);
+        }
         @media (max-width: 768px) {
             .nav-menu { gap: 0.75rem; font-size: 0.875rem; }
             .header-actions { gap: 0.5rem; }
@@ -316,12 +568,14 @@
             .game-section { padding: 1.5rem 0; }
             .filters { justify-content: center; }
             .filters button { padding: 0.5rem 1rem; font-size: 0.875rem; }
+            #cart-modal { width: 85%; }
         }
         @media (max-width: 480px) {
             header { padding: 0.5rem; }
             .nav-menu { flex-wrap: wrap; justify-content: center; }
             .header-actions { flex-wrap: wrap; justify-content: center; }
             .game-card { height: 200px; }
+            #cart-modal { width: 80%; }
         }
     </style>
 </head>
@@ -383,5 +637,29 @@
             </div>
         </div>
     </footer>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <h2>🛒 ตะกร้าสินค้าของคุณ</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Game ID</th>
+                    <th>Account ID</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button class="purchase-btn mt-4" onclick="purchaseCart()">ชำระเงิน</button>
+        <button class="close-btn mt-2" onclick="toggleModal()">ปิด</button>
+    </div>
+
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
 </body>
 </html>

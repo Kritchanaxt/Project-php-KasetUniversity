@@ -40,7 +40,6 @@ try {
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
-    // ใช้ "s" เพราะ user_id ดูเหมือนเป็น VARCHAR (เช่น 'U0204')
     $stmt->bind_param("s", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -50,10 +49,12 @@ try {
         $_SESSION["username"] = $row["username"];
         $_SESSION["email"] = $row["email"];
         $_SESSION["phone"] = $row["phone"];
+        $_SESSION["points"] = $row["point"]; // Ensure points are stored in session
 
         // Debug: ตรวจสอบข้อมูลที่ดึงจากฐานข้อมูล (เฉพาะในโหมด DEBUG)
         if (DEBUG) {
             error_log("DB Data: " . print_r($row, true));
+            error_log("Session Points Set: " . $_SESSION["points"]);
         }
 
         // ส่งข้อมูลกลับไปในรูปแบบ JSON รวมทั้ง point
@@ -63,13 +64,14 @@ try {
                 "username" => $row["username"],
                 "email" => $row["email"],
                 "phone" => $row["phone"],
-                "point" => $row["point"] // ดึงค่า point จากฐานข้อมูล
+                "point" => $row["point"]
             ]
         ];
         echo json_encode($response);
     } else {
         // กรณีไม่พบข้อมูลผู้ใช้ แต่ยัง logged in
         echo json_encode(["logged_in" => false, "message" => "User data not found in database"]);
+        $_SESSION["points"] = 0; // Default to 0 if user not found
     }
 
     $stmt->close();
@@ -79,6 +81,7 @@ try {
         error_log("Error: " . $e->getMessage() . " in " . $e->getFile() . " at line " . $e->getLine());
     }
     echo json_encode(["logged_in" => false, "message" => "An error occurred"]);
+    $_SESSION["points"] = 0; // Default to 0 on error
 }
 
 $conn->close();
