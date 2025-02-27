@@ -191,18 +191,18 @@
                 <span class="text-2xl font-bold logo-text">PLAYER HAVEN</span>
             </div>
             <div class="hidden md:flex space-x-6">
-                <a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
-				<a href="HomePage.html" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
-				<a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
-				<a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
-				<a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
-				<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
+                <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">หน้าแรก</a>
+                <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">ซื้อไอดีเกม</a>
+                <a href="#" class="nav-link hover:text-indigo-300 transition-all">สุ่มไอดีเกม</a>
+                <a href="TopUpCredit.html" class="nav-link hover:text-indigo-300 transition-all">เติม Points</a>
+                <a href="ProfileEdit.html" class="nav-link hover:text-indigo-300 transition-all">ดูโปรไฟล์</a>
+                <a href="#" class="nav-link hover:text-indigo-300 transition-all">ติดต่อเรา</a>
             </div>
             <div class="flex items-center space-x-4">
                 <div class="relative flex items-center space-x-2">
                     <button class="flex items-center hover:text-indigo-300 focus:outline-none">
                         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile" class="w-8 h-8 rounded-full mr-2" />
-                        <span>Korkrit</span>
+                        <span>User</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                         </svg>
@@ -218,23 +218,44 @@
         <aside class="sidebar w-full md:w-64 p-6 rounded-lg shadow-md">
             <ul class="space-y-4">
                 <li>
-                    <a href="TopUpHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Top-Up History</span>
+                    <a href="ProfileEdit.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-semibold">แก้ไขโปรไฟล์</span>
                     </a>
                 </li>
                 <li>
-                    <a href="PurchaseHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Purchase History</span>
+                    <a href="TopUpHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg bg-indigo-600 bg-opacity-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-semibold">ประวัติการเติมเงิน</span>
                     </a>
                 </li>
                 <li>
-                    <a href="GameCardBox.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md bg-indigo-600 bg-opacity-20">
-                        <span class="font-semibold">Game Card Box</span>
+                    <a href="PurchaseHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                        </svg>
+                        <span class="font-semibold">ประวัติการซื้อ</span>
                     </a>
                 </li>
                 <li>
-                    <a href="Mailbox.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-3 hover:shadow-md">
-                        <span class="font-semibold">Mailbox</span>
+                    <a href="GameCardBox.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z" />
+                        </svg>
+                        <span class="font-semibold">กล่องไอดีเกม</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="Mailbox.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                        <span class="font-semibold">กล่องข้อความ</span>
                     </a>
                 </li>
             </ul>
