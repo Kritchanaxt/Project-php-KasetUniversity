@@ -357,6 +357,31 @@
             } else {
                 body.classList.remove("dark-mode");
                 logo.src = "image/logo_player/light_logo.png";
+                body.style.backgroundColor = "#10142b";
+				navbar.style.backgroundColor = "#1a1f36";
+				loginSection.style.backgroundColor = "#232c58";
+            }
+        };
+
+        // โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
+        window.onload = function () {
+            const savedTheme = localStorage.getItem("theme");
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const navbar = document.querySelector("header");
+            const loginSection = document.querySelector(".bg-indigo-600");
+            const logo = document.getElementById("logo");
+
+            if (savedTheme === "dark") {
+                toggle.checked = true;
+                body.classList.add("dark-mode");
+                logo.src = "image/logo_player/dark_logo.png";
+                body.style.backgroundColor = "#10142b";
+                navbar.style.backgroundColor = "#1a1f36";
+                loginSection.style.backgroundColor = "#232c58";
+            } else {
+                body.classList.remove("dark-mode");
+                logo.src = "image/logo_player/light_logo.png";
                 body.style.backgroundColor = "";
                 navbar.style.backgroundColor = "";
                 loginSection.style.backgroundColor = "";
