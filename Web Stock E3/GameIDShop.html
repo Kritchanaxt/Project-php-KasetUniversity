@@ -221,163 +221,155 @@
             }
 
             function addToCart(account_id) {
-                const username = localStorage.getItem("username");
-                if (!username) {
-                    alert("Please login first");
-                    return;
-                }
+    const username = localStorage.getItem("username");
+    if (!username) {
+        alert("Please login first");
+        return;
+    }
 
-                if (!account_id) {
-                    alert("Missing account_id for cart operation");
-                    console.error("No account_id provided for cart addition");
-                    return;
-                }
+    fetch('buy_game.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ account_id: account_id, action: 'add_to_cart' })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            cartCount.textContent = data.cart_count || 0;
+            alert('เพิ่มลงตะกร้าสำเร็จ! จำนวนในตะกร้า: ' + data.cart_count);
+            updateCartModal();
+        } else {
+            alert(data.message || 'Transaction failed');
+        }
+    })
+    .catch(error => {
+        console.error('Cart error:', error);
+        alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+    });
+}
 
-                const userPoints = parseFloat(localStorage.getItem("points")) || 0;
+function purchaseGame(gameId, cardElement, action) {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        alert("Please login first");
+        return;
+    }
 
-                fetch('buy_game.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ account_id: account_id, action: 'add_to_cart' })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        cartCount.textContent = data.cart_count || 0;
-                        alert('เพิ่มลงตะกร้าสสำเร็จ! จำนวนในตะกร้า: ' + data.cart_count);
-                        if (data.cart_item) {
-                            console.log("Cart item added:", data.cart_item);
-                            updateCartModal();
-                        }
-                    } else {
-                        alert(data.message || 'Transaction failed');
-                    }
-                })
-                .catch(error => {
-                    console.error('Cart error:', error);
-                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
-                });
-            }
+    fetch('buy_game.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ account_id: gameId, action: action, username: username })
+})
+.then(response => response.json())
+.then(data => {
+    console.log(data); // เพิ่มการแสดงผลข้อผิดพลาดในคอนโซล
+    if (data.success) {
+        alert('การซื้อสำเร็จ! Points เหลือ: ' + (data.remaining_points || 'N/A'));
+        localStorage.setItem("points", data.remaining_points || 0);
+        updateCartModal();
+    } else {
+        alert(data.message || 'Transaction failed');
+    }
+})
+.catch(error => {
+    console.error('Purchase error:', error);
+    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+});
+fetch('sync_points.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ points: points, user_id: user_id })
+})
+.then(response => response.json())  // แปลงข้อมูลที่ได้รับเป็น JSON
+.then(data => {
+    console.log(data);  // แสดงข้อมูลที่ได้รับจากเซิร์ฟเวอร์
+})
+.catch(error => {
+    console.error("Error syncing points:", error);  // แสดงข้อผิดพลาดในกรณีเกิดปัญหา
+});
 
-            function purchaseGame(gameId, cardElement, action) {
-                const username = localStorage.getItem("username");
-                if (!username) {
-                    alert("Please login first");
-                    return;
-                }
 
-                if (!gameId) {
-                    alert("Missing account_id for purchase");
-                    console.error("No account_id provided for purchase");
-                    return;
-                }
+}
 
-                const userPoints = parseFloat(localStorage.getItem("points")) || 0;
-                console.log("Attempting purchase with points:", userPoints, "for gameId:", gameId);
 
-                fetch('buy_game.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ account_id: gameId, action: action })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        if (action === 'buy_now') {
-                            cardElement.classList.add('sold');
-                            const statusBadge = cardElement.querySelector('.status-badge');
-                            statusBadge.textContent = 'Sold';
-                            statusBadge.classList.remove('bg-green-500');
-                            statusBadge.classList.add('bg-red-500');
-                            const buyBtn = cardElement.querySelector('.buy-btn');
-                            const cartBtn = cardElement.querySelector('.cart-btn');
-                            buyBtn.outerHTML = '<p class="sold-text text-red-500 font-semibold">Already Sold</p>';
-                            if (cartBtn) cartBtn.remove();
-                            alert('การซื้อสำเร็จ! Points เหลือ: ' + (data.remaining_points || 'N/A'));
-                            localStorage.setItem("points", data.remaining_points || 0);
-                            fetchProfileData(username); // Refresh profile data
-                            updateCartModal(); // Remove item from cart if purchased
-                        }
-                    } else {
-                        alert(data.message || 'Transaction failed');
-                    }
-                })
-                .catch(error => {
-                    console.error('Purchase error:', error);
-                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
-                });
-            }
+            // ใน JavaScript ของคุณ
+function purchaseGame(gameId, cardElement, action) {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        alert("Please login first");
+        return;
+    }
 
-            function updateCartModal() {
-                fetch('get_cart.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: localStorage.getItem("username") })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const cartItems = data.cart || [];
-                        const cartTable = cartModal.querySelector('tbody');
-                        cartTable.innerHTML = '';
-                        cartItems.forEach(item => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${item.game_id || 'N/A'}</td>
-                                <td>${item.account_id || 'N/A'}</td>
-                                <td>
-                                    <button class="remove-btn bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition-colors" data-id="${item.account_id || ''}">ลบ</button>
-                                </td>
-                            `;
-                            cartTable.appendChild(row);
-                        });
-                        cartCount.textContent = cartItems.length;
-                        document.querySelectorAll('.remove-btn').forEach(btn => {
-                            btn.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                const accountId = this.getAttribute('data-id');
-                                if (!accountId) {
-                                    console.error("No account_id for remove operation");
-                                    alert("Missing account_id for removal");
-                                    return;
-                                }
-                                removeFromCart(accountId);
-                            });
-                        });
-                    } else {
-                        cartModal.querySelector('tbody').innerHTML = '<tr><td colspan="3">ไม่มีสินค้าในตะกร้า</td></tr>';
-                        cartCount.textContent = '0';
-                    }
-                })
-                .catch(error => console.error('Error updating cart:', error));
-            }
+    fetch('buy_game.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ account_id: gameId, action: action, username: username })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Purchase successful! Points remaining: ' + data.remaining_points);
+            localStorage.setItem("points", data.remaining_points);
+            updatePointsDisplay(); // ฟังก์ชันเพื่ออัปเดตแสดงพอยต์ใน UI
+            updateCartModal(); // อัปเดตตะกร้า
+        } else {
+            alert(data.message || 'Transaction failed');
+        }
+    })
+    .catch(error => {
+        console.error('Purchase error:', error);
+        alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+    });
+}
 
-            function removeFromCart(account_id) {
-                if (!account_id) {
-                    alert("Missing account_id for cart removal");
-                    console.error("No account_id provided for removal");
-                    return;
-                }
+            function updateCart() {
+    fetch('cart.php', {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const cartItems = data.cart_items;
+            let cartHtml = '';
+            cartItems.forEach(item => {
+                cartHtml += `
+                    <div class="cart-item">
+                        <p>Game ID: ${item.game_id}</p>
+                        <p>Username: ${item.username}</p>
+                        <p>Price: ${item.price} บาท</p>
+                        <p>Status: ${item.status}</p>
+                        <p>Details: ${item.details}</p>
+                        <button onclick="removeFromCart('${item.account_id}')">Remove</button>
+                    </div>
+                `;
+            });
+            document.getElementById('cart-container').innerHTML = cartHtml;
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching cart:', error);
+    });
+}
 
-                fetch('buy_game.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ account_id: account_id, action: 'remove_from_cart' })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('ลบสินค้าออกจากตะกร้าสำเร็จ!');
-                        updateCartModal();
-                    } else {
-                        alert(data.message || 'Failed to remove item from cart');
-                    }
-                })
-                .catch(error => {
-                    console.error('Remove error:', error);
-                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
-                });
-            }
+function removeFromCart(accountId) {
+    fetch('cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove_from_cart', account_id: accountId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateCart();  // Update cart after removal
+        }
+    })
+    .catch(error => {
+        console.error('Error removing item:', error);
+    });
+}
+
+updateCart();  // Call to load the cart when the page loads
+
 
             function purchaseCart() {
                 const username = localStorage.getItem("username");
