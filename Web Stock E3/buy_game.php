@@ -1,227 +1,456 @@
 <?php
-session_start();
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Database connection file
+require_once 'db_connect.php';
+
+// Set header to JSON
 header('Content-Type: application/json');
 
-// เปิดการแสดง error เพื่อดีบัก
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Get JSON input
+$jsonInput = file_get_contents('php://input');
+$data = json_decode($jsonInput, true);
 
-// เชื่อมต่อฐานข้อมูล
-$servername = getenv('DB_SERVER') ?: '158.108.101.153';
-$username = getenv('DB_USERNAME') ?: 'std6630202015';
-$password = getenv('DB_PASSWORD') ?: 'g3#Vjp8L';
-$dbname = getenv('DB_NAME') ?: 'it_std6630202015';
+// Response array
+$response = array('success' => false, 'message' => '');
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-if (!$conn) {
-    error_log('Database connection failed: ' . mysqli_connect_error());
-    die(json_encode(['success' => false, 'message' => 'Database connection failed: ' . mysqli_connect_error()]));
-}
-mysqli_set_charset($conn, "utf8");
-
-// เริ่มต้นตะกร้าถ้ายังไม่มี
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
-
-// อ่านข้อมูลจาก input JSON
-$data = json_decode(file_get_contents('php://input'), true);
-if (!$data) {
-    error_log('Invalid JSON input');
-    echo json_encode(['success' => false, 'message' => 'Invalid JSON input']);
+// Check if action is set
+if (!isset($data['action'])) {
+    $response['message'] = 'Action not specified';
+    echo json_encode($response);
     exit;
 }
 
-$action = $data['action'] ?? '';
-$username = $data['username'] ?? ''; // ใช้ username จากผู้ใช้ที่ล็อคอิน
-
-// ตรวจสอบว่าผู้ใช้ล็อคอินหรือไม่
-if (empty($username)) {
-    error_log('User not logged in');
-    echo json_encode(['success' => false, 'message' => 'Please login first']);
-    exit;
+// Different actions: add_to_cart, remove_from_cart, buy_now, purchase_cart
+switch ($data['action']) {
+    case 'add_to_cart':
+        handleAddToCart($conn, $data, $response);
+        break;
+        
+    case 'remove_from_cart':
+        handleRemoveFromCart($conn, $data, $response);
+        break;
+        
+    case 'buy_now':
+        handleBuyNow($conn, $data, $response);
+        break;
+        
+    case 'purchase_cart':
+        handlePurchaseCart($conn, $data, $response);
+        break;
+        
+    default:
+        $response['message'] = 'Invalid action';
+        break;
 }
 
-// ดึง user_id จาก username (สมมติว่ามีตาราง users)
-$user_query = "SELECT user_id, point FROM users WHERE username = '$username'";
-$user_result = mysqli_query($conn, $user_query);
-if (!$user_result || mysqli_num_rows($user_result) == 0) {
-    error_log('User not found: ' . $username);
-    echo json_encode(['success' => false, 'message' => 'User not found']);
-    exit;
-}
+// Return JSON response
+echo json_encode($response);
+$conn->close();
 
-$user = mysqli_fetch_assoc($user_result);
-$user_id = $user['user_id'];
-$current_points = $user['point'] ?? 0;
-
-if ($action === 'buy_now') {
-    $account_id = mysqli_real_escape_string($conn, $data['account_id'] ?? '');
-
-    if (empty($account_id)) {
-        error_log('Missing account_id in buy_now action');
-        echo json_encode(['success' => false, 'message' => 'Missing account_id']);
-        exit;
+// Function to handle adding item to cart
+function handleAddToCart($conn, $data, &$response) {
+    // Check if user is logged in
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+        $response['message'] = 'User not logged in';
+        return;
     }
-
-    // ดึงข้อมูลสินค้าเพื่อเช็คราคาและสถานะ
-    $account_query = "SELECT game_id, price, status FROM Accounts WHERE account_id = '$account_id'";
-    $account_result = mysqli_query($conn, $account_query);
-    if (!$account_result || mysqli_num_rows($account_result) == 0) {
-        error_log('Account not found: ' . $account_id);
-        echo json_encode(['success' => false, 'message' => 'Item not found']);
-        exit;
+    
+    // Validate required params
+    if (!isset($data['account_id'])) {
+        $response['message'] = 'Missing account ID';
+        return;
     }
-
-    $account = mysqli_fetch_assoc($account_result);
-    if ($account['status'] !== 'available') {
-        error_log('Item not available for account_id: ' . $account_id);
-        echo json_encode(['success' => false, 'message' => 'Item already sold or not available']);
-        exit;
+    
+    $userId = $_SESSION['user_id'];
+    $accountId = filter_var($data['account_id'], FILTER_VALIDATE_INT);
+    
+    if ($accountId === false) {
+        $response['message'] = 'Invalid account ID';
+        return;
     }
-
-    $price = $account['price'];
-    $game_id = $account['game_id'];
-
-    // ตรวจสอบพอยต์ของผู้ใช้ว่าพอหรือไม่
-    if ($current_points < $price) {
-        error_log('Insufficient points for user ' . $username . ': ' . $current_points . ' < ' . $price);
-        echo json_encode(['success' => false, 'message' => 'Insufficient points. Required: ' . $price . ', Available: ' . $current_points]);
-        exit;
-    }
-
-    // อัปเดตสถานะใน Accounts
-    $update_query = "UPDATE Accounts SET status = 'sold' WHERE account_id = '$account_id'";
-    if (!mysqli_query($conn, $update_query)) {
-        error_log('Update query failed for account_id ' . $account_id . ': ' . mysqli_error($conn));
-        echo json_encode(['success' => false, 'message' => 'Update failed: ' . mysqli_error($conn)]);
-        exit;
-    }
-
-    if (mysqli_affected_rows($conn) == 0) {
-        error_log('No rows updated for account_id: ' . $account_id);
-        echo json_encode(['success' => false, 'message' => 'No rows updated']);
-        exit;
-    }
-
-    // บันทึกข้อมูลลง TempAccounts
-    $insert_query = "INSERT INTO TempAccounts (account_id, game_id, user_id, username, password, details, price, status)
-                    SELECT account_id, game_id, '$user_id', username, password, details, price, 'sold'
-                    FROM Accounts WHERE account_id = '$account_id'";
-    if (!mysqli_query($conn, $insert_query)) {
-        error_log('Insert into TempAccounts failed for account_id ' . $account_id . ': ' . mysqli_error($conn));
-        echo json_encode(['success' => false, 'message' => 'Insert failed: ' . mysqli_error($conn)]);
-        exit;
-    }
-
-    // หักพอยต์ของผู้ใช้
-    $new_points = $current_points - $price;
-    $update_points_query = "UPDATE users SET point = '$new_points' WHERE user_id = '$user_id'";
-    if (!mysqli_query($conn, $update_points_query)) {
-        error_log('Update points failed for user_id ' . $user_id . ': ' . mysqli_error($conn));
-        echo json_encode(['success' => false, 'message' => 'Failed to update points: ' . mysqli_error($conn)]);
-        exit;
-    }
-
-    echo json_encode(['success' => true, 'remaining_points' => $new_points]);
-} elseif ($action === 'purchase_cart') {
-    if (empty($_SESSION['cart'])) {
-        error_log('Cart is empty for user ' . $username);
-        echo json_encode(['success' => false, 'message' => 'Cart is empty. Please add items to your cart.']);
-        exit;
-    }
-
-    $success = true;
-    $total_price = 0;
-    $errors = [];
-
-    // คำนวณราคารวมและตรวจสอบสินค้าในตะกร้า
-    foreach ($_SESSION['cart'] as $item) {
-        $account_id = mysqli_real_escape_string($conn, $item['account_id'] ?? '');
-        if (empty($account_id)) {
-            $success = false;
-            $errors[] = "Invalid account_id in cart";
-            continue;
+    
+    try {
+        // Check if account exists and is available
+        $checkAccountStmt = $conn->prepare("SELECT account_id, status FROM accounts WHERE account_id = ?");
+        $checkAccountStmt->bind_param("i", $accountId);
+        $checkAccountStmt->execute();
+        $accountResult = $checkAccountStmt->get_result();
+        
+        if ($accountResult->num_rows === 0) {
+            $response['message'] = 'Account not found';
+            return;
         }
-
-        $account_query = "SELECT price, status FROM Accounts WHERE account_id = '$account_id'";
-        $account_result = mysqli_query($conn, $account_query);
-        if (!$account_result || mysqli_num_rows($account_result) == 0) {
-            $success = false;
-            $errors[] = "Item not found for account_id: $account_id";
-            continue;
-        }
-
-        $account = mysqli_fetch_assoc($account_result);
+        
+        $account = $accountResult->fetch_assoc();
         if ($account['status'] !== 'available') {
-            $success = false;
-            $errors[] = "Item already sold or not available for account_id: $account_id";
-            continue;
+            $response['message'] = 'Account is not available for purchase';
+            return;
         }
-
-        $total_price += $account['price'];
-    }
-
-    // ตรวจสอบพอยต์ว่าพอหรือไม่
-    if ($current_points < $total_price) {
-        error_log('Insufficient points for user ' . $username . ': ' . $current_points . ' < ' . $total_price);
-        echo json_encode(['success' => false, 'message' => 'Insufficient points. Required: ' . $total_price . ', Available: ' . $current_points]);
-        exit;
-    }
-
-    if ($success) {
-        foreach ($_SESSION['cart'] as $item) {
-            $account_id = mysqli_real_escape_string($conn, $item['account_id'] ?? '');
-            $game_id = mysqli_real_escape_string($conn, $item['game_id'] ?? '');
-
-            if (empty($account_id) || empty($game_id)) {
-                $success = false;
-                $errors[] = "Invalid account_id or game_id in cart";
-                continue;
-            }
-
-            // อัปเดตสถานะใน Accounts
-            $update_query = "UPDATE Accounts SET status = 'sold' WHERE account_id = '$account_id'";
-            if (!mysqli_query($conn, $update_query)) {
-                $success = false;
-                $errors[] = "Update failed for account_id $account_id: " . mysqli_error($conn);
-                continue;
-            }
-
-            // บันทึกข้อมูลลง TempAccounts
-            $insert_query = "INSERT INTO TempAccounts (account_id, game_id, user_id, username, password, details, price, status)
-                            SELECT account_id, game_id, '$user_id', username, password, details, price, 'sold'
-                            FROM Accounts WHERE account_id = '$account_id'";
-            if (!mysqli_query($conn, $insert_query)) {
-                $success = false;
-                $errors[] = "Insert failed for account_id $account_id: " . mysqli_error($conn);
-                continue;
-            }
+        
+        // Check if account is already in cart
+        $checkCartStmt = $conn->prepare("SELECT cart_id FROM cart WHERE user_id = ? AND account_id = ?");
+        $checkCartStmt->bind_param("ii", $userId, $accountId);
+        $checkCartStmt->execute();
+        $cartResult = $checkCartStmt->get_result();
+        
+        if ($cartResult->num_rows > 0) {
+            $response['message'] = 'Account already in cart';
+            $response['success'] = true;
+            
+            // Get cart count
+            $cartCountStmt = $conn->prepare("SELECT COUNT(*) as count FROM cart WHERE user_id = ?");
+            $cartCountStmt->bind_param("i", $userId);
+            $cartCountStmt->execute();
+            $countResult = $cartCountStmt->get_result();
+            $countRow = $countResult->fetch_assoc();
+            $response['cart_count'] = $countRow['count'];
+            
+            return;
         }
-
-        if ($success) {
-            // หักพอยต์ของผู้ใช้
-            $new_points = $current_points - $total_price;
-            $update_points_query = "UPDATE users SET point = '$new_points' WHERE user_id = '$user_id'";
-            if (!mysqli_query($conn, $update_points_query)) {
-                error_log('Update points failed for user_id ' . $user_id . ': ' . mysqli_error($conn));
-                echo json_encode(['success' => false, 'message' => 'Failed to update points: ' . mysqli_error($conn)]);
-                exit;
-            }
-
-            $_SESSION['cart'] = [];
-            echo json_encode(['success' => true, 'remaining_points' => $new_points]);
+        
+        // Add to cart
+        $addCartStmt = $conn->prepare("INSERT INTO cart (user_id, account_id, date_added) VALUES (?, ?, NOW())");
+        $addCartStmt->bind_param("ii", $userId, $accountId);
+        
+        if ($addCartStmt->execute()) {
+            $response['success'] = true;
+            $response['message'] = 'Added to cart successfully';
+            
+            // Get cart count
+            $cartCountStmt = $conn->prepare("SELECT COUNT(*) as count FROM cart WHERE user_id = ?");
+            $cartCountStmt->bind_param("i", $userId);
+            $cartCountStmt->execute();
+            $countResult = $cartCountStmt->get_result();
+            $countRow = $countResult->fetch_assoc();
+            $response['cart_count'] = $countRow['count'];
         } else {
-            error_log('Purchase cart errors: ' . implode('; ', $errors));
-            echo json_encode(['success' => false, 'message' => 'Some items could not be purchased: ' . implode('; ', $errors)]);
+            $response['message'] = 'Failed to add to cart';
         }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Some items in cart are invalid or unavailable']);
+        
+    } catch (Exception $e) {
+        $response['message'] = 'Database error: ' . $e->getMessage();
     }
-} else {
-    error_log('Invalid action: ' . $action);
-    echo json_encode(['success' => false, 'message' => 'Invalid action']);
 }
 
-mysqli_close($conn);
+// Function to handle removing item from cart
+function handleRemoveFromCart($conn, $data, &$response) {
+    // Check if user is logged in
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+        $response['message'] = 'User not logged in';
+        return;
+    }
+    
+    // Validate required params
+    if (!isset($data['account_id'])) {
+        $response['message'] = 'Missing account ID';
+        return;
+    }
+    
+    $userId = $_SESSION['user_id'];
+    $accountId = filter_var($data['account_id'], FILTER_VALIDATE_INT);
+    
+    if ($accountId === false) {
+        $response['message'] = 'Invalid account ID';
+        return;
+    }
+    
+    try {
+        // Remove from cart
+        $removeStmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND account_id = ?");
+        $removeStmt->bind_param("ii", $userId, $accountId);
+        
+        if ($removeStmt->execute()) {
+            $response['success'] = true;
+            $response['message'] = 'Removed from cart successfully';
+            
+            // Get cart count
+            $cartCountStmt = $conn->prepare("SELECT COUNT(*) as count FROM cart WHERE user_id = ?");
+            $cartCountStmt->bind_param("i", $userId);
+            $cartCountStmt->execute();
+            $countResult = $cartCountStmt->get_result();
+            $countRow = $countResult->fetch_assoc();
+            $response['cart_count'] = $countRow['count'];
+        } else {
+            $response['message'] = 'Failed to remove from cart';
+        }
+        
+    } catch (Exception $e) {
+        $response['message'] = 'Database error: ' . $e->getMessage();
+    }
+}
+
+// Function to handle direct purchase (buy now)
+function handleBuyNow($conn, $data, &$response) {
+    // Check if user is logged in
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+        $response['message'] = 'User not logged in';
+        return;
+    }
+    
+    // Validate required params
+    if (!isset($data['account_id']) || !isset($data['price'])) {
+        $response['message'] = 'Missing required parameters';
+        return;
+    }
+    
+    $userId = $_SESSION['user_id'];
+    $accountId = filter_var($data['account_id'], FILTER_VALIDATE_INT);
+    $price = filter_var($data['price'], FILTER_VALIDATE_FLOAT);
+    
+    if ($accountId === false || $price === false) {
+        $response['message'] = 'Invalid parameters';
+        return;
+    }
+    
+    try {
+        // Start transaction
+        $conn->begin_transaction();
+        
+        // Check if account exists and is available
+        $checkAccountStmt = $conn->prepare("SELECT account_id, status, price, game_id FROM accounts WHERE account_id = ?");
+        $checkAccountStmt->bind_param("i", $accountId);
+        $checkAccountStmt->execute();
+        $accountResult = $checkAccountStmt->get_result();
+        
+        if ($accountResult->num_rows === 0) {
+            $response['message'] = 'Account not found';
+            $conn->rollback();
+            return;
+        }
+        
+        $account = $accountResult->fetch_assoc();
+        if ($account['status'] !== 'available') {
+            $response['message'] = 'Account is not available for purchase';
+            $conn->rollback();
+            return;
+        }
+        
+        // Verify price
+        if ($account['price'] != $price) {
+            $response['message'] = 'Price mismatch';
+            $conn->rollback();
+            return;
+        }
+        
+        // Check if user has enough points
+        $checkUserStmt = $conn->prepare("SELECT point FROM users WHERE user_id = ?");
+        $checkUserStmt->bind_param("i", $userId);
+        $checkUserStmt->execute();
+        $userResult = $checkUserStmt->get_result();
+        
+        if ($userResult->num_rows === 0) {
+            $response['message'] = 'User not found';
+            $conn->rollback();
+            return;
+        }
+        
+        $user = $userResult->fetch_assoc();
+        if ($user['point'] < $price) {
+            $response['message'] = 'Insufficient points';
+            $conn->rollback();
+            return;
+        }
+        
+        // Update user points
+        $newPoints = $user['point'] - $price;
+        $updateUserStmt = $conn->prepare("UPDATE users SET point = ? WHERE user_id = ?");
+        $updateUserStmt->bind_param("di", $newPoints, $userId);
+        
+        if (!$updateUserStmt->execute()) {
+            $response['message'] = 'Failed to update user points';
+            $conn->rollback();
+            return;
+        }
+        
+        // Update account status
+        $updateAccountStmt = $conn->prepare("UPDATE accounts SET status = 'sold', buyer_id = ? WHERE account_id = ?");
+        $updateAccountStmt->bind_param("ii", $userId, $accountId);
+        
+        if (!$updateAccountStmt->execute()) {
+            $response['message'] = 'Failed to update account status';
+            $conn->rollback();
+            return;
+        }
+        
+        // Record purchase in purchase history
+        $insertHistoryStmt = $conn->prepare("
+            INSERT INTO purchase_history (user_id, account_id, game_id, price, purchase_date)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+        $gameId = $account['game_id'];
+        $insertHistoryStmt->bind_param("iisd", $userId, $accountId, $gameId, $price);
+        
+        if (!$insertHistoryStmt->execute()) {
+            $response['message'] = 'Failed to record purchase history';
+            $conn->rollback();
+            return;
+        }
+        
+        // Commit transaction
+        $conn->commit();
+        
+        // Update session
+        $_SESSION['user_point'] = $newPoints;
+        
+        $response['success'] = true;
+        $response['message'] = 'Purchase successful';
+        $response['remaining_points'] = $newPoints;
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        $response['message'] = 'Database error: ' . $e->getMessage();
+    }
+}
+
+// Function to handle purchasing all items in cart
+function handlePurchaseCart($conn, $data, &$response) {
+    // Check if user is logged in
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+        $response['message'] = 'User not logged in';
+        return;
+    }
+    
+    // Validate required params
+    if (!isset($data['total_price'])) {
+        $response['message'] = 'Missing total price';
+        return;
+    }
+    
+    $userId = $_SESSION['user_id'];
+    $totalPrice = filter_var($data['total_price'], FILTER_VALIDATE_FLOAT);
+    
+    if ($totalPrice === false) {
+        $response['message'] = 'Invalid total price';
+        return;
+    }
+    
+    try {
+        // Start transaction
+        $conn->begin_transaction();
+        
+        // Get cart items
+        $cartStmt = $conn->prepare("
+            SELECT c.cart_id, c.account_id, a.price, a.game_id, a.status
+            FROM cart c
+            JOIN accounts a ON c.account_id = a.account_id
+            WHERE c.user_id = ?
+        ");
+        $cartStmt->bind_param("i", $userId);
+        $cartStmt->execute();
+        $cartResult = $cartStmt->get_result();
+        
+        if ($cartResult->num_rows === 0) {
+            $response['message'] = 'Cart is empty';
+            $conn->rollback();
+            return;
+        }
+        
+        // Calculate total price from database items and verify with client total
+        $cartItems = array();
+        $dbTotalPrice = 0;
+        
+        while ($item = $cartResult->fetch_assoc()) {
+            if ($item['status'] !== 'available') {
+                $response['message'] = 'One or more items are no longer available';
+                $conn->rollback();
+                return;
+            }
+            
+            $cartItems[] = $item;
+            $dbTotalPrice += $item['price'];
+        }
+        
+        // Verify total price (with small tolerance for floating point)
+        if (abs($dbTotalPrice - $totalPrice) > 0.01) {
+            $response['message'] = 'Price mismatch';
+            $conn->rollback();
+            return;
+        }
+        
+        // Check if user has enough points
+        $checkUserStmt = $conn->prepare("SELECT point FROM users WHERE user_id = ?");
+        $checkUserStmt->bind_param("i", $userId);
+        $checkUserStmt->execute();
+        $userResult = $checkUserStmt->get_result();
+        
+        if ($userResult->num_rows === 0) {
+            $response['message'] = 'User not found';
+            $conn->rollback();
+            return;
+        }
+        
+        $user = $userResult->fetch_assoc();
+        if ($user['point'] < $dbTotalPrice) {
+            $response['message'] = 'Insufficient points';
+            $conn->rollback();
+            return;
+        }
+        
+        // Update user points
+        $newPoints = $user['point'] - $dbTotalPrice;
+        $updateUserStmt = $conn->prepare("UPDATE users SET point = ? WHERE user_id = ?");
+        $updateUserStmt->bind_param("di", $newPoints, $userId);
+        
+        if (!$updateUserStmt->execute()) {
+            $response['message'] = 'Failed to update user points';
+            $conn->rollback();
+            return;
+        }
+        
+        // Process each cart item
+        foreach ($cartItems as $item) {
+            // Update account status
+            $updateAccountStmt = $conn->prepare("UPDATE accounts SET status = 'sold', buyer_id = ? WHERE account_id = ?");
+            $updateAccountStmt->bind_param("ii", $userId, $item['account_id']);
+            
+            if (!$updateAccountStmt->execute()) {
+                $response['message'] = 'Failed to update account status';
+                $conn->rollback();
+                return;
+            }
+            
+            // Record purchase in purchase history
+            $insertHistoryStmt = $conn->prepare("
+                INSERT INTO purchase_history (user_id, account_id, game_id, price, purchase_date)
+                VALUES (?, ?, ?, ?, NOW())
+            ");
+            $insertHistoryStmt->bind_param("iisd", $userId, $item['account_id'], $item['game_id'], $item['price']);
+            
+            if (!$insertHistoryStmt->execute()) {
+                $response['message'] = 'Failed to record purchase history';
+                $conn->rollback();
+                return;
+            }
+        }
+        
+        // Clear user's cart
+        $clearCartStmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
+        $clearCartStmt->bind_param("i", $userId);
+        
+        if (!$clearCartStmt->execute()) {
+            $response['message'] = 'Failed to clear cart';
+            $conn->rollback();
+            return;
+        }
+        
+        // Commit transaction
+        $conn->commit();
+        
+        // Update session
+        $_SESSION['user_point'] = $newPoints;
+        
+        $response['success'] = true;
+        $response['message'] = 'Cart purchase successful';
+        $response['remaining_points'] = $newPoints;
+        $response['redirect_to_history'] = true;
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        $response['message'] = 'Database error: ' . $e->getMessage();
+    }
+}
+?>

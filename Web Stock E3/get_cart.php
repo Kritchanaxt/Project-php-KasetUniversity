@@ -1,45 +1,66 @@
 <?php
-session_start();
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Database connection file
+require_once 'db_connect.php';
+
+// Set header to JSON
 header('Content-Type: application/json');
 
-$conn = mysqli_connect('158.108.101.153', 'std6630202015', 'g3#Vjp8L', 'it_std6630202015');
-mysqli_set_charset($conn, "utf8");
+// Response array
+$response = array('success' => false, 'cart_items' => array());
 
-if (!$conn) {
-    die(json_encode(['success' => false, 'message' => 'Database connection failed']));
+// Check if user is logged in
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true || !isset($_SESSION['user_id'])) {
+    $response['message'] = 'User not logged in';
+    echo json_encode($response);
+    exit;
 }
 
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
+$userId = $_SESSION['user_id'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $action = $data['action'] ?? '';
-
-    if ($action === 'add_to_cart') {
-        $account_id = $data['account_id'];
-        $game_id = $data['game_id'];
-
-        if (!in_array($account_id, array_column($_SESSION['cart'], 'account_id'))) {
-            $_SESSION['cart'][] = ['account_id' => $account_id, 'game_id' => $game_id];
+try {
+    // Get cart items for the user
+    $stmt = $conn->prepare("
+        SELECT c.cart_id, c.user_id, c.account_id, c.date_added, 
+               a.username as account_username, a.price, a.status, a.game_id, a.details
+        FROM cart c
+        JOIN accounts a ON c.account_id = a.account_id
+        WHERE c.user_id = ? AND a.status = 'available'
+    ");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $response['cart_items'][] = array(
+                'cart_id' => $row['cart_id'],
+                'account_id' => $row['account_id'],
+                'username' => $row['account_username'],
+                'price' => $row['price'],
+                'game_id' => $row['game_id'],
+                'details' => $row['details'],
+                'date_added' => $row['date_added']
+            );
         }
-        echo json_encode(['success' => true, 'cart_count' => count($_SESSION['cart'])]);
-    } elseif ($action === 'remove_from_cart') {
-        $account_id = $data['account_id'];
-        $_SESSION['cart'] = array_filter($_SESSION['cart'], fn($item) => $item['account_id'] != $account_id);
-        echo json_encode(['success' => true, 'cart_count' => count($_SESSION['cart'])]);
+        $response['success'] = true;
+    } else {
+        $response['success'] = true;
+        $response['message'] = 'Cart is empty';
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $cart_items = [];
-    foreach ($_SESSION['cart'] as $item) {
-        $cart_items[] = [
-            'account_id' => $item['account_id'],
-            'game_id' => $item['game_id']
-        ];
-    }
-    echo json_encode(['success' => true, 'cart_items' => $cart_items]);
+    
+    $stmt->close();
+    
+} catch (Exception $e) {
+    $response['message'] = 'Database error: ' . $e->getMessage();
+} finally {
+    $conn->close();
 }
 
-mysqli_close($conn);
+// Return JSON response
+echo json_encode($response);
 ?>

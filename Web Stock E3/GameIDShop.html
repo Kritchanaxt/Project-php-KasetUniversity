@@ -6,6 +6,14 @@
     <title>Game ID Shop - PLAYERHAVEN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        function toggleTheme() {
+            const root = document.documentElement;
+            if (root.classList.contains("light")) {
+                root.classList.remove("light");
+            } else {
+                root.classList.add("light");
+            }
+        }
         document.addEventListener("DOMContentLoaded", function () {
             const gameIdContainer = document.getElementById("gameIdContainer");
             const noGameId = document.getElementById("noGameId");
@@ -16,6 +24,7 @@
             const loginBtn = document.getElementById("loginBtn");
             const registerBtn = document.getElementById("registerBtn");
             const cartModal = document.getElementById("cart-modal");
+            const cartIcon = document.getElementById("cartIcon");
 
             errorMessage.className = "mt-4 text-red-500 text-center";
             errorMessage.id = "errorMessage";
@@ -27,6 +36,14 @@
 
             // Fetch game IDs and initialize points
             fetchGameIdsAndPoints();
+
+            // Set up cart icon click event
+            if (cartIcon) {
+                cartIcon.addEventListener("click", function() {
+                    updateCartModal();
+                    toggleModal();
+                });
+            }
 
             function fetchGameIdsAndPoints() {
                 // Fetch game IDs
@@ -68,6 +85,8 @@
                     if (registerBtn) registerBtn.style.display = "none";
                     if (pointsDisplay) pointsDisplay.style.display = "inline-block";
                     fetchProfileData(username);
+                    // Also fetch cart count when logging in
+                    fetchCartCount();
                 }
             }
 
@@ -75,16 +94,16 @@
                 fetch('get_profile.php')
                     .then(response => response.json())
                     .then(data => {
-                        console.log("Profile Data:", data); // Debug log
+                        console.log("Profile Data:", data);
                         if (data.logged_in) {
                             const point = data.user.point || 0;
-                            const user_id = data.user.user_id || ''; // Assuming get_profile.php returns user_id
+                            const user_id = data.user.user_id || '';
                             pointsDisplay.textContent = `คงเหลือ ${point}.00 เครดิต`;
                             pointsDisplay.style.display = "inline-block";
                             localStorage.setItem("points", point);
                             localStorage.setItem("user_id", user_id);
                             localStorage.setItem("username", username);
-                            syncPointsWithSession(point, user_id); // Sync points with session
+                            syncPointsWithSession(point, user_id);
                         } else {
                             pointsDisplay.textContent = `คงเหลือ 0.00 เครดิต`;
                             pointsDisplay.style.display = "inline-block";
@@ -100,6 +119,22 @@
                         localStorage.removeItem("points");
                         localStorage.removeItem("user_id");
                         localStorage.removeItem("username");
+                    });
+            }
+
+            function fetchCartCount() {
+                fetch('get_cart.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            cartCount.textContent = data.cart_items.length || 0;
+                        } else {
+                            cartCount.textContent = "0";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cart count:', error);
+                        cartCount.textContent = "0";
                     });
             }
 
@@ -120,7 +155,7 @@
 
             function displayGameIds(data) {
                 if (!data.success || !data.gameIds || data.gameIds.length === 0) {
-                    errorMessage.textContent = "ไม่มีไอดีゲームที่พร้อมขาย!";
+                    errorMessage.textContent = "ไม่มีไอดีที่พร้อมขาย!";
                     errorMessage.style.display = "block";
                     gameIdContainer.innerHTML = "";
                     noGameId.classList.remove("hidden");
@@ -147,7 +182,7 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             ${games.map(game => `
-                                <div class="game-card ${game.status === 'available' ? '' : 'sold'} transform transition-transform duration-300 hover:scale-105" data-id="${game.account_id || ''}">
+                                <div class="game-card ${game.status === 'available' ? '' : 'sold'}" data-id="${game.account_id || ''}">
                                     <div class="game-card-inner">
                                         <div class="game-card-front p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
                                             <div class="card-content text-center">
@@ -165,8 +200,8 @@
                                                 <p class="mb-2 text-gray-700 dark:text-gray-300"><span class="font-medium">Details:</span> ${game.details || 'N/A'}</p>
                                                 <p class="mb-4 text-gray-700 dark:text-gray-300"><span class="font-medium">Status:</span> ${game.status}</p>
                                                 ${game.status === 'available' ? `
-                                                    <button class="buy-btn w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-300">Buy Now</button>
-                                                    <button class="cart-btn w-full mt-3 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300" data-id="${game.account_id || ''}">Add to Cart</button>
+                                                    <button class="buy-btn w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-300" data-id="${game.account_id || ''}" data-price="${game.price || 0}">Buy Now</button>
+                                                    <button class="cart-btn w-full mt-3 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300" data-id="${game.account_id || ''}" data-price="${game.price || 0}" data-game-id="${game.game_id || ''}">Add to Cart</button>
                                                 ` : `<p class="sold-text text-red-500 font-semibold">Already Sold</p>`}
                                             </div>
                                         </div>
@@ -184,7 +219,7 @@
                 document.querySelectorAll('.game-card').forEach(card => {
                     card.addEventListener('click', function(e) {
                         if (!e.target.classList.contains('buy-btn') && !e.target.classList.contains('cart-btn')) {
-                            this.classList.toggle('flipped');
+                            this.querySelector('.game-card-inner').classList.toggle('flipped');
                         }
                     });
 
@@ -194,12 +229,21 @@
                             e.stopPropagation();
                             const username = localStorage.getItem("username");
                             if (!username) {
-                                alert("Please login first");
+                                alert("กรุณาเข้าสู่ระบบก่อนทำการซื้อ");
+                                window.location.href = 'Login.html';
                                 return;
                             }
-                            const accountId = this.getAttribute('data-id') || card.getAttribute('data-id');
-                            console.log("Buying with account_id:", accountId, "Points:", localStorage.getItem("points"));
-                            purchaseGame(accountId, card, 'buy_now');
+                            const accountId = this.getAttribute('data-id');
+                            const price = parseInt(this.getAttribute('data-price')) || 0;
+                            const points = parseInt(localStorage.getItem("points")) || 0;
+                            
+                            if (points < price) {
+                                alert("ไม่มีเครดิตเพียงพอ กรุณาเติมเครดิตก่อน");
+                                return;
+                            }
+                            
+                            console.log("Buying with account_id:", accountId, "Points:", points, "Price:", price);
+                            purchaseGame(accountId, card, 'buy_now', price);
                         });
                     }
 
@@ -209,190 +253,258 @@
                             e.stopPropagation();
                             const username = localStorage.getItem("username");
                             if (!username) {
-                                alert("Please login first");
+                                alert("กรุณาเข้าสู่ระบบก่อนทำการเพิ่มลงตะกร้า");
+                                window.location.href = 'Login.html';
                                 return;
                             }
-                            const accountId = this.getAttribute('data-id') || card.getAttribute('data-id');
-                            console.log("Adding to cart with account_id:", accountId, "Points:", localStorage.getItem("points"));
-                            addToCart(accountId);
+                            const accountId = this.getAttribute('data-id');
+                            const gameId = this.getAttribute('data-game-id');
+                            const price = this.getAttribute('data-price');
+                            console.log("Adding to cart with account_id:", accountId, "game_id:", gameId, "price:", price);
+                            addToCart(accountId, gameId, price);
                         });
                     }
                 });
             }
 
-            function addToCart(account_id) {
-    const username = localStorage.getItem("username");
-    if (!username) {
-        alert("Please login first");
-        return;
-    }
-
-    fetch('buy_game.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ account_id: account_id, action: 'add_to_cart' })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            cartCount.textContent = data.cart_count || 0;
-            alert('เพิ่มลงตะกร้าสำเร็จ! จำนวนในตะกร้า: ' + data.cart_count);
-            updateCartModal();
-        } else {
-            alert(data.message || 'Transaction failed');
-        }
-    })
-    .catch(error => {
-        console.error('Cart error:', error);
-        alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
-    });
-}
-
-function purchaseGame(gameId, cardElement, action) {
-    const username = localStorage.getItem("username");
-    if (!username) {
-        alert("Please login first");
-        return;
-    }
-
-    fetch('buy_game.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ account_id: gameId, action: action, username: username })
-})
-.then(response => response.json())
-.then(data => {
-    console.log(data); // เพิ่มการแสดงผลข้อผิดพลาดในคอนโซล
-    if (data.success) {
-        alert('การซื้อสำเร็จ! Points เหลือ: ' + (data.remaining_points || 'N/A'));
-        localStorage.setItem("points", data.remaining_points || 0);
-        updateCartModal();
-    } else {
-        alert(data.message || 'Transaction failed');
-    }
-})
-.catch(error => {
-    console.error('Purchase error:', error);
-    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
-});
-fetch('sync_points.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ points: points, user_id: user_id })
-})
-.then(response => response.json())  // แปลงข้อมูลที่ได้รับเป็น JSON
-.then(data => {
-    console.log(data);  // แสดงข้อมูลที่ได้รับจากเซิร์ฟเวอร์
-})
-.catch(error => {
-    console.error("Error syncing points:", error);  // แสดงข้อผิดพลาดในกรณีเกิดปัญหา
-});
-
-
-}
-
-
-            // ใน JavaScript ของคุณ
-function purchaseGame(gameId, cardElement, action) {
-    const username = localStorage.getItem("username");
-    if (!username) {
-        alert("Please login first");
-        return;
-    }
-
-    fetch('buy_game.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ account_id: gameId, action: action, username: username })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Purchase successful! Points remaining: ' + data.remaining_points);
-            localStorage.setItem("points", data.remaining_points);
-            updatePointsDisplay(); // ฟังก์ชันเพื่ออัปเดตแสดงพอยต์ใน UI
-            updateCartModal(); // อัปเดตตะกร้า
-        } else {
-            alert(data.message || 'Transaction failed');
-        }
-    })
-    .catch(error => {
-        console.error('Purchase error:', error);
-        alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
-    });
-}
-
-            function updateCart() {
-    fetch('cart.php', {
-        method: 'GET'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const cartItems = data.cart_items;
-            let cartHtml = '';
-            cartItems.forEach(item => {
-                cartHtml += `
-                    <div class="cart-item">
-                        <p>Game ID: ${item.game_id}</p>
-                        <p>Username: ${item.username}</p>
-                        <p>Price: ${item.price} บาท</p>
-                        <p>Status: ${item.status}</p>
-                        <p>Details: ${item.details}</p>
-                        <button onclick="removeFromCart('${item.account_id}')">Remove</button>
-                    </div>
-                `;
-            });
-            document.getElementById('cart-container').innerHTML = cartHtml;
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching cart:', error);
-    });
-}
-
-function removeFromCart(accountId) {
-    fetch('cart.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'remove_from_cart', account_id: accountId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            updateCart();  // Update cart after removal
-        }
-    })
-    .catch(error => {
-        console.error('Error removing item:', error);
-    });
-}
-
-updateCart();  // Call to load the cart when the page loads
-
-
-            function purchaseCart() {
+            function addToCart(account_id, game_id, price) {
                 const username = localStorage.getItem("username");
                 if (!username) {
-                    alert("Please login first");
+                    alert("กรุณาเข้าสู่ระบบก่อน");
+                    window.location.href = 'Login.html';
                     return;
                 }
-
-                const userPoints = parseFloat(localStorage.getItem("points")) || 0;
-                console.log("Attempting cart purchase with points:", userPoints);
 
                 fetch('buy_game.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'purchase_cart' })
+                    body: JSON.stringify({ 
+                        account_id: account_id, 
+                        game_id: game_id,
+                        price: price,
+                        action: 'add_to_cart', 
+                        username: username 
+                    })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('การชำระเงินสำเร็จ! Points เหลือ: ' + (data.remaining_points || 'N/A'));
-                        localStorage.setItem("points", data.remaining_points || 0);
-                        fetchProfileData(username);
+                        cartCount.textContent = data.cart_count || 0;
+                        alert('เพิ่มลงตะกร้าสำเร็จ! จำนวนในตะกร้า: ' + data.cart_count);
                         updateCartModal();
+                    } else {
+                        alert(data.message || 'Transaction failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Cart error:', error);
+                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+                });
+            }
+
+            function purchaseGame(gameId, cardElement, action, price) {
+                const username = localStorage.getItem("username");
+                if (!username) {
+                    alert("กรุณาเข้าสู่ระบบก่อน");
+                    window.location.href = 'Login.html';
+                    return;
+                }
+
+                const currentPoints = parseInt(localStorage.getItem("points")) || 0;
+                if (currentPoints < price) {
+                    alert("ไม่มีเครดิตเพียงพอ กรุณาเติมเครดิตก่อน");
+                    return;
+                }
+
+                fetch('buy_game.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        account_id: gameId, 
+                        action: action, 
+                        username: username,
+                        price: price 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update points in localStorage and display
+                        const remainingPoints = currentPoints - price;
+                        localStorage.setItem("points", remainingPoints);
+                        pointsDisplay.textContent = `คงเหลือ ${remainingPoints}.00 เครดิต`;
+                        
+                        alert('การซื้อสำเร็จ! Points เหลือ: ' + remainingPoints);
+                        
+                        // Mark card as sold
+                        if (cardElement) {
+                            cardElement.classList.add('sold');
+                            const statusBadge = cardElement.querySelector('.status-badge');
+                            if (statusBadge) {
+                                statusBadge.classList.remove('bg-green-500');
+                                statusBadge.classList.add('bg-red-500');
+                                statusBadge.textContent = 'Sold';
+                            }
+                            
+                            const cardBackContent = cardElement.querySelector('.game-card-back .card-content');
+                            if (cardBackContent) {
+                                // Remove buttons and add "Already Sold" text
+                                const buyBtn = cardBackContent.querySelector('.buy-btn');
+                                const cartBtn = cardBackContent.querySelector('.cart-btn');
+                                if (buyBtn) buyBtn.remove();
+                                if (cartBtn) cartBtn.remove();
+                                
+                                const soldTextElement = document.createElement('p');
+                                soldTextElement.className = 'sold-text text-red-500 font-semibold';
+                                soldTextElement.textContent = 'Already Sold';
+                                cardBackContent.appendChild(soldTextElement);
+                            }
+                        }
+                        
+                        updateCartModal();
+                    } else {
+                        alert(data.message || 'Transaction failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Purchase error:', error);
+                    alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
+                });
+            }
+
+            function updateCartModal() {
+                fetch('get_cart.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const cartItems = data.cart_items;
+                            let totalPrice = 0;
+                            
+                            if (cartItems.length === 0) {
+                                document.getElementById('cart-tbody').innerHTML = '<tr><td colspan="5" class="text-center">ไม่มีสินค้าในตะกร้า</td></tr>';
+                                document.getElementById('cart-total').textContent = '0.00';
+                                document.getElementById('purchase-cart-btn').disabled = true;
+                                document.getElementById('purchase-cart-btn').classList.add('opacity-50');
+                                document.getElementById('not-enough-points').style.display = 'none';
+                                return;
+                            }
+                            
+                            let cartHtml = '';
+                            cartItems.forEach(item => {
+                                const itemPrice = parseFloat(item.price) || 0;
+                                totalPrice += itemPrice;
+                                
+                                cartHtml += `
+                                    <tr>
+                                        <td>${item.game_id || 'N/A'}</td>
+                                        <td>${item.account_id || 'N/A'}</td>
+                                        <td>${item.username || 'N/A'}</td>
+                                        <td>${item.price || '0'} บาท</td>
+                                        <td>
+                                            <button class="remove-btn text-red-500 hover:text-red-700" onclick="removeFromCart('${item.account_id}')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            
+                            document.getElementById('cart-tbody').innerHTML = cartHtml;
+                            document.getElementById('cart-total').textContent = totalPrice.toFixed(2);
+                            
+                            // Check if user has enough points
+                            const currentPoints = parseInt(localStorage.getItem("points")) || 0;
+                            const purchaseBtn = document.getElementById('purchase-cart-btn');
+                            
+                            if (currentPoints < totalPrice) {
+                                purchaseBtn.disabled = true;
+                                purchaseBtn.classList.add('opacity-50');
+                                document.getElementById('not-enough-points').style.display = 'block';
+                            } else {
+                                purchaseBtn.disabled = false;
+                                purchaseBtn.classList.remove('opacity-50');
+                                document.getElementById('not-enough-points').style.display = 'none';
+                            }
+                        } else {
+                            document.getElementById('cart-tbody').innerHTML = '<tr><td colspan="5" class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูลตะกร้า</td></tr>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cart:', error);
+                        document.getElementById('cart-tbody').innerHTML = '<tr><td colspan="5" class="text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูลตะกร้า</td></tr>';
+                    });
+            }
+
+            window.removeFromCart = function(accountId) {
+                fetch('buy_game.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'remove_from_cart', account_id: accountId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        cartCount.textContent = data.cart_count || 0;
+                        updateCartModal();
+                        alert('ลบสินค้าออกจากตะกร้าเรียบร้อยแล้ว');
+                    } else {
+                        alert(data.message || 'Failed to remove item');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing item:', error);
+                    alert('Error removing item, please try again');
+                });
+            };
+
+            window.purchaseCart = function() {
+                const username = localStorage.getItem("username");
+                if (!username) {
+                    alert("กรุณาเข้าสู่ระบบก่อน");
+                    window.location.href = 'Login.html';
+                    return;
+                }
+
+                const currentPoints = parseInt(localStorage.getItem("points")) || 0;
+                const totalPrice = parseFloat(document.getElementById('cart-total').textContent) || 0;
+
+                if (currentPoints < totalPrice) {
+                    alert("ไม่มีเครดิตเพียงพอ กรุณาเติมเครดิตก่อน");
+                    return;
+                }
+
+                fetch('buy_game.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'purchase_cart',
+                        username: username,
+                        total_price: totalPrice
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const remainingPoints = currentPoints - totalPrice;
+                        localStorage.setItem("points", remainingPoints);
+                        pointsDisplay.textContent = `คงเหลือ ${remainingPoints}.00 เครดิต`;
+                        
+                        alert('การชำระเงินสำเร็จ! เครดิตคงเหลือ: ' + remainingPoints + ' บาท');
+                        cartCount.textContent = "0";
+                        
+                        // Refresh game list to update sold status
+                        fetchGameIdsAndPoints();
+                        toggleModal();
+                        
+                        // Redirect to purchase history page if available
+                        if (data.redirect_to_history) {
+                            if (confirm('คุณต้องการดูประวัติการซื้อหรือไม่?')) {
+                                window.location.href = 'purchase_history.php';
+                            }
+                        }
                     } else {
                         alert(data.message || 'Transaction failed');
                     }
@@ -401,19 +513,36 @@ updateCart();  // Call to load the cart when the page loads
                     console.error('Purchase cart error:', error);
                     alert('เกิดข้อผิดพลาด กรุณาลองใหม่!');
                 });
-            }
+            };
 
             document.querySelector("main").appendChild(errorMessage);
 
-            function logout() {
-                localStorage.removeItem("username");
-                localStorage.removeItem("email");
-                localStorage.removeItem("points");
-                localStorage.removeItem("user_id");
-                updateLoginUI(null);
-            }
+            window.logout = function() {
+                fetch('logout.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            localStorage.removeItem("username");
+                            localStorage.removeItem("email");
+                            localStorage.removeItem("points");
+                            localStorage.removeItem("user_id");
+                            updateLoginUI(null);
+                            alert("ออกจากระบบสำเร็จ");
+                        } else {
+                            alert("เกิดข้อผิดพลาดในการออกจากระบบ");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Logout error:", error);
+                        localStorage.removeItem("username");
+                        localStorage.removeItem("email");
+                        localStorage.removeItem("points");
+                        localStorage.removeItem("user_id");
+                        updateLoginUI(null);
+                    });
+            };
 
-            function toggleTheme() {
+            window.toggleTheme = function() {
                 const body = document.body;
                 const navbar = document.querySelector("header");
                 const loginSection = document.querySelector(".bg-gradient-to-r.from-purple-600.to-indigo-600");
@@ -433,12 +562,46 @@ updateCart();  // Call to load the cart when the page loads
                 }
 
                 localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-            }
+            };
+
+            window.toggleModal = function() {
+                const modal = document.getElementById('cart-modal');
+                if (modal.classList.contains('modal-open')) {
+                    modal.classList.remove('modal-open');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 300);
+                } else {
+                    updateCartModal();
+                    modal.style.display = 'flex';
+                    setTimeout(() => {
+                        modal.classList.add('modal-open');
+                    }, 10);
+                }
+            };
+
+            // View purchase history
+            window.viewPurchaseHistory = function() {
+                const username = localStorage.getItem("username");
+                if (!username) {
+                    alert("กรุณาเข้าสู่ระบบก่อน");
+                    window.location.href = 'Login.html';
+                    return;
+                }
+                window.location.href = 'purchase_history.php';
+            };
 
             // Load initial cart count and points
-            cartCount.textContent = sessionStorage.getItem('cartCount') || 0;
-            updateCartModal(); // Load cart on page load
-            if (username) fetchProfileData(username); // Ensure points are loaded on page load
+            if (username) {
+                fetchCartCount();
+                fetchProfileData(username);
+            }
+            
+            // Apply saved theme
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                toggleTheme();
+            }
         });
     </script>
     <style>
@@ -491,68 +654,193 @@ updateCart();  // Call to load the cart when the page loads
         .dark-mode #registerBtn { border-color: white !important; color: white !important; }
         .dark-mode #logoutBtn { background-color: #ef4444 !important; color: white !important; }
         .dark-mode .buy-btn, .dark-mode .cart-btn { background-color: #22c55e !important; color: white !important; }
-
+        
         /* Cart Modal Styles */
         #cart-modal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 600px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            border-radius: 1rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        #cart-modal h2 {
-            color: #FFD700;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        #cart-modal table {
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-top: 1rem;
-            border-collapse: collapse;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        #cart-modal table th, #cart-modal table td {
-            border: 1px solid #ccc;
+        #cart-modal.modal-open {
+            opacity: 1;
+        }
+        .cart-modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        #cart-modal.modal-open .cart-modal-content {
+            transform: translateY(0);
+        }
+        .cart-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(107, 114, 128, 0.2);
+        }
+        .cart-modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--btn-primary);
+        }
+        .cart-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        .cart-table th, .cart-table td {
             padding: 0.75rem;
             text-align: left;
-            color: white;
+            border-bottom: 1px solid rgba(107, 114, 128, 0.2);
         }
-        #cart-modal table th {
-            background: #007bff;
-            color: white;
+        .cart-table th {
+            font-weight: 600;
+            background-color: rgba(107, 114, 128, 0.1);
         }
-        #cart-modal .remove-btn, #cart-modal .purchase-btn {
-            background: #dc3545;
+        .cart-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(107, 114, 128, 0.2);
+        }
+        .cart-total {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .cart-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        #purchase-cart-btn {
+            background-color: var(--btn-primary);
             color: white;
-            border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: background-color 0.3s;
         }
-        #cart-modal .remove-btn:hover, #cart-modal .purchase-btn:hover {
-            background: #c82333;
-            transform: scale(1.05);
+        #purchase-cart-btn:hover {
+            background-color: var(--btn-hover);
         }
-        #cart-modal .close-btn {
-            background: #6c757d;
+        .cart-close-button {
+            background-color: #6B7280;
             color: white;
-            border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: background-color 0.3s;
         }
-        #cart-modal .close-btn:hover {
-            background: #5a6268;
-            transform: scale(1.05);
+        .cart-close-button:hover {
+            background-color: #4B5563;
         }
+        #not-enough-points {
+            display: none;
+            color: var(--badge-sold);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        .remove-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .remove-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        /* User account dropdown */
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            min-width: 200px;
+            background-color: var(--card-bg);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            z-index: 1;
+            margin-top: 0.5rem;
+        }
+        .user-dropdown-content a {
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        .user-dropdown-content a:hover {
+            background-color: rgba(107, 114, 128, 0.1);
+        }
+        .user-dropdown:hover .user-dropdown-content {
+            display: block;
+        }
+        
+        /* Cart icon with badge */
+        .cart-icon-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .cart-icon {
+            font-size: 1.5rem;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #EF4444;
+            color: white;
+            font-size: 0.75rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             .nav-menu { gap: 0.75rem; font-size: 0.875rem; }
             .header-actions { gap: 0.5rem; }
@@ -560,14 +848,17 @@ updateCart();  // Call to load the cart when the page loads
             .game-section { padding: 1.5rem 0; }
             .filters { justify-content: center; }
             .filters button { padding: 0.5rem 1rem; font-size: 0.875rem; }
-            #cart-modal { width: 85%; }
+            .cart-modal-content { width: 95%; padding: 1rem; }
+            .cart-table th, .cart-table td { padding: 0.5rem; font-size: 0.875rem; }
         }
         @media (max-width: 480px) {
             header { padding: 0.5rem; }
             .nav-menu { flex-wrap: wrap; justify-content: center; }
             .header-actions { flex-wrap: wrap; justify-content: center; }
             .game-card { height: 200px; }
-            #cart-modal { width: 80%; }
+            .cart-modal-content { width: 95%; }
+            .cart-table { font-size: 0.75rem; }
+            .cart-table th, .cart-table td { padding: 0.25rem; }
         }
     </style>
 </head>
