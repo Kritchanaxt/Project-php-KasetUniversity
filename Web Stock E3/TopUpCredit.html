@@ -23,33 +23,33 @@
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <!-- Header/Navbar -->
-    <header class="text-white shadow-lg bg-purple-600">
-        <div class="container mx-auto flex justify-between items-center py-4 px-6">
-            <div class="flex items-center">
-                <img id="logo" src="image/logo_player/light_logo.png" alt="logo" 
-                    class="w-auto h-16 mr-3 transition-all duration-500 hover:scale-105 filter" />
-                <span class="text-2xl font-bold logo-text">PLAYERHAVEN</span>
+    <!-- Header -->
+    <header class="bg-purple-600 text-white">
+        <div class="container mx-auto flex justify-between items-center p-4">
+            <div class="text-2xl font-bold">
+                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo" class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
+                PLAYERHAVEN
             </div>
-            
-            <nav class="hidden md:flex space-x-6 text-lg">
-                <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">หน้าแรก</a>
-                <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">ซื้อไอดีเกม</a>
-                <a href="#" class="nav-link hover:text-indigo-300 transition-all">สุ่มไอดีเกม</a>
-                <a href="TopUpCredit.html" class="nav-link hover:text-indigo-300 transition-all">เติม Points</a>
-                <a href="ProfileEdit.html" class="nav-link hover:text-indigo-300 transition-all">ดูโปรไฟล์</a>
-                <a href="#" class="nav-link hover:text-indigo-300 transition-all">ติดต่อเรา</a>
-            </nav>
-            
-            <div class="flex items-center space-x-4">
-                <!-- Logout button -->
-                <button id="logoutBtn" class="btn bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-all shadow-md" onclick="logout()">
+            <nav class="flex space-x-4">
+				<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
+				<a href="HomePage.html" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
+				<a href="#" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
+				<a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
+				<a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
+				<a href="#" class="hover:text-indigo-300">ติดต่อเรา</a>
+			</nav>
+            <div class="space-x-4">
+                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800 hidden" onclick="location.href='Login.html'">
+                    เข้าสู่ระบบ
+                </button>
+                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden" onclick="location.href='Register.html'">
+                    สมัครสมาชิก
+                </button>
+                <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 hidden" onclick="logout()">
                     ออกจากระบบ
                 </button>
-                
-                <!-- Theme toggle -->
-                <button onclick="toggleTheme()" class="theme-toggle p-3 rounded-full bg-gray-700 hover:bg-gray-600 shadow-md transition-all">
-                    <span id="themeIcon" class="text-lg">🌙</span>
+                <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
+                    🌙 / ☀️
                 </button>
             </div>
         </div>
