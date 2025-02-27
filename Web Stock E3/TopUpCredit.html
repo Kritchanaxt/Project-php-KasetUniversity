@@ -6,102 +6,215 @@
     <title>เติมเครดิต - PLAYERHAVEN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .red-envelope {
-            background-color: #ff4444; /* สีแดงสดใสเหมือนอังเปา */
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
+        body {
+            font-family: 'Prompt', 'Kanit', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .red-envelope:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        
+        .credit-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
         }
-        .dark-mode .red-envelope {
-            background-color: #dc2626; /* สีแดงเข้มในโหมดมืด */
+        
+        .credit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            border-color: #60a5fa;
+        }
+        
+        .dark-mode {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .credit-card {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+        }
+        
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4338ca;
+            transform: translateY(-2px);
+        }
+        
+        .dark-mode .btn-primary {
+            background-color: #6366f1;
+        }
+        
+        .dark-mode .btn-primary:hover {
+            background-color: #818cf8;
+        }
+
+        .input-field {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+        
+        .input-field:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            outline: none;
+        }
+        
+        .dark-mode .input-field {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <!-- Header -->
-    <header class="bg-purple-600 text-white">
-        <div class="container mx-auto flex justify-between items-center p-4">
-            <div class="text-2xl font-bold">
-                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo" class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
-                PLAYERHAVEN
+<body class="bg-gray-50 font-sans">
+    <!-- Header/Navbar -->
+    <header class="bg-indigo-600 text-white shadow-lg">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <div class="flex items-center">
+                <img id="logo" src="image/logo_player/light_logo.png" alt="logo" 
+                    class="w-auto h-16 mr-3 transition-all duration-500 hover:scale-105 filter" />
+                <span class="text-2xl font-bold logo-text tracking-wider">PLAYERHAVEN</span>
             </div>
-            <div class="space-x-4">
-                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800 hidden" onclick="location.href='Login.html'">
-                    เข้าสู่ระบบ
-                </button>
-                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden" onclick="location.href='Register.html'">
-                    สมัครสมาชิก
-                </button>
-                <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 hidden" onclick="logout()">
+            
+            <nav class="hidden md:flex space-x-6 text-lg">
+                <a href="HomePage.html" class="hover:text-indigo-200 transition-all font-medium">หน้าแรก</a>
+                <a href="HomePage.html" class="hover:text-indigo-200 transition-all font-medium">ซื้อไอดีเกม</a>
+                <a href="#" class="hover:text-indigo-200 transition-all font-medium">สุ่มไอดีเกม</a>
+                <a href="TopUpCredit.html" class="hover:text-indigo-200 transition-all font-medium border-b-2 border-white">เติม Points</a>
+                <a href="ProfileEdit.html" class="hover:text-indigo-200 transition-all font-medium">ดูโปรไฟล์</a>
+                <a href="#" class="hover:text-indigo-200 transition-all font-medium">ติดต่อเรา</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Logout button -->
+                <button id="logoutBtn" class="btn-primary px-4 py-2 rounded-lg shadow-md flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm5 4a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm0 4a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm-3 1a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm3 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
                     ออกจากระบบ
                 </button>
-                <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
-                    🌙 / ☀️
-                </button>
+                
+            
             </div>
         </div>
     </header>
 
     <!-- Main Section -->
-    <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">เติมเครดิตด้วยอังเปา</h1>
-        
-        <!-- แสดงยอดเครดิตปัจจุบัน -->
-        <div class="text-center mb-6">
-            <p class="text-xl font-semibold text-gray-700 dark:text-gray-300">ยอดเครดิตปัจจุบัน: <span id="currentPoints">0</span> เครดิต</p>
-        </div>
-
-        <!-- รายการอังเปา -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- อังเปา 100 เครดิต (50 บาท) -->
-            <div class="red-envelope text-white text-center cursor-pointer" onclick="selectRedEnvelope(100, 50)">
-                <h2 class="text-xl font-bold">เติม 100 เครดิต</h2>
-                <p class="text-lg">ราคา: 50 บาท</p>
+    <div class="container mx-auto py-12 px-4">
+        <div class="max-w-5xl mx-auto">
+            <h1 class="text-4xl font-bold text-center mb-8 text-indigo-800 dark:text-indigo-300">เติมเครดิต <span class="text-indigo-500">PLAYERHAVEN</span></h1>
+            
+            <!-- แสดงยอดเครดิตปัจจุบัน -->
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 mb-10 text-center">
+                <p class="text-xl font-medium text-gray-600 dark:text-gray-300">ยอดเครดิตปัจจุบันของคุณ</p>
+                <div class="flex justify-center items-center mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
+                    </svg>
+                    <span id="currentPoints" class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">0</span>
+                    <span class="text-xl ml-2 text-gray-600 dark:text-gray-300">เครดิต</span>
+                </div>
             </div>
 
-            <!-- อังเปา 500 เครดิต (200 บาท) -->
-            <div class="red-envelope text-white text-center cursor-pointer" onclick="selectRedEnvelope(500, 200)">
-                <h2 class="text-xl font-bold">เติม 500 เครดิต</h2>
-                <p class="text-lg">ราคา: 200 บาท</p>
+            <!-- รายการเติมเครดิต -->
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-700">เลือกแพ็คเกจเติมเครดิต</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <!-- 100 เครดิต -->
+                <div class="credit-card text-white text-center cursor-pointer" onclick="selectRedEnvelope(100, 50)">
+                    <div class="flex justify-center mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">100 เครดิต</h3>
+                    <p class="text-lg mb-3">ราคาเพียง 50 บาท</p>
+                    <div class="mt-4 text-sm opacity-80">คุ้มค่าสำหรับผู้เริ่มต้น</div>
+                </div>
+
+                <!-- 500 เครดิต -->
+                <div class="credit-card text-white text-center cursor-pointer" onclick="selectRedEnvelope(500, 200)">
+                    <div class="flex justify-center mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">500 เครดิต</h3>
+                    <p class="text-lg mb-3">ราคาเพียง 200 บาท</p>
+                    <div class="mt-4 text-sm opacity-80">แพ็คเกจยอดนิยม</div>
+                </div>
+
+                <!-- 1,000 เครดิต -->
+                <div class="credit-card text-white text-center cursor-pointer" onclick="selectRedEnvelope(1000, 400)">
+                    <div class="flex justify-center mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">1,000 เครดิต</h3>
+                    <p class="text-lg mb-3">ราคาเพียง 400 บาท</p>
+                    <div class="mt-4 text-sm opacity-80">คุ้มค่าที่สุด</div>
+                </div>
             </div>
 
-            <!-- อังเปา 1,000 เครดิต (400 บาท) -->
-            <div class="red-envelope text-white text-center cursor-pointer" onclick="selectRedEnvelope(1000, 400)">
-                <h2 class="text-xl font-bold">เติม 1,000 เครดิต</h2>
-                <p class="text-lg">ราคา: 400 บาท</p>
+            <!-- ฟอร์มการชำระเงิน -->
+            <div id="paymentForm" class="hidden max-w-2xl mx-auto">
+                <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-indigo-700 dark:text-indigo-300">ยืนยันการชำระเงิน</h2>
+                    <div class="mb-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                        <p class="text-gray-700 dark:text-gray-300">คุณเลือกแพ็คเกจ: <span id="selectedEnvelope" class="font-semibold text-indigo-700 dark:text-indigo-300"></span></p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">เลือกวิธีการชำระเงิน</label>
+                        <select id="paymentMethod" class="w-full input-field">
+                            <option value="creditCard">บัตรเครดิต/เดบิต</option>
+                            <option value="paypal">PayPal</option>
+                        </select>
+                    </div>
+                    
+                    <div id="creditCardFields" class="mb-6 hidden space-y-4">
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">หมายเลขบัตร</label>
+                            <input type="text" id="cardNumber" class="w-full input-field" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">วันหมดอายุ (MM/YY)</label>
+                                <input type="text" id="expiryDate" class="w-full input-field" placeholder="MM/YY">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">CVV</label>
+                                <input type="text" id="cvv" class="w-full input-field" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="paypalFields" class="mb-6 hidden">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">อีเมล PayPal</label>
+                        <input type="email" id="paypalEmail" class="w-full input-field" placeholder="example@paypal.com">
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                        <button id="submitPayment" class="btn-primary py-3 rounded-lg flex-1 font-medium">ยืนยันการชำระเงิน</button>
+                        <button id="cancelPayment" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-3 rounded-lg flex-1 font-medium transition-all">ยกเลิก</button>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- ฟอร์มการชำระเงิน -->
-        <div id="paymentForm" class="mt-8 hidden bg-white p-6 rounded-lg shadow-md dark:bg-gray-800">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">ชำระเงินสำหรับอังเปา</h2>
-            <p class="mb-4 text-gray-700 dark:text-gray-300">คุณเลือกอังเปา: <span id="selectedEnvelope"></span></p>
-            <div class="mb-4">
-                <label class="block text-gray-700 dark:text-gray-300">วิธีการชำระเงิน</label>
-                <select id="paymentMethod" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white">
-                    <option value="creditCard">บัตรเครดิต/เดบิต</option>
-                    <option value="paypal">PayPal</option>
-                </select>
-            </div>
-            <div id="creditCardFields" class="mb-4 hidden">
-                <label class="block text-gray-700 dark:text-gray-300">หมายเลขบัตร</label>
-                <input type="text" id="cardNumber" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="1234 5678 9012 3456">
-                <label class="block mt-2 text-gray-700 dark:text-gray-300">วันหมดอายุ (MM/YY)</label>
-                <input type="text" id="expiryDate" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="MM/YY">
-                <label class="block mt-2 text-gray-700 dark:text-gray-300">CVV</label>
-                <input type="text" id="cvv" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="123">
-            </div>
-            <div id="paypalFields" class="mb-4 hidden">
-                <label class="block text-gray-700 dark:text-gray-300">อีเมล PayPal</label>
-                <input type="email" id="paypalEmail" class="w-full p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white" placeholder="example@paypal.com">
-            </div>
-            <button id="submitPayment" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded mt-4">ยืนยันการชำระเงิน</button>
-            <button id="cancelPayment" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 rounded mt-2">ยกเลิก</button>
         </div>
     </div>
 
@@ -115,13 +228,11 @@
             const isDarkMode = body.classList.toggle("dark-mode");
 
             if (isDarkMode) {
+                document.getElementById("themeIcon").textContent = "☀️";
                 logo.src = "image/logo_player/dark_logo.png";
-                body.style.backgroundColor = "#10142b";
-                navbar.style.backgroundColor = "#1a1f36";
             } else {
+                document.getElementById("themeIcon").textContent = "🌙";
                 logo.src = "image/logo_player/light_logo.png";
-                body.style.backgroundColor = "";
-                navbar.style.backgroundColor = "";
             }
 
             localStorage.setItem("theme", isDarkMode ? "dark" : "light");
@@ -133,6 +244,7 @@
             if (savedTheme === "dark") {
                 document.body.classList.add("dark-mode");
                 document.getElementById("logo").src = "image/logo_player/dark_logo.png";
+                document.getElementById("themeIcon").textContent = "☀️";
             }
 
             // ตรวจสอบสถานะการล็อกอินและแสดงปุ่ม
@@ -142,14 +254,14 @@
             const logoutBtn = document.getElementById("logoutBtn");
 
             if (username) {
-                logoutBtn.classList.remove("hidden");
-                loginBtn.classList.add("hidden");
-                registerBtn.classList.add("hidden");
+                if (loginBtn) loginBtn.classList.add("hidden");
+                if (registerBtn) registerBtn.classList.add("hidden");
+                if (logoutBtn) logoutBtn.classList.remove("hidden");
                 fetchCurrentPoints();
             } else {
-                logoutBtn.classList.add("hidden");
-                loginBtn.classList.remove("hidden");
-                registerBtn.classList.remove("hidden");
+                if (logoutBtn) logoutBtn.classList.add("hidden");
+                if (loginBtn) loginBtn.classList.remove("hidden");
+                if (registerBtn) registerBtn.classList.remove("hidden");
                 window.location.href = "Login.html";
             }
         };
@@ -172,6 +284,15 @@
             const paymentMethod = document.getElementById("paymentMethod");
             const creditCardFields = document.getElementById("creditCardFields");
             const paypalFields = document.getElementById("paypalFields");
+
+            // แสดงฟิลด์การชำระเงินเริ่มต้น
+            if (paymentMethod.value === "creditCard") {
+                creditCardFields.classList.remove("hidden");
+                paypalFields.classList.add("hidden");
+            } else {
+                creditCardFields.classList.add("hidden");
+                paypalFields.classList.remove("hidden");
+            }
 
             paymentMethod.addEventListener("change", function () {
                 if (paymentMethod.value === "creditCard") {
@@ -208,9 +329,10 @@
             // ยกเลิกการชำระเงิน
             document.getElementById("cancelPayment").onclick = function () {
                 paymentForm.classList.add("hidden");
-                creditCardFields.classList.add("hidden");
-                paypalFields.classList.add("hidden");
             };
+
+            // เลื่อนไปยังฟอร์มการชำระเงิน
+            paymentForm.scrollIntoView({ behavior: 'smooth' });
         }
 
         // ฟังก์ชันดึงยอดเครดิตปัจจุบัน
@@ -230,31 +352,28 @@
         }
 
         function processPayment(points, price, method) {
-    alert(`การชำระเงิน ${price} บาท สำเร็จ! คุณได้รับ ${points} เครดิต`);
+            alert(`การชำระเงิน ${price} บาท สำเร็จ! คุณได้รับ ${points} เครดิต`);
 
-    // อัปเดตเครดิตในเซิร์ฟเวอร์
-    const username = localStorage.getItem("username");
-    if (username) {
-        fetch("update_points.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `username=${encodeURIComponent(username)}&points=${points}&payment_amount=${price}&payment_method=${encodeURIComponent(method)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                fetchCurrentPoints(); // อัปเดตยอดเครดิตปัจจุบัน
-                document.getElementById("paymentForm").classList.add("hidden");
-                document.getElementById("creditCardFields").classList.add("hidden");
-                document.getElementById("paypalFields").classList.add("hidden");
-            } else {
-                alert("การอัปเดตเครดิตล้มเหลว: " + data.message);
+            // อัปเดตเครดิตในเซิร์ฟเวอร์
+            const username = localStorage.getItem("username");
+            if (username) {
+                fetch("update_points.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `username=${encodeURIComponent(username)}&points=${points}&payment_amount=${price}&payment_method=${encodeURIComponent(method)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchCurrentPoints(); // อัปเดตยอดเครดิตปัจจุบัน
+                        document.getElementById("paymentForm").classList.add("hidden");
+                    } else {
+                        alert("การอัปเดตเครดิตล้มเหลว: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error updating points:", error));
             }
-        })
-        .catch(error => console.error("Error updating points:", error));
-    }
-}
-
+        }
     </script>
 </body>
 </html>
