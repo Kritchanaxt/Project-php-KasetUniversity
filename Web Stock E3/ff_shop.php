@@ -61,8 +61,8 @@ if ($logged_in) {
     }
 }
 
-// ดึงข้อมูลสินค้า CODM เท่านั้น
-$query = "SELECT * FROM Accounts WHERE status = 'available' AND game_id = '#CODM' ORDER BY account_id ASC";
+// ดึงข้อมูลสินค้า FF เท่านั้น
+$query = "SELECT * FROM Accounts WHERE status = 'available' AND game_id = '#FF' ORDER BY account_id ASC";
 $result = mysqli_query($conn, $query);
 
 // ตรวจสอบตะกร้า
@@ -246,14 +246,14 @@ foreach ($_SESSION['cart'] as $item) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Call of Duty Mobile Shop</title>
+    <title>Free Fire Shop</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Kanit', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #212121, #000000);
+            background: linear-gradient(135deg, #1E3F6B, #041025);
             color: white;
             line-height: 1.6;
         }
@@ -264,9 +264,9 @@ foreach ($_SESSION['cart'] as $item) {
             justify-content: space-between;
             align-items: center;
             padding: 15px 20px;
-            background: #000000; /* CODM black */
+            background: #041025; /* FF dark blue */
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            border-bottom: 2px solid #FF6C00; /* CODM orange */
+            border-bottom: 2px solid #FF9800; /* FF orange */
         }
 
         .navbar a {
@@ -279,7 +279,7 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .navbar a:hover {
-            background: rgba(255, 108, 0, 0.2);
+            background: rgba(255, 152, 0, 0.2);
             transform: scale(1.05);
         }
 
@@ -288,7 +288,7 @@ foreach ($_SESSION['cart'] as $item) {
             font-weight: bold;
             display: flex;
             align-items: center;
-            color: #FF6C00; /* CODM orange */
+            color: #FF9800; /* FF orange */
         }
 
         .nav-right {
@@ -301,10 +301,10 @@ foreach ($_SESSION['cart'] as $item) {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(40, 40, 40, 0.8);
+            background: rgba(0, 0, 0, 0.4);
             padding: 8px 12px;
             border-radius: 5px;
-            border: 1px solid #FF6C00; /* CODM orange border */
+            border: 1px solid #FF9800; /* FF orange border */
         }
 
         .cart {
@@ -313,20 +313,20 @@ foreach ($_SESSION['cart'] as $item) {
             align-items: center;
             cursor: pointer;
             padding: 8px 12px;
-            background: rgba(40, 40, 40, 0.8);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 5px;
             transition: background 0.3s;
-            border: 1px solid #FF6C00; /* CODM orange border */
+            border: 1px solid #FF9800; /* FF orange border */
         }
 
         .cart:hover {
-            background: rgba(255, 108, 0, 0.2);
+            background: rgba(255, 152, 0, 0.2);
         }
 
         .cart span {
             margin-left: 8px;
-            background: #FF6C00;
-            color: #000000;
+            background: #FF9800;
+            color: #041025;
             border-radius: 50%;
             width: 22px;
             height: 22px;
@@ -341,15 +341,15 @@ foreach ($_SESSION['cart'] as $item) {
         .header {
             text-align: center;
             padding: 40px 20px;
-            background: rgba(0, 0, 0, 0.5);
-            border-bottom: 1px solid #FF6C00;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid #FF9800;
         }
 
         .header h1 {
             font-size: 36px;
             margin-bottom: 10px;
-            color: #FF6C00; /* CODM orange */
-            text-shadow: 0 0 10px rgba(255, 108, 0, 0.5);
+            color: #FF9800; /* FF orange */
+            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
         }
 
         .header p {
@@ -395,20 +395,20 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .modal-content {
-            background: #212121;
+            background: #0C243D;
             width: 90%;
             max-width: 600px;
             border-radius: 10px;
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             position: relative;
-            border: 2px solid #FF6C00;
+            border: 2px solid #FF9800;
         }
 
         .modal h2 {
-            color: #FF6C00;
+            color: #FF9800;
             margin-top: 0;
-            border-bottom: 2px solid rgba(255, 108, 0, 0.3);
+            border-bottom: 2px solid rgba(255, 152, 0, 0.3);
             padding-bottom: 15px;
         }
 
@@ -423,7 +423,7 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .close-btn:hover {
-            color: #FF6C00;
+            color: #FF9800;
         }
 
         .modal table {
@@ -433,13 +433,13 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .modal table th, .modal table td {
-            border: 1px solid #444;
+            border: 1px solid #2A4766;
             padding: 12px;
             text-align: left;
         }
 
         .modal table th {
-            background: rgba(255, 108, 0, 0.2);
+            background: rgba(255, 152, 0, 0.2);
             color: #FFFFFF;
         }
 
@@ -453,19 +453,19 @@ foreach ($_SESSION['cart'] as $item) {
             align-items: center;
             margin-top: 25px;
             padding-top: 15px;
-            border-top: 1px solid #444;
+            border-top: 1px solid #2A4766;
         }
 
         .total-price {
             font-size: 18px;
             font-weight: bold;
-            color: #FF6C00;
+            color: #FF9800;
         }
 
         .purchase-btn {
-            background: #333;
-            color: #FF6C00;
-            border: 1px solid #FF6C00;
+            background: #0C243D;
+            color: #FF9800;
+            border: 1px solid #FF9800;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
@@ -474,8 +474,8 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .purchase-btn:hover {
-            background: #FF6C00;
-            color: #000;
+            background: #FF9800;
+            color: #041025;
             transform: scale(1.05);
         }
 
@@ -489,8 +489,8 @@ foreach ($_SESSION['cart'] as $item) {
 
         .remove-btn {
             background: transparent;
-            color: #ff0000;
-            border: 1px solid #ff0000;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
             padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
@@ -498,7 +498,7 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .remove-btn:hover {
-            background: rgba(255, 0, 0, 0.2);
+            background: rgba(255, 107, 107, 0.2);
         }
 
         /* Products */
@@ -515,31 +515,31 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .card {
-            background: rgba(40, 40, 40, 0.8);
+            background: rgba(30, 63, 107, 0.6);
             border-radius: 10px;
             overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            border: 1px solid #444;
+            border: 1px solid #2A4766;
         }
 
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            border-color: #FF6C00;
+            border-color: #FF9800;
         }
 
         .card-header {
-            background: rgba(255, 108, 0, 0.2);
+            background: rgba(255, 152, 0, 0.2);
             padding: 15px;
             text-align: center;
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid #2A4766;
         }
 
         .card-header h2 {
             margin: 0;
             font-size: 22px;
-            color: #FF6C00;
+            color: #FF9800;
         }
 
         .card-body {
@@ -568,7 +568,7 @@ foreach ($_SESSION['cart'] as $item) {
         .price {
             display: block;
             text-align: center;
-            color: #FF6C00;
+            color: #FF9800;
             font-size: 24px;
             font-weight: bold;
             margin: 15px 0;
@@ -576,9 +576,9 @@ foreach ($_SESSION['cart'] as $item) {
 
         .card button {
             width: 100%;
-            background: #333;
-            color: #FF6C00;
-            border: 1px solid #FF6C00;
+            background: #0C243D;
+            color: #FF9800;
+            border: 1px solid #FF9800;
             padding: 12px;
             border-radius: 5px;
             font-size: 16px;
@@ -587,8 +587,8 @@ foreach ($_SESSION['cart'] as $item) {
         }
 
         .card button:hover {
-            background: #FF6C00;
-            color: #000;
+            background: #FF9800;
+            color: #041025;
             transform: scale(1.05);
         }
 
@@ -621,12 +621,12 @@ foreach ($_SESSION['cart'] as $item) {
 <body>
     <!-- Navbar -->
     <div class="navbar">
-        <div class="brand">🎮 CODM SHOP</div>
+        <div class="brand">🎮 FREE FIRE SHOP</div>
         <div class="nav-right">
             <?php if ($logged_in): ?>
                 <div class="user-info">
                     👤 <?php echo $_SESSION['username'] ?? 'User'; ?> 
-                    <span style="color: #FF6C00; font-weight: bold;"><?php echo number_format($user_point, 2); ?> Point</span>
+                    <span style="color: #FF9800; font-weight: bold;"><?php echo number_format($user_point, 2); ?> Point</span>
                 </div>
                 <a href="logout.php">ออกจากระบบ</a>
             <?php else: ?>
@@ -641,8 +641,8 @@ foreach ($_SESSION['cart'] as $item) {
 
     <!-- Header -->
     <div class="header">
-        <h1>CALL OF DUTY MOBILE ACCOUNTS SHOP</h1>
-        <p>เลือกซื้อไอดีเกม Call of Duty Mobile คุณภาพดี การันตีทุกบัญชี</p>
+        <h1>FREE FIRE ACCOUNTS SHOP</h1>
+        <p>เลือกซื้อไอดีเกม Free Fire คุณภาพดี การันตีทุกบัญชี</p>
     </div>
 
     <!-- Alerts -->
@@ -749,7 +749,7 @@ foreach ($_SESSION['cart'] as $item) {
                 <?php endwhile; ?>
             <?php else: ?>
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                    <h2 style="color: #FF6C00;">ไม่มีสินค้า Call of Duty Mobile ในขณะนี้</h2>
+                    <h2 style="color: #FF9800;">ไม่มีสินค้า Free Fire ในขณะนี้</h2>
                     <p style="color: #FFFFFF;">กรุณากลับมาใหม่ในภายหลัง</p>
                 </div>
             <?php endif; ?>

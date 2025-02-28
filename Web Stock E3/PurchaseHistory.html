@@ -7,11 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Base styles */
         :root {
             --primary: #7f56d9;
             --primary-dark: #6844b1;
             --accent: #00ffff;
             --accent-secondary: #ff00ff;
+            
+            /* Light theme variables */
             --bg-light: #f5f5ff;
             --text-light: #2d3748;
             --navbar-light: linear-gradient(135deg, #6b46c1 0%, #8b5cf6 100%);
@@ -19,6 +22,8 @@
             --sidebar-light: rgba(248, 250, 252, 0.9);
             --sidebar-item-light: rgba(255, 255, 255, 0.9);
             --sidebar-hover-light: rgba(237, 233, 254, 0.9);
+            
+            /* Dark theme variables */
             --bg-dark: #0f172a;
             --text-dark: #e2e8f0;
             --navbar-dark: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
@@ -27,7 +32,7 @@
             --sidebar-item-dark: rgba(30, 41, 59, 0.8);
             --sidebar-hover-dark: rgba(30, 41, 59, 1);
         }
-
+        
         body {
             margin: 0;
             padding: 0;
@@ -38,17 +43,19 @@
             position: relative;
             z-index: 1;
         }
-
+        
+        /* Theme transitions */
         .theme-transition {
             animation: themeTransition 1s ease;
         }
-
+        
         @keyframes themeTransition {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
             100% { opacity: 1; }
         }
-
+        
+        /* Light theme */
         .light {
             --bg: var(--bg-light);
             --text: var(--text-light);
@@ -58,7 +65,8 @@
             --sidebar-item: var(--sidebar-item-light);
             --sidebar-hover: var(--sidebar-hover-light);
         }
-
+        
+        /* Dark theme */
         :root:not(.light) {
             --bg: var(--bg-dark);
             --text: var(--text-dark);
@@ -68,25 +76,27 @@
             --sidebar-item: var(--sidebar-item-dark);
             --sidebar-hover: var(--sidebar-hover-dark);
         }
-
+        
         body {
             background-color: var(--bg);
             color: var(--text);
         }
-
-        .navbar {
+        
+        /* Navigation bar */
+        header {
             background: var(--navbar);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
             transition: all 0.5s ease;
             position: relative;
             z-index: 20;
         }
-
+        
         .logo-text {
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 1px;
         }
-
+        
+        /* Sidebar styling */
         .sidebar {
             background: var(--sidebar);
             backdrop-filter: blur(10px);
@@ -94,20 +104,21 @@
             border-radius: 15px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
-
+        
         .sidebar-item {
             background: var(--sidebar-item);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
         }
-
+        
         .sidebar-item:hover {
             background: var(--sidebar-hover);
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
-
+        
+        /* Main content */
         .content {
             background: var(--card);
             backdrop-filter: blur(10px);
@@ -115,34 +126,45 @@
             border-radius: 15px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
-
-        .nav-link {
-            position: relative;
+        
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: transparent;
+        }
+        
+        th, td {
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+        
+        tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
-
-        .nav-link:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background: var(--accent);
-            transition: width 0.3s ease;
+        
+        /* Transaction card */
+        .transaction-card {
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-
-        .nav-link:hover:after {
-            width: 100%;
+        
+        tr:hover .transaction-card {
+            background: rgba(255, 255, 255, 0.05);
         }
-
+        
+        /* Theme toggle button */
         .theme-toggle {
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             z-index: 1;
         }
-
+        
         .theme-toggle:before {
             content: '';
             position: absolute;
@@ -156,11 +178,12 @@
             border-radius: 50%;
             z-index: -1;
         }
-
+        
         .theme-toggle:hover:before {
             transform: scale(2);
         }
-
+        
+        /* Particles background */
         #particles {
             position: fixed;
             top: 0;
@@ -170,66 +193,116 @@
             z-index: 0;
             pointer-events: none;
         }
-
-        table {
+        
+        /* Nav links with hover effect */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: transparent;
         }
-
-        th, td {
+        
+        /* Buttons */
+        .btn {
             transition: all 0.3s ease;
-            border: none;
-            background: transparent;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
-
-        tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn:hover:before {
+            left: 100%;
+        }
+        
+        /* Logo animation */
+        #logo {
+            transition: all 0.5s ease;
+        }
+        
+        #logo:hover {
+            transform: scale(1.05) rotate(2deg);
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+        }
+        
+        /* Empty state styling */
+        #noPurchases {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
             transition: all 0.3s ease;
-        }
-
-        .table-row:hover {
-            background: rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
+
 <body>
+    <!-- Particles Background -->
     <canvas id="particles"></canvas>
-    <nav class="navbar p-4 shadow-md text-white">
-        <div class="container mx-auto flex justify-between items-center">
+    
+    <!-- Header/Navbar -->
+    <header class="text-white shadow-lg">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
             <div class="flex items-center">
-                <img id="logo" src="image/logo_player/light_logo.png" alt="logo" class="w-auto h-16 mr-3 transition-all duration-500" />
-                <span class="text-2xl font-bold logo-text">PLAYER HAVEN</span>
+                <img id="logo" src="image/logo_player/light_logo.png" alt="logo" 
+                    class="w-auto h-16 mr-3 transition-all duration-500 hover:scale-105 filter" />
+                <span class="text-2xl font-bold logo-text">PLAYERHAVEN</span>
             </div>
-            <div class="hidden md:flex space-x-6">
+            
+            <nav class="hidden md:flex space-x-6 text-lg">
                 <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">หน้าแรก</a>
                 <a href="HomePage.html" class="nav-link hover:text-indigo-300 transition-all">ซื้อไอดีเกม</a>
                 <a href="#" class="nav-link hover:text-indigo-300 transition-all">สุ่มไอดีเกม</a>
                 <a href="TopUpCredit.html" class="nav-link hover:text-indigo-300 transition-all">เติม Points</a>
                 <a href="ProfileEdit.html" class="nav-link hover:text-indigo-300 transition-all">ดูโปรไฟล์</a>
                 <a href="#" class="nav-link hover:text-indigo-300 transition-all">ติดต่อเรา</a>
-            </div>
+            </nav>
+            
             <div class="flex items-center space-x-4">
-                <div class="relative flex items-center space-x-2">
-                    <button class="flex items-center hover:text-indigo-300 focus:outline-none">
-                        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile" class="w-8 h-8 rounded-full mr-2" />
-                        <span>User</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    <button onclick="toggleTheme()" class="theme-toggle p-3 rounded-full bg-gray-700 hover:bg-gray-600 shadow-md">
-                        <span id="themeIcon" class="text-lg">🌙</span>
-                    </button>
-                </div>
+                <!-- Logout button -->
+                <button id="logoutBtn" class="btn bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-all shadow-md" onclick="logout()">
+                    ออกจากระบบ
+                </button>
+                
+                <!-- Theme toggle -->
+                <button onclick="toggleTheme()" class="theme-toggle p-3 rounded-full bg-gray-700 hover:bg-gray-600 shadow-md transition-all">
+                    <span id="themeIcon" class="text-lg">🌙</span>
+                </button>
             </div>
         </div>
-    </nav>
-    <div class="flex justify-center py-8 px-4 gap-6">
-        <aside class="sidebar w-full md:w-64 p-6 rounded-lg shadow-md">
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto flex flex-col md:flex-row justify-center py-8 px-4 gap-6">
+        <!-- Sidebar -->
+        <aside class="sidebar w-full md:w-64 p-6 rounded-xl shadow-lg">
+            <h3 class="text-xl font-bold mb-4 border-b pb-2">บัญชีของฉัน</h3>
             <ul class="space-y-4">
-				<li>
+                <li>
                     <a href="ProfileEdit.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
@@ -238,7 +311,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="TopUpHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg bg-indigo-600 bg-opacity-20">
+                    <a href="TopUpHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                         </svg>
@@ -246,7 +319,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="PurchaseHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg">
+                    <a href="PurchaseHistory.html" class="sidebar-item flex items-center space-x-3 rounded-lg p-4 hover:shadow-lg bg-indigo-600 bg-opacity-20">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
                         </svg>
@@ -272,121 +345,241 @@
                 </li>
             </ul>
         </aside>
-        <main class="content w-[850px] p-8 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold mb-6">Purchase History</h2>
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-opacity-10 bg-gray-500 text-gray-300 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6">Order ID</th>
-                        <th class="py-3 px-6">Date</th>
-                        <th class="py-3 px-6">Game</th>
-                        <th class="py-3 px-6">Amount</th>
-                        <th class="py-3 px-6">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-opacity-20 table-row">
-                        <td class="py-3 px-6">#001</td>
-                        <td class="py-3 px-6">2025-01-01</td>
-                        <td class="py-3 px-6">Valorant</td>
-                        <td class="py-3 px-6">500 Baht</td>
-                        <td class="py-3 px-6 text-green-400 font-bold">Completed</td>
-                    </tr>
-                    <tr class="border-b border-opacity-20 table-row">
-                        <td class="py-3 px-6">#002</td>
-                        <td class="py-3 px-6">2025-01-02</td>
-                        <td class="py-3 px-6">League of Legends</td>
-                        <td class="py-3 px-6">1000 Baht</td>
-                        <td class="py-3 px-6 text-red-400 font-bold">Failed</td>
-                    </tr>
-                </tbody>
-            </table>
+
+        <!-- Content -->
+        <main class="content flex-1 p-6 rounded-xl shadow-lg border">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">ประวัติการซื้อเกม</h2>
+                <div class="inline-block px-3 py-1 bg-indigo-600 bg-opacity-20 rounded-full text-sm">
+                    แสดงรายการซื้อทั้งหมด
+                </div>
+            </div>
+            
+            <!-- Purchase History Table -->
+            <div class="overflow-hidden rounded-xl bg-opacity-50 shadow-inner">
+                <table id="purchaseTable" class="w-full">
+                    <tbody class="divide-y divide-gray-200 divide-opacity-20"></tbody>
+                </table>
+            </div>
+            
+            <!-- No Purchases Notice -->
+            <div id="noPurchases" class="hidden mt-8 p-8 text-center rounded-lg bg-opacity-10 backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <p class="text-lg">ไม่มีประวัติการซื้อเกม</p>
+                <p class="mt-2 opacity-70">เมื่อคุณซื้อสินค้าครั้งแรก รายการจะปรากฏที่นี่</p>
+                <a href="HomePage.html" class="inline-block mt-4 px-6 py-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-700 transition-all shadow-md">
+                    ซื้อเกมตอนนี้
+                </a>
+            </div>
         </main>
     </div>
+    
     <script>
-        function toggleTheme() {
-            const isLightMode = document.documentElement.classList.toggle("light");
-            const themeIcon = document.getElementById("themeIcon");
-            if (isLightMode) {
-                themeIcon.textContent = "☀️";
-                localStorage.setItem("theme", "light");
-                applyTheme("light");
-            } else {
-                themeIcon.textContent = "🌙";
-                localStorage.setItem("theme", "dark");
-                applyTheme("dark");
-            }
-            document.body.classList.add('theme-transition');
-            setTimeout(() => {
-                document.body.classList.remove('theme-transition');
-            }, 1000);
-        }
+                   document.addEventListener("DOMContentLoaded", function () {
+    const purchaseTable = document.getElementById("purchaseTable");
+    const noPurchases = document.getElementById("noPurchases");
+    const errorMessage = document.createElement("p");
+    errorMessage.className = "mt-4 text-red-500 text-center";
+    errorMessage.id = "errorMessage";
+    errorMessage.style.display = "none";
+    
+    // Add error message to DOM immediately
+    document.querySelector(".content").appendChild(errorMessage);
 
-        function applyTheme(theme) {
-            const logo = document.getElementById("logo");
-            const body = document.body;
-            if (theme === "dark") {
-                logo.src = "image/logo_player/dark_logo.png";
-                body.classList.add("dark-mode");
-                body.classList.remove("light-mode");
-            } else {
-                logo.src = "image/logo_player/light_logo.png";
-                body.classList.add("light-mode");
-                body.classList.remove("dark-mode");
-            }
-        }
+    // Initialize particles
+    initParticles();
 
-        function initParticles() {
-            const canvas = document.getElementById('particles');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const particleCount = 50;
-            const particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 2 + 1,
-                    color: `rgba(${Math.floor(Math.random() * 100 + 150)}, ${Math.floor(Math.random() * 100 + 150)}, 255, ${Math.random() * 0.5 + 0.3})`,
-                    speedX: Math.random() * 0.5 - 0.25,
-                    speedY: Math.random() * 0.5 - 0.25
+    // เรียกใช้ API เพื่อดึงข้อมูลประวัติการซื้อจาก get_purchase_history.php
+    fetch('get_purchase_history.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("API Response:", data);
+
+            if (!data.success) {
+                errorMessage.textContent = data.message || "Failed to load purchase history.";
+                errorMessage.style.display = "block";
+                purchaseTable.innerHTML = "";
+                noPurchases.classList.remove("hidden");
+                return;
+            }
+
+            if (data.history && data.history.length > 0) {
+                purchaseTable.innerHTML = "";
+                data.history.forEach((purchase, index) => {
+                    purchaseTable.innerHTML += `
+                        <tr class="border-b border-opacity-20 hover:bg-opacity-10 hover:bg-white transition-all duration-300">
+                            <td class="py-4 px-6 font-semibold">Order ${purchase.purchase_id}</td>
+                            <td class="py-4 px-6">
+                                <div class="transaction-card">
+                                    <div class="mb-1"><span class="font-medium">วันที่:</span> ${new Date(purchase.purchase_date || "").toLocaleDateString() || "-"}</div>
+                                    <div class="mb-1"><span class="font-medium">เกม:</span> ${purchase.game_id || "-"}</div>
+                                    <div class="mb-1"><span class="font-medium">ราคา:</span> ${parseFloat(purchase.price || 0).toFixed(2)} บาท</div>
+                                    ${purchase.password ? `<div class="mb-1"><span class="font-medium">รหัสผ่าน:</span> ${purchase.password}</div>` : ''}
+                                    <div><span class="font-medium">สถานะ:</span> <span class="text-green-400 font-bold">Completed</span></div> <!-- สมมติว่าไม่มีสถานะในตาราง -->
+                                </div>
+                            </td>
+                        </tr>
+                    `;
                 });
-            }
-            function animate() {
-                requestAnimationFrame(animate);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(particle => {
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = particle.color;
-                    ctx.fill();
-                    particle.x += particle.speedX;
-                    particle.y += particle.speedY;
-                    if (particle.x < 0 || particle.x > canvas.width) particle.speedX = -particle.speedX;
-                    if (particle.y < 0 || particle.y > canvas.height) particle.speedY = -particle.speedY;
-                });
-            }
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
-            animate();
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            initParticles();
-            const savedTheme = localStorage.getItem("theme") || "dark";
-            if (savedTheme === "light") {
-                document.documentElement.classList.add("light");
-                document.getElementById("themeIcon").textContent = "☀️";
+                noPurchases.classList.add("hidden");
+                errorMessage.style.display = "none";
             } else {
-                document.documentElement.classList.add("dark");
-                document.getElementById("themeIcon").textContent = "🌙";
+                noPurchases.classList.remove("hidden");
+                errorMessage.style.display = "none";
             }
-            applyTheme(savedTheme);
+        })
+        .catch(error => {
+            console.error("Error fetching purchase history:", error);
+            errorMessage.textContent = "An error occurred while loading the purchase history. Please try again later.";
+            errorMessage.style.display = "block";
+            purchaseTable.innerHTML = "";
+            noPurchases.classList.remove("hidden");
         });
+
+    // Check theme on page load
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    if (savedTheme === "light") {
+        document.documentElement.classList.add("light");
+        document.getElementById("themeIcon").textContent = "☀️";
+    } else {
+        document.documentElement.classList.add("dark");
+        document.getElementById("themeIcon").textContent = "🌙";
+    }
+    applyTheme(savedTheme);
+});
+
+// Particle animation functions
+function initParticles() {
+    const canvas = document.getElementById('particles');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Particle configuration
+    const particleCount = 50;
+    const particles = [];
+    
+    // Create particles
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 2 + 1,
+            color: `rgba(${Math.floor(Math.random() * 100 + 150)}, ${Math.floor(Math.random() * 100 + 150)}, 255, ${Math.random() * 0.5 + 0.3})`,
+            speedX: Math.random() * 0.5 - 0.25,
+            speedY: Math.random() * 0.5 - 0.25
+        });
+    }
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw and update particles
+        particles.forEach(particle => {
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+            ctx.fillStyle = particle.color;
+            ctx.fill();
+            
+            // Update position
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+            
+            // Bounce off edges
+            if (particle.x < 0 || particle.x > canvas.width) {
+                particle.speedX = -particle.speedX;
+            }
+            
+            if (particle.y < 0 || particle.y > canvas.height) {
+                particle.speedY = -particle.speedY;
+            }
+        });
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+    
+    // Start animation
+    animate();
+}
+
+// ฟังก์ชันออกจากระบบ
+function logout() {
+    // ส่งคำขอไปยัง server เพื่อล้าง session
+    fetch('logout.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "Login.html";
+            } else {
+                console.error("Logout failed:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error during logout:", error);
+            // ถ้ามีข้อผิดพลาดก็ให้ redirect ไปหน้า login อยู่ดี
+            window.location.href = "Login.html";
+        });
+}
+
+// ฟังก์ชันเปลี่ยนธีม
+function toggleTheme() {
+    const isDarkMode = document.documentElement.classList.toggle("light");
+    const themeIcon = document.getElementById("themeIcon");
+    
+    // Toggle theme icon and store preference
+    if (isDarkMode) {
+        themeIcon.textContent = "☀️";
+        localStorage.setItem("theme", "light");
+        applyTheme("light");
+    } else {
+        themeIcon.textContent = "🌙";
+        localStorage.setItem("theme", "dark");
+        applyTheme("dark");
+    }
+    
+    // Apply transition animation
+    document.body.classList.add('theme-transition');
+    setTimeout(() => {
+        document.body.classList.remove('theme-transition');
+    }, 1000);
+}
+
+// Apply theme settings
+function applyTheme(theme) {
+    const logo = document.getElementById("logo");
+    const body = document.body;
+    const navbar = document.querySelector("header");
+    
+    if (theme === "dark") {
+        logo.src = "image/logo_player/dark_logo.png";
+        body.classList.add("dark-mode");
+        body.classList.remove("light-mode");
+    } else {
+        logo.src = "image/logo_player/light_logo.png";
+        body.classList.add("light-mode");
+        body.classList.remove("dark-mode");
+    }
+}
     </script>
 </body>
 </html>

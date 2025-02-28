@@ -150,42 +150,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['purchase'])) {
                 $update_stmt->close();
                 
                 // บันทึกประวัติการซื้อและอัปเดตสถานะสินค้า
-                foreach ($_SESSION['cart'] as $item) {
-                    $account_id = $item['account_id'];
-                    $price = $item['price'];
-                    
-                    // อัปเดตสถานะบัญชีด้วย prepared statement - ไม่ใช้ buyer_id
-                    $update_account_stmt = $conn->prepare("UPDATE Accounts SET status = 'sold' WHERE account_id = ?");
-                    if (!$update_account_stmt) {
-                        throw new Exception("Prepare account update failed: " . $conn->error);
-                    }
-                    
-                    $update_account_stmt->bind_param("s", $account_id);
-                    if (!$update_account_stmt->execute()) {
-                        throw new Exception("Failed to update account status: " . $update_account_stmt->error);
-                    }
-                    
-                    // ตรวจสอบว่ามีการอัปเดตจริงหรือไม่
-                    if ($update_account_stmt->affected_rows == 0) {
-                        throw new Exception("No rows updated when changing account status. Account ID: $account_id");
-                    }
-                    
-                    $update_account_stmt->close();
-                    
-                    // บันทึกประวัติการซื้อ - เก็บ user_id ที่ซื้อไว้ในตารางประวัติแทน
-                    $purchase_date = date('Y-m-d H:i:s');
-                    $insert_stmt = $conn->prepare("INSERT INTO purchase_history (user_id, account_id, game_id, price, purchase_date) VALUES (?, ?, 'VLR', ?, ?)");
-                    if (!$insert_stmt) {
-                        throw new Exception("Prepare insert statement failed: " . $conn->error);
-                    }
-                    
-                    $insert_stmt->bind_param("ssds", $user_id, $account_id, $price, $purchase_date);
-                    if (!$insert_stmt->execute()) {
-                        throw new Exception("Failed to insert purchase history: " . $insert_stmt->error);
-                    }
-                    
-                    $insert_stmt->close();
-                }
+foreach ($_SESSION['cart'] as $item) {
+    $account_id = $item['account_id'];
+    $price = $item['price'];
+    $original_game_id = $item['game_id']; // ใช้ game_id ที่มากับไอเทมในตะกร้า
+    
+    // อัปเดตสถานะบัญชี
+    $update_account_stmt = $conn->prepare("UPDATE Accounts SET status = 'sold' WHERE account_id = ?");
+    if (!$update_account_stmt) {
+        throw new Exception("Prepare account update failed: " . $conn->error);
+    }
+    
+    $update_account_stmt->bind_param("s", $account_id);
+    if (!$update_account_stmt->execute()) {
+        throw new Exception("Failed to update account status: " . $update_account_stmt->error);
+    }
+    
+    // ตรวจสอบว่ามีการอัปเดตจริงหรือไม่
+    if ($update_account_stmt->affected_rows == 0) {
+        throw new Exception("No rows updated when changing account status. Account ID: $account_id");
+    }
+    
+    $update_account_stmt->close();
+    
+    // ดึงรหัสผ่านจากตาราง Accounts
+    $get_password_stmt = $conn->prepare("SELECT password FROM Accounts WHERE account_id = ?");
+    if (!$get_password_stmt) {
+        throw new Exception("Prepare get password statement failed: " . $conn->error);
+    }
+    
+    $get_password_stmt->bind_param("s", $account_id);
+    if (!$get_password_stmt->execute()) {
+        throw new Exception("Failed to get password: " . $get_password_stmt->error);
+    }
+    
+    $password_result = $get_password_stmt->get_result();
+    if ($password_row = $password_result->fetch_assoc()) {
+        $account_password = $password_row['password'];
+    } else {
+        $account_password = ''; // กรณีไม่พบรหัสผ่าน
+    }
+    
+    $get_password_stmt->close();
+    
+    // บันทึกประวัติการซื้อ พร้อมรหัสผ่าน
+    $purchase_date = date('Y-m-d H:i:s');
+    $insert_stmt = $conn->prepare("INSERT INTO purchase_history (user_id, account_id, game_id, price, password, purchase_date) VALUES (?, ?, ?, ?, ?, ?)");
+    if (!$insert_stmt) {
+        throw new Exception("Prepare insert statement failed: " . $conn->error);
+    }
+    
+    $insert_stmt->bind_param("sssdss", $user_id, $account_id, $original_game_id, $price, $account_password, $purchase_date);
+    if (!$insert_stmt->execute()) {
+        throw new Exception("Failed to insert purchase history: " . $insert_stmt->error);
+    }
+    
+    $insert_stmt->close();
+}
                 
                 // Commit transaction
                 mysqli_commit($conn);
