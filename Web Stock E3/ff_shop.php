@@ -620,24 +620,31 @@ foreach ($_SESSION['cart'] as $item) {
 </head>
 <body>
     <!-- Navbar -->
-    <div class="navbar">
-        <div class="brand">🎮 FREE FIRE SHOP</div>
-        <div class="nav-right">
-            <?php if ($logged_in): ?>
-                <div class="user-info">
-                    👤 <?php echo $_SESSION['username'] ?? 'User'; ?> 
-                    <span style="color: #FF9800; font-weight: bold;"><?php echo number_format($user_point, 2); ?> Point</span>
-                </div>
-                <a href="logout.php">ออกจากระบบ</a>
-            <?php else: ?>
-                <a href="login.php">เข้าสู่ระบบ</a>
-                <a href="register.php">สมัครสมาชิก</a>
-            <?php endif; ?>
-            <div class="cart" onclick="toggleModal()">
-                🛒 ตะกร้า <span id="cart-count"><?php echo count($_SESSION['cart']); ?></span>
+<div class="navbar">
+    <div class="brand">🎮 PLAYER HAVEN</div>
+    <div class="nav-right">
+        <a href="HomePage.html">Home</a>
+        <a href="vlr_shop.php">VALORANT</a>
+        <a href="rov_shop.php">ROV</a>
+        <a href="tft_shop.php">TFT</a>
+        <a href="codm_shop.php">CODM</a>
+        <a href="lol_shop.php">LOL</a>
+        <?php if ($logged_in): ?>
+            <div class="user-info">
+                👤 <?php echo $_SESSION['username'] ?? 'User'; ?> 
+                <span style="color: #FF9800; font-weight: bold;"><?php echo number_format($user_point, 2); ?> Point</span>
             </div>
+            <a href="logout.php">ออกจากระบบ</a>
+        <?php else: ?>
+            <a href="Login.html">เข้าสู่ระบบ</a>
+            <a href="Register.html">สมัครสมาชิก</a>
+        <?php endif; ?>
+        <div class="cart" onclick="toggleModal()">
+            🛒 ตะกร้า <span id="cart-count"><?php echo count($_SESSION['cart']); ?></span>
         </div>
     </div>
+</div>
+
 
     <!-- Header -->
     <div class="header">
@@ -722,7 +729,7 @@ foreach ($_SESSION['cart'] as $item) {
                             <div class="card-info">
                                 <p>
                                     <span class="label">Account ID:</span>
-                                    <span class="value">#<?php echo htmlspecialchars($row['account_id']); ?></span>
+                                    <span class="value"><?php echo htmlspecialchars($row['account_id']); ?></span>
                                 </p>
                                 <p>
                                     <span class="label">Username:</span>

@@ -620,8 +620,14 @@ foreach ($_SESSION['cart'] as $item) {
 <body>
     <!-- Navbar -->
     <div class="navbar">
-        <div class="brand">🎮 LEAGUE OF LEGENDS SHOP</div>
+        <div class="brand">🎮 PLAYER HAVEN</div>
         <div class="nav-right">
+        <a href="HomePage.html">Home</a>
+        <a href="vlr_shop.php">VALORANT</a>
+        <a href="rov_shop.php">ROV</a>
+        <a href="tft_shop.php">TFT</a>
+        <a href="codm_shop.php">CODM</a>
+        <a href="lol_shop.php">LOL</a>
             <?php if ($logged_in): ?>
                 <div class="user-info">
                     👤 <?php echo $_SESSION['username'] ?? 'User'; ?> 
@@ -721,7 +727,7 @@ foreach ($_SESSION['cart'] as $item) {
                             <div class="card-info">
                                 <p>
                                     <span class="label">Account ID:</span>
-                                    <span class="value">#<?php echo htmlspecialchars($row['account_id']); ?></span>
+                                    <span class="value"><?php echo htmlspecialchars($row['account_id']); ?></span>
                                 </p>
                                 <p>
                                     <span class="label">Username:</span>
