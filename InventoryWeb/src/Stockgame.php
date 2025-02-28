@@ -16,7 +16,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการสต็อกเกม</title>
+    <title>ShowProduct</title>
     <link rel="stylesheet" href="styles.css">
     <style>
 body {
@@ -267,7 +267,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 ระบบจัดการสต็อกเกม</title>
+    <title>ShowProduct</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -278,9 +278,8 @@ $result = $conn->query($query);
     <div class="nav-logo">📦 Inventory</div>
     <ul class="nav-links">
         <li><a href="inventory.php">Store</a></li>
-        <li><a href="showproduct.php">ShowProducts</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>
-        <li><a href="#Stockgame.php">Stockgame</a></li>
+        <li><a href="#Stockgame.php">ShowProduct</a></li>
         <li><a href="add_product.php" class="add-product-btn">➕ Add Product</a></li>
     </ul>
 </nav>
