@@ -610,7 +610,7 @@ foreach ($_SESSION['cart'] as $item) {
     <div class="navbar">
         <div class="brand">🎮 PLAYER HAVEN</div>
         <div class="nav-right">
-        <a href="HomePage.html">หน้าแรก</a>
+        <a href="HomePage.php">หน้าแรก</a>
         <a href="RandomWheel.php">สุ่มไอดีเกม</a>
         <a href="vlr_shop.php">VALORANT</a>
         <a href="rov_shop.php">ROV</a>

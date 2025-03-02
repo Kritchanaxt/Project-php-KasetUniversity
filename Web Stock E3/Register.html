@@ -80,7 +80,7 @@
         /* Theme mode */
         .dark-mode {
             background-color: #0a1a2f;
-            /* เปลี่ยนเป็นสีพื้นหลังหลักของโモードมืด */
+            /* เปลี่ยนเป็นสีพื้นหลังหลักของโหมดมืด */
             color: white;
         }
 
@@ -113,7 +113,43 @@
             color: white !important;
         }
 
-        /* Switch Toggle Button (ยังคงเหมือนเดิม) */
+        /* ปรับปรุงสีพื้นหลังของฟอร์มในโหมดมืด */
+        .dark-mode .form-container {
+            background-color: #1e293b !important; /* สีพื้นหลังฟอร์มในโหมดมืด */
+        }
+
+        .dark-mode .form-heading {
+            color: white !important;
+        }
+
+        .dark-mode .form-subheading {
+            color: #cbd5e1 !important;
+        }
+
+        /* ปรับปรุงสี input ในโหมดมืด */
+        .dark-mode input[type="text"],
+        .dark-mode input[type="password"],
+        .dark-mode input[type="email"],
+        .dark-mode input[type="tel"] {
+            background-color: #334155 !important;
+            border-color: #475569 !important;
+            color: white !important;
+        }
+
+        .dark-mode input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        .dark-mode .form-label {
+            color: #e2e8f0 !important;
+        }
+
+        /* ปรับปรุงสีข้อความยินยอมเงื่อนไข */
+        .dark-mode .terms-label {
+            color: #e2e8f0 !important;
+        }
+
+        /* Switch Toggle Button */
         .theme-toggle {
             position: relative;
             display: inline-block;
@@ -161,7 +197,6 @@
             font-size: 18px;
             color: #f1c40f;
             transition: opacity 0.3s ease, content 0.3s ease;
-
         }
 
         input:checked+.slider {
@@ -177,29 +212,9 @@
             color: #fff;
         }
 
-        /* กำหนดสีข้อความใน input เป็นสีดำตลอดเวลา */
-        input[type="text"],
-        input[type="password"] {
-            color: #000000 !important;
-            /* สีดำตลอดเวลา */
-        }
-
-        /* ป้องกันการเปลี่ยนสีข้อความในโหมดมืด */
-        .dark-mode input[type="text"],
-        .dark-mode input[type="password"] {
-            color: #000000 !important;
-            /* สีดำในโหมดมืด */
-        }
-
-        /* รักษาสไตล์การโฟกัสของ input */
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            color: #000000;
-            /* สีดำเมื่อโฟกัส */
-        }
         .bg-nav {
-			background-color: #1a1f36;
-		}
+            background-color: #1a1f36;
+        }
     </style>
 </head>
 
@@ -217,8 +232,8 @@
                 PLAYERHAVEN
             </div>
             <nav class="flex space-x-4 text-lg font-semibold">
-                <a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
-                <a href="HomePage.html" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
+                <a href="HomePage.php" class="hover:text-indigo-300">หน้าแรก</a>
+                <a href="HomePage.php" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
                 <a href="RandomWheel.php" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
                 <a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
                 <a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
@@ -249,7 +264,7 @@
                     <span class="slider"></span>
                 </label>
             </div>
-
+        </div>
     </header>
 
     <!-- Register Section -->
@@ -262,43 +277,43 @@
 
     <!-- Register Form -->
     <section class="container mx-auto py-12 flex justify-center">
-        <div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
+        <div class="form-container bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
             <div class="text-center mb-6">
                 <img src="img/player_logo.jpg" alt="PlayerHaven Logo" class="mx-auto w-26 h-24 mb-6">
-                <h2 class="text-3xl font-bold text-indigo-800">PLAYERHAVEN</h2>
-                <p class="text-gray-600">GAME ONLINE STORE CENTER</p>
+                <h2 class="form-heading text-3xl font-bold text-indigo-800">PLAYERHAVEN</h2>
+                <p class="form-subheading text-gray-600">GAME ONLINE STORE CENTER</p>
             </div>
-            <p class="text-center text-gray-600 mb-4 font-medium">สมัครสมาชิก</p>
+            <p class="form-subheading text-center text-gray-600 mb-4 font-medium">สมัครสมาชิก</p>
 
             <!-- Register Form -->
             <form action="register.php" method="POST">
                 <div class="mb-4">
-                    <label for="username" class="block text-gray-800 font-medium">ชื่อผู้ใช้ *</label>
+                    <label for="username" class="form-label block text-gray-800 font-medium">ชื่อผู้ใช้ *</label>
                     <input type="text" id="username" name="username"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required>
                 </div>
                 <div class="mb-4">
-                    <label for="password" class="block text-gray-800 font-medium">รหัสผ่าน *</label>
+                    <label for="password" class="form-label block text-gray-800 font-medium">รหัสผ่าน *</label>
                     <input type="password" id="password" name="password"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required>
                 </div>
                 <div class="mb-4">
-                    <label for="email" class="block text-gray-800 font-medium">อีเมล *</label>
+                    <label for="email" class="form-label block text-gray-800 font-medium">อีเมล *</label>
                     <input type="email" id="email" name="email"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required>
                 </div>
                 <div class="mb-4">
-                    <label for="phone" class="block text-gray-800 font-medium">เบอร์โทรศัพท์ *</label>
+                    <label for="phone" class="form-label block text-gray-800 font-medium">เบอร์โทรศัพท์ *</label>
                     <input type="tel" id="phone" name="phone"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required>
                 </div>
                 <div class="mb-4 flex items-center">
                     <input type="checkbox" id="terms" name="terms" class="mr-2" required>
-                    <label for="terms" class="text-gray-800">ฉันยินยอมตามเงื่อนไขและนโยบาย</label>
+                    <label for="terms" class="terms-label text-gray-800">ฉันยินยอมตามเงื่อนไขและนโยบาย</label>
                 </div>
                 <div class="flex space-x-4">
                     <button type="submit"
@@ -340,31 +355,6 @@
 
             localStorage.setItem("theme", isDarkMode ? "dark" : "light");
         }
-
-        // โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
-        window.onload = function () {
-            const savedTheme = localStorage.getItem("theme");
-            const toggle = document.getElementById("themeToggle");
-            const body = document.body;
-            const navbar = document.querySelector("header");
-            const loginSection = document.querySelector(".bg-indigo-600");
-            const logo = document.getElementById("logo");
-
-            if (savedTheme === "dark") {
-                toggle.checked = true;
-                body.classList.add("dark-mode");
-                logo.src = "image/logo_player/dark_logo.png";
-                body.style.backgroundColor = "#10142b";
-                navbar.style.backgroundColor = "#1a1f36";
-                loginSection.style.backgroundColor = "#232c58";
-            } else {
-                body.classList.remove("dark-mode");
-                logo.src = "image/logo_player/light_logo.png";
-                body.style.backgroundColor = "#10142b";
-				navbar.style.backgroundColor = "#1a1f36";
-				loginSection.style.backgroundColor = "#232c58";
-            }
-        };
 
         // โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
         window.onload = function () {

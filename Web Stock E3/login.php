@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<script>
                 localStorage.setItem('username', '" . addslashes($user['username']) . "');
                 localStorage.setItem('email', '" . addslashes($user['email']) . "');
-                window.location.href = 'HomePage.html';
+                window.location.href = 'HomePage.php';
             </script>";
         } else {
             echo "<script>alert('รหัสผ่านไม่ถูกต้อง'); window.location.href = 'Login.html';</script>";

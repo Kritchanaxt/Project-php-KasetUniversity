@@ -1,3 +1,20 @@
+<?php
+// เพิ่ม PHP session_start() ที่ด้านบนของหน้า
+session_start();
+
+// ฟังก์ชันตรวจสอบว่าเป็น admin หรือไม่
+function isAdmin($username) {
+    // ตรวจสอบว่าเป็น admin12345678 หรือไม่
+    return ($username === 'admin12345678');
+}
+
+// เตรียมตัวแปร JavaScript สำหรับส่งค่าไปยัง script
+$isAdminJS = 'false';
+if (isset($_SESSION['username']) && isAdmin($_SESSION['username'])) {
+    $isAdminJS = 'true';
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -114,6 +131,17 @@
 			color: white !important;
 		}
 
+		/* Admin Badge */
+		.admin-badge {
+			background-color: #fbbf24;
+			color: #7c2d12;
+			padding: 2px 8px;
+			border-radius: 6px;
+			font-size: 0.75rem;
+			font-weight: bold;
+			margin-left: 8px;
+		}
+
 		/* Switch Toggle Button */
 		.theme-toggle {
 			position: relative;
@@ -203,6 +231,11 @@
 				<a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
 				<a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
 				<a href="contact.html" class="hover:text-indigo-300">ติดต่อเรา</a>
+				<!-- ปุ่ม Inventory สำหรับ Admin (ซ่อนเริ่มต้น) -->
+				<a href="InventoryWeb/src/inventory.php" id="adminInventoryBtn" class="hidden hover:text-indigo-300 relative">
+					<span>จัดการสินค้า</span>
+					<span class="admin-badge">Admin</span>
+				</a>
 			</nav>
 			<div class="space-x-4">
 				<!-- ปุ่มเข้าสู่ระบบ -->
@@ -228,7 +261,7 @@
 					<span class="slider"></span>
 				</label>
 			</div>
-
+        </div>
 	</header>
 
 	<!-- Section -->
@@ -288,6 +321,14 @@
 							onclick="window.location.href='Mailbox.html'">
 							<span class="text-2xl">📩</span>
 							<span class="text-sm mt-1">กล่องจดหมาย</span>
+						</button>
+						<!-- ปุ่มจัดการสินค้าสำหรับ Admin (ซ่อนเริ่มต้น) -->
+						<button id="adminInventoryBox"
+							class="flex flex-col items-center bg-yellow-100 hover:bg-yellow-200 p-4 rounded-xl w-40 shadow-sm text-gray-900 font-semibold hidden"
+							onclick="window.location.href='InventoryWeb/src/inventory.php'">
+							<span class="text-2xl">🔧</span>
+							<span class="text-sm mt-1">จัดการสินค้า</span>
+							<span class="text-xs bg-yellow-500 text-white px-2 py-0.5 rounded mt-1">Admin</span>
 						</button>
 					</div>
 
@@ -400,12 +441,16 @@
 	</section>
 	<!-- Script -->
 	<script>
+		// ส่งค่า isAdmin จาก PHP ไปยัง JavaScript
+		const isAdmin = <?php echo $isAdminJS; ?>;
+
 		function scrollToBottom() {
-    window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth' 
-    });
-}
+			window.scrollTo({
+				top: document.body.scrollHeight,
+				behavior: 'smooth' 
+			});
+		}
+		
 		window.onload = function () {
 			const username = localStorage.getItem("username");
 			const profileSection = document.getElementById("profileSection");
@@ -421,6 +466,10 @@
 			const topupHistory = document.getElementById("topupHistory");
 			const giftCardBox = document.getElementById("giftCardBox");
 			const mailbox = document.getElementById("mailbox");
+			
+			// Admin UI Elements
+			const adminInventoryBtn = document.getElementById("adminInventoryBtn");
+			const adminInventoryBox = document.getElementById("adminInventoryBox");
 
 			if (username) {
 				usernameDisplay.textContent = username; // อัปเดตชื่อบัญชี
@@ -435,6 +484,14 @@
 				topupHistory.classList.remove("hidden");
 				giftCardBox.classList.remove("hidden");
 				mailbox.classList.remove("hidden");
+				
+				// ตรวจสอบว่าเป็น admin12345678 หรือไม่
+				if (username === 'admin12345678' || isAdmin) {
+					// แสดงปุ่ม Admin ในเมนูหลัก
+					adminInventoryBtn.classList.remove("hidden");
+					// แสดงปุ่ม Admin ในส่วน Action
+					adminInventoryBox.classList.remove("hidden");
+				}
 
 				// ดึงข้อมูลจากเซิร์ฟเวอร์เพื่ออัปเดต point
 				fetch("get_profile.php")
@@ -460,6 +517,10 @@
 				logoutBtn.classList.add("hidden"); // ซ่อนปุ่มออกจากระบบ
 				loginBtn.classList.remove("hidden"); // แสดงปุ่มเข้าสู่ระบบ
 				registerBtn.classList.remove("hidden"); // แสดงปุ่มสมัครสมาชิก
+				
+				// ซ่อนปุ่ม Admin
+				adminInventoryBtn.classList.add("hidden");
+				adminInventoryBox.classList.add("hidden");
 
 				// ซ่อนปุ่มประวัติการทำรายการ
 				purchaseHistory.classList.add("hidden");
@@ -488,12 +549,16 @@
 				logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
 				body.style.backgroundColor = "#10142b";
 				navbar.style.backgroundColor = "#1a1f36";
-				loginSection.style.backgroundColor = "#232c58";
+				if (loginSection) {
+					loginSection.style.backgroundColor = "#232c58";
+				}
 			} else {
 				logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
 				body.style.backgroundColor = "#10142b";
 				navbar.style.backgroundColor = "#1a1f36";
-				loginSection.style.backgroundColor = "#232c58";
+				if (loginSection) {
+					loginSection.style.backgroundColor = "#232c58";
+				}
 			}
 
 			localStorage.setItem("theme", isDarkMode ? "dark" : "light");
