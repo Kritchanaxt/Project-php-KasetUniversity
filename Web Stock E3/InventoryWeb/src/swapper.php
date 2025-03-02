@@ -213,7 +213,7 @@
             padding: 1rem 2rem;
             font-size: 1.1rem;
             background: rgba(255, 255, 255, 0.1);
-            color: white;
+            color: black;
             border: 2px solid rgba(167, 139, 250, 0.5);
             border-radius: 15px;
             appearance: none;
