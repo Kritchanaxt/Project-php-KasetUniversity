@@ -225,8 +225,8 @@ if (isset($_SESSION['username']) && isAdmin($_SESSION['username'])) {
 				PLAYERHAVEN
 			</div>
 			<nav class="flex space-x-4">
-				<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
-				<a href="#HomePage.html" onclick="scrollToBottom()" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
+				<a href="HomePage.php" class="hover:text-indigo-300">หน้าแรก</a>
+				<a href="#HomePage.php" onclick="scrollToBottom()" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
 				<a href="RandomWheel.php" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
 				<a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
 				<a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
