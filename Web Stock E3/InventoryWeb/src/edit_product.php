@@ -312,6 +312,7 @@ if (isset($_GET['delete'])) {
         <li><a href="inventory.php">Store</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>
         <li><a href="Stockgame.php">ShowProduct</a></li>
+        <li><a href="swapper.php">API-DB</a></li>
         <li><a href="add_product.php" class="add-product-btn">➕ Add Product</a></li>
     </ul>
 </nav>
