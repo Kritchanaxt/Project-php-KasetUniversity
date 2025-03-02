@@ -391,16 +391,16 @@ if (isset($_SESSION['username']) && isAdmin($_SESSION['username'])) {
     </div>
 </a>
 
-				<!-- Golden Spatula -->
+				<!-- FF -->
 <a href="ff_shop.php" class="relative group overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
     <div class="aspect-video overflow-hidden">
-        <img src="image/game_pic/golden_pic.jpg" alt="Golden Spatula"
+        <img src="image/game_pic/FF.png" alt="Free Fire"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
     </div>
     <div
         class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div class="absolute bottom-0 left-0 right-0 p-4">
-            <h3 class="text-white text-lg font-bold">Golden Spatula</h3>
+            <h3 class="text-white text-lg font-bold">Free Fire</h3>
         </div>
     </div>
 </a>
@@ -530,12 +530,30 @@ if (isset($_SESSION['username']) && isAdmin($_SESSION['username'])) {
 			}
 		};
 
-		// ฟังก์ชัน Logout
-		function logout() {
-			localStorage.removeItem("username");
-			localStorage.removeItem("email");
-			window.location.href = "Login.html";
-		}
+		// ฟังก์ชัน Logout ที่ปรับปรุงใหม่
+function logout() {
+    // ลบข้อมูลทั้งหมดที่เกี่ยวข้องกับการล็อกอินออกจาก localStorage
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("point");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("session_token");
+    
+    // ล้าง PHP session ผ่าน AJAX request (ถ้าใช้ PHP session)
+    fetch("logout.php", {
+        method: "POST",
+        credentials: "same-origin"
+    }).then(response => {
+        console.log("PHP session cleared");
+    }).catch(error => {
+        console.error("Error clearing PHP session:", error);
+    });
+    
+    // ไปที่หน้า Login
+    window.location.href = "Login.html";
+}
 
 		// ฟังก์ชันเปลี่ยนธีม
 		function toggleTheme() {

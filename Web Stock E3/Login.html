@@ -354,138 +354,262 @@
 
     <!-- Script -->
     <script>
-        // ฟังก์ชันสลับการแสดงรหัสผ่าน
-        function togglePasswordVisibility() {
-            const passwordField = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
+       // ฟังก์ชันสลับการแสดงรหัสผ่าน
+function togglePasswordVisibility() {
+    const passwordField = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// ฟังก์ชันเปลี่ยนธีม
+function toggleTheme() {
+    const body = document.body;
+    const navbar = document.querySelector("header");
+    const loginSection = document.querySelector(".bg-indigo-600");
+    const formContainer = document.querySelector(".form-container");
+    const formLabels = document.querySelectorAll(".form-label");
+    const formHeading = document.querySelector(".form-heading");
+    const formSubheadings = document.querySelectorAll(".form-subheading");
+    const termsLabel = document.querySelector(".terms-label");
+    const logo = document.getElementById("logo");
+    const toggle = document.getElementById("themeToggle");
+    const isDarkMode = toggle.checked;
+
+    if (isDarkMode) {
+        logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
+        body.classList.add("dark-mode");
+        body.style.backgroundColor = "#10142b"; // ยังคงไว้เพื่อความเข้ากันกับ CSS เดิม
+        navbar.style.backgroundColor = "#1a1f36";
+        loginSection.style.backgroundColor = "#232c58";
+        
+        // อัปเดตสีฟอร์มในโหมดมืด
+        formContainer.style.backgroundColor = "#1e293b";
+        formHeading.style.color = "white";
+        formSubheadings.forEach(item => item.style.color = "#cbd5e1");
+        formLabels.forEach(label => label.style.color = "#e2e8f0");
+        termsLabel.style.color = "#e2e8f0";
+    } else {
+        logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
+        body.classList.remove("dark-mode");
+        body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
+        navbar.style.backgroundColor = "";
+        loginSection.style.backgroundColor = "";
+        
+        // คืนค่าสีฟอร์มในโหมดสว่าง
+        formContainer.style.backgroundColor = "";
+        formHeading.style.color = "";
+        formSubheadings.forEach(item => item.style.color = "");
+        formLabels.forEach(label => label.style.color = "");
+        termsLabel.style.color = "";
+    }
+
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+}
+
+// โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
+window.onload = function () {
+    const savedTheme = localStorage.getItem("theme");
+    const toggle = document.getElementById("themeToggle");
+    const body = document.body;
+    const navbar = document.querySelector("header");
+    const loginSection = document.querySelector(".bg-indigo-600");
+    const formContainer = document.querySelector(".form-container");
+    const formLabels = document.querySelectorAll(".form-label");
+    const formHeading = document.querySelector(".form-heading");
+    const formSubheadings = document.querySelectorAll(".form-subheading");
+    const termsLabel = document.querySelector(".terms-label");
+    const logo = document.getElementById("logo");
+
+    if (savedTheme === "dark") {
+        toggle.checked = true;
+        body.classList.add("dark-mode");
+        logo.src = "image/logo_player/dark_logo.png";
+        body.style.backgroundColor = "#10142b";
+        navbar.style.backgroundColor = "#1a1f36";
+        loginSection.style.backgroundColor = "#232c58";
+        
+        // อัปเดตสีฟอร์มในโหมดมืด
+        formContainer.style.backgroundColor = "#1e293b";
+        formHeading.style.color = "white";
+        formSubheadings.forEach(item => item.style.color = "#cbd5e1");
+        formLabels.forEach(label => label.style.color = "#e2e8f0");
+        termsLabel.style.color = "#e2e8f0";
+    } else {
+        body.classList.remove("dark-mode");
+        logo.src = "image/logo_player/light_logo.png";
+        body.style.backgroundColor = "";
+        navbar.style.backgroundColor = "";
+        loginSection.style.backgroundColor = "";
+        
+        // คืนค่าสีฟอร์มในโหมดสว่าง
+        formContainer.style.backgroundColor = "";
+        formHeading.style.color = "";
+        formSubheadings.forEach(item => item.style.color = "");
+        formLabels.forEach(label => label.style.color = "");
+        termsLabel.style.color = "";
+    }
+    
+    // ตรวจสอบสถานะการล็อกอินเมื่อโหลดหน้า
+    checkLoginStatus();
+};
+
+// ฟังก์ชันตรวจสอบสถานะการล็อกอิน
+function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    
+    if (isLoggedIn) {
+        // ถ้าล็อกอินแล้ว ซ่อนปุ่มล็อกอินและสมัครสมาชิก แสดงปุ่มออกจากระบบ
+        loginBtn.classList.add("hidden");
+        registerBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+    } else {
+        // ถ้ายังไม่ล็อกอิน แสดงปุ่มล็อกอินและสมัครสมาชิก ซ่อนปุ่มออกจากระบบ
+        loginBtn.classList.remove("hidden");
+        registerBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+    }
+}
+
+// ฟังก์ชันออกจากระบบที่ทำงานได้อย่างสม่ำเสมอทุกหน้า
+function logout() {
+    // ลบข้อมูลทั้งหมดที่เกี่ยวข้องกับการล็อกอินออกจาก localStorage
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("isLoggedIn"); // เปลี่ยนจากการเซ็ต "false" เป็นการลบออกเลย
+    
+    // ล้างข้อมูลเพิ่มเติมที่อาจมีการบันทึกไว้
+    localStorage.removeItem("point");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("session_token");
+    
+    // อัปเดตการแสดงปุ่ม (ถ้ามีการเรียกใช้ฟังก์ชัน checkLoginStatus)
+    if (typeof checkLoginStatus === 'function') {
+        checkLoginStatus();
+    }
+    
+    // รีเฟรชหน้าปัจจุบันหรือไปยังหน้า Login
+    // แทนที่จะกำหนดหน้าปลายทางตายตัว ให้ตรวจสอบว่ากำลังอยู่ที่หน้าไหน
+    const currentPage = window.location.pathname;
+    
+    // ถ้าอยู่ที่หน้า Login อยู่แล้ว เพียงแค่รีเฟรชหน้า
+    if (currentPage.includes("Login.html") || currentPage.includes("login.html")) {
+        window.location.reload();
+    } else {
+        // ถ้าอยู่หน้าอื่น ให้กลับไปที่หน้า Login
+        window.location.href = "Login.html";
+    }
+}
+
+// ฟังก์ชันตรวจสอบสถานะการล็อกอิน (ปรับปรุงให้ทำงานได้สม่ำเสมอ)
+function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const username = localStorage.getItem("username");
+    
+    // ต้องมีทั้ง isLoggedIn และ username
+    const reallyLoggedIn = isLoggedIn && username;
+    
+    // ค้นหาปุ่มทั้งหมดที่เกี่ยวข้อง
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    
+    // ตรวจสอบว่าปุ่มมีอยู่จริงก่อนทำการเปลี่ยนแปลง
+    if (loginBtn && registerBtn && logoutBtn) {
+        if (reallyLoggedIn) {
+            // ถ้าล็อกอินแล้ว ซ่อนปุ่มล็อกอินและสมัครสมาชิก แสดงปุ่มออกจากระบบ
+            loginBtn.classList.add("hidden");
+            registerBtn.classList.add("hidden");
+            logoutBtn.classList.remove("hidden");
+        } else {
+            // ถ้ายังไม่ล็อกอิน แสดงปุ่มล็อกอินและสมัครสมาชิก ซ่อนปุ่มออกจากระบบ
+            loginBtn.classList.remove("hidden");
+            registerBtn.classList.remove("hidden");
+            logoutBtn.classList.add("hidden");
         }
-
-        // ฟังก์ชันเปลี่ยนธีม
-        function toggleTheme() {
-            const body = document.body;
-            const navbar = document.querySelector("header");
-            const loginSection = document.querySelector(".bg-indigo-600");
-            const formContainer = document.querySelector(".form-container");
-            const formLabels = document.querySelectorAll(".form-label");
-            const formHeading = document.querySelector(".form-heading");
-            const formSubheadings = document.querySelectorAll(".form-subheading");
-            const termsLabel = document.querySelector(".terms-label");
-            const logo = document.getElementById("logo");
-            const toggle = document.getElementById("themeToggle");
-            const isDarkMode = toggle.checked;
-
-            if (isDarkMode) {
-                logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
-                body.classList.add("dark-mode");
-                body.style.backgroundColor = "#10142b"; // ยังคงไว้เพื่อความเข้ากันกับ CSS เดิม
-                navbar.style.backgroundColor = "#1a1f36";
-                loginSection.style.backgroundColor = "#232c58";
-                
-                // อัปเดตสีฟอร์มในโหมดมืด
-                formContainer.style.backgroundColor = "#1e293b";
-                formHeading.style.color = "white";
-                formSubheadings.forEach(item => item.style.color = "#cbd5e1");
-                formLabels.forEach(label => label.style.color = "#e2e8f0");
-                termsLabel.style.color = "#e2e8f0";
-            } else {
-                logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
-                body.classList.remove("dark-mode");
-                body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
-                navbar.style.backgroundColor = "";
-                loginSection.style.backgroundColor = "";
-                
-                // คืนค่าสีฟอร์มในโหมดสว่าง
-                formContainer.style.backgroundColor = "";
-                formHeading.style.color = "";
-                formSubheadings.forEach(item => item.style.color = "");
-                formLabels.forEach(label => label.style.color = "");
-                termsLabel.style.color = "";
-            }
-
-            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+    }
+    
+    // อัปเดตข้อมูลผู้ใช้ที่แสดงในหน้า (ถ้ามี)
+    const usernameDisplay = document.getElementById("usernameDisplay");
+    const pointDisplay = document.getElementById("pointDisplay");
+    
+    if (usernameDisplay && reallyLoggedIn) {
+        usernameDisplay.textContent = username;
+    } else if (usernameDisplay) {
+        usernameDisplay.textContent = "Guest";
+    }
+    
+    if (pointDisplay && !reallyLoggedIn) {
+        pointDisplay.innerHTML = 'คงเหลือ <span class="font-bold text-gray-900">0.00</span> เครดิต';
+    }
+    
+    // อัปเดตการแสดง section ต่างๆ (ถ้ามี)
+    const profileSection = document.getElementById("profileSection");
+    const actionSection = document.getElementById("actionSection");
+    
+    if (profileSection && actionSection) {
+        if (reallyLoggedIn) {
+            profileSection.classList.remove("hidden");
+            actionSection.classList.remove("hidden");
+        } else {
+            profileSection.classList.add("hidden");
+            actionSection.classList.add("hidden");
         }
+    }
+    
+    // อัปเดตปุ่ม Admin (ถ้ามี)
+    const adminInventoryBtn = document.getElementById("adminInventoryBtn");
+    const adminInventoryBox = document.getElementById("adminInventoryBox");
+    
+    if ((adminInventoryBtn || adminInventoryBox) && username === 'admin12345678') {
+        if (adminInventoryBtn) adminInventoryBtn.classList.remove("hidden");
+        if (adminInventoryBox) adminInventoryBox.classList.remove("hidden");
+    } else {
+        if (adminInventoryBtn) adminInventoryBtn.classList.add("hidden");
+        if (adminInventoryBox) adminInventoryBox.classList.add("hidden");
+    }
+    
+    return reallyLoggedIn;
+}
 
-        // โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
-        window.onload = function () {
-            const savedTheme = localStorage.getItem("theme");
-            const toggle = document.getElementById("themeToggle");
-            const body = document.body;
-            const navbar = document.querySelector("header");
-            const loginSection = document.querySelector(".bg-indigo-600");
-            const formContainer = document.querySelector(".form-container");
-            const formLabels = document.querySelectorAll(".form-label");
-            const formHeading = document.querySelector(".form-heading");
-            const formSubheadings = document.querySelectorAll(".form-subheading");
-            const termsLabel = document.querySelector(".terms-label");
-            const logo = document.getElementById("logo");
-
-            if (savedTheme === "dark") {
-                toggle.checked = true;
-                body.classList.add("dark-mode");
-                logo.src = "image/logo_player/dark_logo.png";
-                body.style.backgroundColor = "#10142b";
-                navbar.style.backgroundColor = "#1a1f36";
-                loginSection.style.backgroundColor = "#232c58";
-                
-                // อัปเดตสีฟอร์มในโหมดมืด
-                formContainer.style.backgroundColor = "#1e293b";
-                formHeading.style.color = "white";
-                formSubheadings.forEach(item => item.style.color = "#cbd5e1");
-                formLabels.forEach(label => label.style.color = "#e2e8f0");
-                termsLabel.style.color = "#e2e8f0";
-            } else {
-                body.classList.remove("dark-mode");
-                logo.src = "image/logo_player/light_logo.png";
-                body.style.backgroundColor = "";
-                navbar.style.backgroundColor = "";
-                loginSection.style.backgroundColor = "";
-                
-                // คืนค่าสีฟอร์มในโหมดสว่าง
-                formContainer.style.backgroundColor = "";
-                formHeading.style.color = "";
-                formSubheadings.forEach(item => item.style.color = "");
-                formLabels.forEach(label => label.style.color = "");
-                termsLabel.style.color = "";
-            }
-        };
-
-        // ฟังก์ชันจัดการการส่งฟอร์ม
-        document.getElementById("loginForm").addEventListener("submit", function (e) {
-            e.preventDefault(); // ป้องกันการรีเฟรชหน้า
-
-            const formData = new FormData(this);
-
-            fetch("login.php", {
-                method: "POST",
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // บันทึกค่าใน LocalStorage
-                        localStorage.setItem("username", data.username);
-                        localStorage.setItem("email", data.email);
-                        localStorage.setItem("role", data.role);
-                        localStorage.setItem("isLoggedIn", "true");
-
-                        // ไปหน้า HomePage
-                        window.location.href = "HomePage.html";
-                    } else {
-                        alert(data.message); // แจ้งเตือนถ้าล็อกอินไม่สำเร็จ
-                    }
-                })
-                .catch(error => console.error("Error:", error));
-        });
+// ตรวจสอบเมื่อโหลดหน้า
+document.addEventListener("DOMContentLoaded", function() {
+    // เรียกใช้ฟังก์ชัน checkLoginStatus เมื่อโหลดหน้า
+    checkLoginStatus();
+    
+    // ตรวจสอบหน้าที่กำลังแสดงอยู่
+    const currentPage = window.location.pathname;
+    
+    // ถ้าเป็นหน้าที่ต้องการให้เข้าถึงเฉพาะเมื่อล็อกอินแล้วเท่านั้น
+    const protectedPages = ["ProfileEdit.html", "TopUpCredit.html", "PurchaseHistory.html", "TopUpHistory.html", "Mailbox.html"];
+    const isProtectedPage = protectedPages.some(page => currentPage.includes(page));
+    
+    if (isProtectedPage && !checkLoginStatus()) {
+        // ถ้าอยู่ในหน้าที่ต้องล็อกอินแต่ยังไม่ได้ล็อกอิน ให้ redirect ไปหน้า Login
+        window.location.href = "Login.html";
+    }
+    
+    // ตรวจสอบหน้าที่เข้าถึงได้เฉพาะ admin
+    const adminPages = ["Inventory.php", "edit_product.php", "add_product.php", "Stockgame.php", "swapper.php"];
+    const isAdminPage = adminPages.some(page => currentPage.includes(page));
+    
+    if (isAdminPage && localStorage.getItem("username") !== 'admin12345678') {
+        // ถ้าอยู่ในหน้า admin แต่ไม่ใช่ admin ให้ redirect ไปหน้า HomePage
+        window.location.href = "HomePage.php";
+    }
+});
     </script>
 </body>
 </html>
