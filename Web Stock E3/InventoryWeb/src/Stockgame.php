@@ -242,6 +242,22 @@ button:hover {
     }
 }
 
+/* ปุ่ม Add Product (ดีไซน์ใหม่) */
+.add-product-btn {
+  width: 165px;
+  height: 62px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 17px;
+  border-radius: 1rem;
+  border: none;
+  position: relative;
+  background: #100720;
+  transition: 0.1s;
+  font-weight: bold;
+}
+
+
 
     </style>
 </head>

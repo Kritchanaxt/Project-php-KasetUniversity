@@ -285,6 +285,23 @@ if (isset($_GET['delete'])) {
             transform: scale(1.1);
             box-shadow: 0px 5px 25px rgba(0, 255, 255, 0.8);
         }
+
+        
+/* ปุ่ม Add Product (ดีไซน์ใหม่) */
+.add-product-btn {
+  width: 165px;
+  height: 62px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 17px;
+  border-radius: 1rem;
+  border: none;
+  position: relative;
+  background: #100720;
+  transition: 0.1s;
+  font-weight: bold;
+}
+
     </style>
 </head>
 <body>

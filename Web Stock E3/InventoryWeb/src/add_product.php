@@ -62,6 +62,21 @@ mysqli_close($conn);
 }
 
 
+/* ปุ่ม Add Product (ดีไซน์ใหม่) */
+.add-product-btn {
+  width: 165px;
+  height: 62px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 17px;
+  border-radius: 1rem;
+  border: none;
+  position: relative;
+  background: #100720;
+  transition: 0.1s;
+  font-weight: bold;
+}
+
 /* 🌟 Navbar (เมนูด้านบน) */
 .navbar {
     position: fixed;
@@ -306,6 +321,7 @@ mysqli_close($conn);
         background-color: rgba(255, 69, 69, 0.9);
     }
 }
+
     </style>
 </head>
 <body>
@@ -313,10 +329,10 @@ mysqli_close($conn);
     <nav class="navbar">
         <div class="nav-logo">📦 Inventory</div>
         <ul class="nav-links">
-            <li><a href="inventory.php">Store</a></li>
-            <li><a href="edit_product.php">EditProduct</a></li>
-            <li><a href="Stockgame.php">ShowProduct</a></li>
-            <li><a href="add_product.php">➕ Add Product</a></li>
+        <li><a href="inventory.php">Store</a></li>
+        <li><a href="edit_product.php">EditProduct</a></li>
+        <li><a href="Stockgame.php">ShowProduct</a></li>
+        <li><a href="add_product.php" class="add-product-btn">➕ Add Product</a></li>
         </ul>
     </nav>
 
