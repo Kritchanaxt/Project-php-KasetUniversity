@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | PLAYERHAVEN</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for the eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS -->
     <style>
         /* อนิเมชันพื้นหลังสำหรับโหมดสว่าง (เพชรฟ้าขาวระยิบ) */
@@ -80,7 +82,7 @@
         /* Theme mode */
         .dark-mode {
             background-color: #0a1a2f;
-            /* เปลี่ยนเป็นสีพื้นหลังหลักของโモードมืด */
+            /* เปลี่ยนเป็นสีพื้นหลังหลักของโมดมืด */
             color: white;
         }
 
@@ -90,6 +92,40 @@
 
         .dark-mode .bg-indigo-600 {
             background-color: #1a3b5d !important;
+        }
+
+        /* ปรับปรุงสีพื้นหลังของฟอร์มในโหมดมืด */
+        .dark-mode .form-container {
+            background-color: #1e293b !important; /* สีพื้นหลังฟอร์มในโหมดมืด */
+        }
+
+        .dark-mode .form-heading {
+            color: white !important;
+        }
+
+        .dark-mode .form-subheading {
+            color: #cbd5e1 !important;
+        }
+
+        /* ปรับปรุงสี input ในโหมดมืด */
+        .dark-mode input[type="text"],
+        .dark-mode input[type="password"] {
+            background-color: #334155 !important;
+            border-color: #475569 !important;
+            color: white !important;
+        }
+
+        .dark-mode input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        .dark-mode .form-label {
+            color: #e2e8f0 !important;
+        }
+
+        /* ปรับปรุงสีข้อความยินยอมเงื่อนไข */
+        .dark-mode .terms-label {
+            color: #e2e8f0 !important;
         }
 
         /* ป้องกันปุ่มเปลี่ยนสีในโหมดสีเข้ม */
@@ -113,7 +149,7 @@
             color: white !important;
         }
 
-        /* Switch Toggle Button (ยังคงเหมือนเดิม) */
+        /* Switch Toggle Button */
         .theme-toggle {
             position: relative;
             display: inline-block;
@@ -161,7 +197,6 @@
             font-size: 18px;
             color: #f1c40f;
             transition: opacity 0.3s ease, content 0.3s ease;
-
         }
 
         input:checked+.slider {
@@ -177,29 +212,38 @@
             color: #fff;
         }
 
-        /* กำหนดสีข้อความใน input เป็นสีดำตลอดเวลา */
-        input[type="text"],
-        input[type="password"] {
-            color: #000000 !important;
-            /* สีดำตลอดเวลา */
-        }
-
-        /* ป้องกันการเปลี่ยนสีข้อความในโหมดมืด */
-        .dark-mode input[type="text"],
-        .dark-mode input[type="password"] {
-            color: #000000 !important;
-            /* สีดำในโหมดมืด */
-        }
-
-        /* รักษาสไตล์การโฟกัสของ input */
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            color: #000000;
-            /* สีดำเมื่อโฟกัส */
-        }
         .bg-nav {
-			background-color: #1a1f36;
-		}
+            background-color: #1a1f36;
+        }
+
+        /* Password visibility toggle */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            z-index: 10;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: #4b5563;
+        }
+
+        .dark-mode .password-toggle {
+            color: #94a3b8;
+        }
+
+        .dark-mode .password-toggle:hover {
+            color: #e2e8f0;
+        }
     </style>
 </head>
 
@@ -248,7 +292,7 @@
                     <span class="slider"></span>
                 </label>
             </div>
-
+        </div>
     </header>
 
     <!-- Login Section -->
@@ -261,32 +305,37 @@
 
     <!-- Login Form -->
     <section class="container mx-auto py-12 flex justify-center">
-        <div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
+        <div class="form-container bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
             <div class="text-center mb-6">
                 <img src="img/Logopage.jpg" alt="PlayerHaven Logo" class="mx-auto w-26 h-24 mb-6" />
-                <h2 class="text-3xl font-bold text-indigo-800">PLAYERHAVEN</h2>
-                <p class="text-gray-600">GAME ONLINE STORE CENTER</p>
+                <h2 class="form-heading text-3xl font-bold text-indigo-800">PLAYERHAVEN</h2>
+                <p class="form-subheading text-gray-600">GAME ONLINE STORE CENTER</p>
             </div>
 
-            <p class="text-center text-gray-600 mb-4 font-medium">LOGIN WITH</p>
-            <form action="login.php" method="POST">
+            <p class="form-subheading text-center text-gray-600 mb-4 font-medium">LOGIN WITH</p>
+            <form action="login.php" method="POST" id="loginForm">
                 <div class="mb-4">
-                    <label for="username" class="block text-gray-800 font-medium">
+                    <label for="username" class="form-label block text-gray-800 font-medium">
                         ชื่อผู้ใช้ *</label>
                     <input type="text" id="username" name="username"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required />
                 </div>
                 <div class="mb-4">
-                    <label for="password" class="block text-gray-800 font-medium">
+                    <label for="password" class="form-label block text-gray-800 font-medium">
                         รหัสผ่าน *</label>
-                    <input type="password" id="password" name="password"
-                        class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
-                        required />
+                    <div class="password-container">
+                        <input type="password" id="password" name="password"
+                            class="w-full border border-gray-300 rounded-lg p-3 pr-10 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                            required />
+                        <span class="password-toggle" onclick="togglePasswordVisibility()">
+                            <i id="toggleIcon" class="fas fa-eye"></i>
+                        </span>
+                    </div>
                 </div>
                 <div class="mb-4 flex items-center">
                     <input type="checkbox" id="remember_me" name="remember_me" class="mr-2" />
-                    <label for="remember_me" class="text-gray-800">
+                    <label for="remember_me" class="terms-label text-gray-800">
                         จำฉันไว้ในระบบ</label>
                 </div>
                 <div class="flex space-x-4">
@@ -303,13 +352,34 @@
         </div>
     </section>
 
-    <!-- Dark Mode Toggle -->
+    <!-- Script -->
     <script>
+        // ฟังก์ชันสลับการแสดงรหัสผ่าน
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
         // ฟังก์ชันเปลี่ยนธีม
         function toggleTheme() {
             const body = document.body;
             const navbar = document.querySelector("header");
             const loginSection = document.querySelector(".bg-indigo-600");
+            const formContainer = document.querySelector(".form-container");
+            const formLabels = document.querySelectorAll(".form-label");
+            const formHeading = document.querySelector(".form-heading");
+            const formSubheadings = document.querySelectorAll(".form-subheading");
+            const termsLabel = document.querySelector(".terms-label");
             const logo = document.getElementById("logo");
             const toggle = document.getElementById("themeToggle");
             const isDarkMode = toggle.checked;
@@ -320,12 +390,26 @@
                 body.style.backgroundColor = "#10142b"; // ยังคงไว้เพื่อความเข้ากันกับ CSS เดิม
                 navbar.style.backgroundColor = "#1a1f36";
                 loginSection.style.backgroundColor = "#232c58";
+                
+                // อัปเดตสีฟอร์มในโหมดมืด
+                formContainer.style.backgroundColor = "#1e293b";
+                formHeading.style.color = "white";
+                formSubheadings.forEach(item => item.style.color = "#cbd5e1");
+                formLabels.forEach(label => label.style.color = "#e2e8f0");
+                termsLabel.style.color = "#e2e8f0";
             } else {
                 logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
                 body.classList.remove("dark-mode");
                 body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
                 navbar.style.backgroundColor = "";
                 loginSection.style.backgroundColor = "";
+                
+                // คืนค่าสีฟอร์มในโหมดสว่าง
+                formContainer.style.backgroundColor = "";
+                formHeading.style.color = "";
+                formSubheadings.forEach(item => item.style.color = "");
+                formLabels.forEach(label => label.style.color = "");
+                termsLabel.style.color = "";
             }
 
             localStorage.setItem("theme", isDarkMode ? "dark" : "light");
@@ -338,6 +422,11 @@
             const body = document.body;
             const navbar = document.querySelector("header");
             const loginSection = document.querySelector(".bg-indigo-600");
+            const formContainer = document.querySelector(".form-container");
+            const formLabels = document.querySelectorAll(".form-label");
+            const formHeading = document.querySelector(".form-heading");
+            const formSubheadings = document.querySelectorAll(".form-subheading");
+            const termsLabel = document.querySelector(".terms-label");
             const logo = document.getElementById("logo");
 
             if (savedTheme === "dark") {
@@ -347,14 +436,30 @@
                 body.style.backgroundColor = "#10142b";
                 navbar.style.backgroundColor = "#1a1f36";
                 loginSection.style.backgroundColor = "#232c58";
+                
+                // อัปเดตสีฟอร์มในโหมดมืด
+                formContainer.style.backgroundColor = "#1e293b";
+                formHeading.style.color = "white";
+                formSubheadings.forEach(item => item.style.color = "#cbd5e1");
+                formLabels.forEach(label => label.style.color = "#e2e8f0");
+                termsLabel.style.color = "#e2e8f0";
             } else {
                 body.classList.remove("dark-mode");
                 logo.src = "image/logo_player/light_logo.png";
-                body.style.backgroundColor = "#10142b";
-				navbar.style.backgroundColor = "#1a1f36";
-				loginSection.style.backgroundColor = "#232c58";
+                body.style.backgroundColor = "";
+                navbar.style.backgroundColor = "";
+                loginSection.style.backgroundColor = "";
+                
+                // คืนค่าสีฟอร์มในโหมดสว่าง
+                formContainer.style.backgroundColor = "";
+                formHeading.style.color = "";
+                formSubheadings.forEach(item => item.style.color = "");
+                formLabels.forEach(label => label.style.color = "");
+                termsLabel.style.color = "";
             }
         };
+
+        // ฟังก์ชันจัดการการส่งฟอร์ม
         document.getElementById("loginForm").addEventListener("submit", function (e) {
             e.preventDefault(); // ป้องกันการรีเฟรชหน้า
 
@@ -382,8 +487,5 @@
                 .catch(error => console.error("Error:", error));
         });
     </script>
-
-
 </body>
-
 </html>

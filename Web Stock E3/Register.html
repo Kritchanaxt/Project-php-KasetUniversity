@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for the eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS -->
     <style>
         /* อนิเมชันพื้นหลังสำหรับโหมดสว่าง (เพชรฟ้าขาวระยิบ) */
@@ -215,9 +217,122 @@
         .bg-nav {
             background-color: #1a1f36;
         }
+
+        /* Password visibility toggle */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            z-index: 10;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .password-toggle:hover {
+            color: #4b5563;
+        }
+
+        .dark-mode .password-toggle {
+            color: #94a3b8;
+        }
+
+        .dark-mode .password-toggle:hover {
+            color: #e2e8f0;
+        }
+
+        /* Password strength meter */
+        .password-strength {
+            margin-top: 5px;
+            height: 5px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .password-feedback {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+
+        /* Validation messages */
+        .validation-message {
+            font-size: 0.8rem;
+            margin-top: 4px;
+            transition: all 0.3s ease;
+        }
+
+        /* Phone input styles */
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .country-code {
+            width: 90px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .phone-number {
+            flex-grow: 1;
+        }
+
+        /* Custom styling for the select element */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .dark-mode select {
+    background-color: #334155 !important;
+    border-color: #475569 !important;
+    color: white !important;
+}
+
+.dark-mode select option {
+    background-color: #1e293b;
+    color: white;
+}
+
+/* Override default select arrow in dark mode */
+.dark-mode select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+}
+
+/* Make sure the select element has consistent styling */
+select.country-code {
+    background-color: #ffffff;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    padding-right: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    width: 90px;
+}
+
+select.country-code:focus {
+    outline: none;
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
     </style>
 </head>
-
 
 <body class="bg-gray-100">
 
@@ -286,35 +401,78 @@
             <p class="form-subheading text-center text-gray-600 mb-4 font-medium">สมัครสมาชิก</p>
 
             <!-- Register Form -->
-            <form action="register.php" method="POST">
+            <form action="register.php" method="POST" id="registerForm">
+                <!-- Username -->
                 <div class="mb-4">
                     <label for="username" class="form-label block text-gray-800 font-medium">ชื่อผู้ใช้ *</label>
-                    <input type="text" id="username" name="username"
+                    <input type="text" id="username" name="username" minlength="6"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required>
+                    <div id="usernameValidation" class="validation-message text-red-500 hidden">
+                        ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 6 ตัวอักษร
+                    </div>
                 </div>
+
+                <!-- Password -->
                 <div class="mb-4">
                     <label for="password" class="form-label block text-gray-800 font-medium">รหัสผ่าน *</label>
-                    <input type="password" id="password" name="password"
-                        class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
-                        required>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" minlength="8"
+                            class="w-full border border-gray-300 rounded-lg p-3 pr-10 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                            required>
+                        <span class="password-toggle" onclick="togglePasswordVisibility()">
+                            <i id="toggleIcon" class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="password-strength w-full bg-gray-200 mt-2"></div>
+                    <div class="password-feedback text-gray-600 mt-1">รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร</div>
                 </div>
+
+                <!-- Email -->
                 <div class="mb-4">
                     <label for="email" class="form-label block text-gray-800 font-medium">อีเมล *</label>
                     <input type="email" id="email" name="email"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
                         required>
+                    <div id="emailValidation" class="validation-message text-red-500 hidden">
+                        กรุณาใส่อีเมลที่ถูกต้อง
+                    </div>
                 </div>
+
+                <!-- Phone with country code -->
                 <div class="mb-4">
                     <label for="phone" class="form-label block text-gray-800 font-medium">เบอร์โทรศัพท์ *</label>
-                    <input type="tel" id="phone" name="phone"
-                        class="w-full border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500"
-                        required>
+                    <div class="phone-input-container">
+                        <select id="countryCode" name="countryCode" 
+                            class="country-code border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500">
+                            <option value="+66">+66</option>
+                            <option value="+1">+1</option>
+                            <option value="+44">+44</option>
+                            <option value="+81">+81</option>
+                            <option value="+82">+82</option>
+                            <option value="+86">+86</option>
+                            <option value="+65">+65</option>
+                            <option value="+60">+60</option>
+                            <option value="+62">+62</option>
+                            <option value="+84">+84</option>
+                            <option value="+63">+63</option>
+                        </select>
+                        <input type="tel" id="phone" name="phone" placeholder="เบอร์โทรศัพท์ (ไม่ต้องใส่ 0 นำหน้า)"
+                            class="phone-number border border-gray-300 rounded-lg p-3 focus:ring focus:ring-indigo-300 focus:border-indigo-500 ml-2"
+                            required>
+                    </div>
+                    <div id="phoneValidation" class="validation-message text-red-500 hidden">
+                        กรุณาใส่เบอร์โทรศัพท์ที่ถูกต้อง
+                    </div>
                 </div>
+
+                <!-- Terms -->
                 <div class="mb-4 flex items-center">
                     <input type="checkbox" id="terms" name="terms" class="mr-2" required>
                     <label for="terms" class="terms-label text-gray-800">ฉันยินยอมตามเงื่อนไขและนโยบาย</label>
                 </div>
+
+                <!-- Buttons -->
                 <div class="flex space-x-4">
                     <button type="submit"
                         class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 w-full">
@@ -328,16 +486,125 @@
         </div>
     </section>
 
-    <!-- Dark Mode Toggle -->
+    <!-- Scripts -->
     <script>
+        // ฟังก์ชันสลับการแสดงรหัสผ่าน
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // ฟังก์ชันตรวจสอบความแข็งแกร่งของรหัสผ่าน
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            const strengthBar = document.querySelector('.password-strength');
+            const feedback = document.querySelector('.password-feedback');
+
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthBar.style.backgroundColor = '';
+                feedback.textContent = 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร';
+                feedback.style.color = '';
+                return;
+            }
+
+            // ตรวจสอบความยาว
+            if (password.length >= 8) {
+                strength += 1;
+            }
+
+            // ตรวจสอบตัวอักษรพิมพ์เล็ก
+            if (password.match(/[a-z]/)) {
+                strength += 1;
+            }
+
+            // ตรวจสอบตัวอักษรพิมพ์ใหญ่
+            if (password.match(/[A-Z]/)) {
+                strength += 1;
+            }
+
+            // ตรวจสอบตัวเลข
+            if (password.match(/[0-9]/)) {
+                strength += 1;
+            }
+
+            // ตรวจสอบอักขระพิเศษ
+            if (password.match(/[^a-zA-Z0-9]/)) {
+                strength += 1;
+            }
+
+            // อัปเดต UI ตามระดับความแข็งแกร่ง
+            switch (strength) {
+                case 0:
+                case 1:
+                    strengthBar.style.width = '20%';
+                    strengthBar.style.backgroundColor = '#ef4444'; // red
+                    feedback.textContent = 'รหัสผ่านอ่อนแอมาก';
+                    feedback.style.color = '#ef4444';
+                    break;
+                case 2:
+                    strengthBar.style.width = '40%';
+                    strengthBar.style.backgroundColor = '#f97316'; // orange
+                    feedback.textContent = 'รหัสผ่านอ่อนแอ';
+                    feedback.style.color = '#f97316';
+                    break;
+                case 3:
+                    strengthBar.style.width = '60%';
+                    strengthBar.style.backgroundColor = '#facc15'; // yellow
+                    feedback.textContent = 'รหัสผ่านปานกลาง';
+                    feedback.style.color = '#facc15';
+                    break;
+                case 4:
+                    strengthBar.style.width = '80%';
+                    strengthBar.style.backgroundColor = '#22c55e'; // green
+                    feedback.textContent = 'รหัสผ่านแข็งแรง';
+                    feedback.style.color = '#22c55e';
+                    break;
+                case 5:
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.backgroundColor = '#3b82f6'; // blue
+                    feedback.textContent = 'รหัสผ่านแข็งแรงมาก';
+                    feedback.style.color = '#3b82f6';
+                    break;
+            }
+        }
+
+        // ตรวจสอบความถูกต้องของอีเมล
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // ตรวจสอบความถูกต้องของเบอร์โทรศัพท์
+        function validatePhone(phone) {
+            // ตรวจสอบว่ามีแต่ตัวเลขและมีความยาวที่เหมาะสม (8-15 หลัก)
+            return /^\d{8,15}$/.test(phone.replace(/\s/g, ''));
+        }
+
         // ฟังก์ชันเปลี่ยนธีม
         function toggleTheme() {
             const body = document.body;
-            const navbar = document.querySelector("header");
-            const loginSection = document.querySelector(".bg-indigo-600");
-            const logo = document.getElementById("logo");
-            const toggle = document.getElementById("themeToggle");
-            const isDarkMode = toggle.checked;
+    const navbar = document.querySelector("header");
+    const loginSection = document.querySelector(".bg-indigo-600");
+    const formContainer = document.querySelector(".form-container");
+    const formLabels = document.querySelectorAll(".form-label");
+    const formHeading = document.querySelector(".form-heading");
+    const formSubheadings = document.querySelectorAll(".form-subheading");
+    const termsLabel = document.querySelector(".terms-label");
+    const logo = document.getElementById("logo");
+    const toggle = document.getElementById("themeToggle");
+    const countryCodeSelect = document.getElementById("countryCode");
+    const isDarkMode = toggle.checked;
 
             if (isDarkMode) {
                 logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
@@ -346,42 +613,177 @@
                 navbar.style.backgroundColor = "#1a1f36";
                 loginSection.style.backgroundColor = "#232c58";
             } else {
-                logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
-                body.classList.remove("dark-mode");
-                body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
-                navbar.style.backgroundColor = "";
-                loginSection.style.backgroundColor = "";
-            }
-
-            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
+        body.classList.remove("dark-mode");
+        body.style.backgroundColor = ""; // กลับไปใช้พื้นหลังแอนิเมชันโหมดสว่าง
+        navbar.style.backgroundColor = "";
+        loginSection.style.backgroundColor = "";
+        
+        // คืนค่าสีฟอร์มในโหมดสว่าง
+        formContainer.style.backgroundColor = "";
+        formHeading.style.color = "";
+        formSubheadings.forEach(item => item.style.color = "");
+        formLabels.forEach(label => label.style.color = "");
+        termsLabel.style.color = "";
+        
+        // คืนค่าสี country code select
+        if (countryCodeSelect) {
+            countryCodeSelect.style.backgroundColor = "";
+            countryCodeSelect.style.borderColor = "";
+            countryCodeSelect.style.color = "";
         }
+    }
 
-        // โหลดธีมที่บันทึกไว้ตอนเริ่มหน้าเว็บ
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+}
+
+        // เมื่อเอกสารโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', function() {
+            // รับอิลิเมนต์ฟอร์ม
+            const form = document.getElementById('registerForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const countryCodeSelect = document.getElementById('countryCode');
+            
+            // ตรวจสอบความยาวของ username
+            usernameInput.addEventListener('input', function() {
+                const usernameValidation = document.getElementById('usernameValidation');
+                if (this.value.length < 6) {
+                    usernameValidation.classList.remove('hidden');
+                } else {
+                    usernameValidation.classList.add('hidden');
+                }
+            });
+            
+            // ตรวจสอบความแข็งแรงของรหัสผ่าน
+            passwordInput.addEventListener('input', function() {
+                checkPasswordStrength(this.value);
+            });
+            
+            // ตรวจสอบรูปแบบอีเมล
+            emailInput.addEventListener('input', function() {
+                const emailValidation = document.getElementById('emailValidation');
+                if (this.value && !validateEmail(this.value)) {
+                    emailValidation.classList.remove('hidden');
+                } else {
+                    emailValidation.classList.add('hidden');
+                }
+            });
+            
+            // ตรวจสอบรูปแบบเบอร์โทรศัพท์
+            phoneInput.addEventListener('input', function() {
+                const phoneValidation = document.getElementById('phoneValidation');
+                if (this.value && !validatePhone(this.value)) {
+                    phoneValidation.classList.remove('hidden');
+                } else {
+                    phoneValidation.classList.add('hidden');
+                }
+            });
+            
+            // ตรวจสอบฟอร์มก่อนส่ง
+            form.addEventListener('submit', function(e) {
+                let hasError = false;
+                
+                // ตรวจสอบ username
+                if (usernameInput.value.length < 6) {
+                    document.getElementById('usernameValidation').classList.remove('hidden');
+                    hasError = true;
+                }
+                
+                // ตรวจสอบ password
+                if (passwordInput.value.length < 8) {
+                    hasError = true;
+                }
+                
+                // ตรวจสอบ email
+                if (!validateEmail(emailInput.value)) {
+                    document.getElementById('emailValidation').classList.remove('hidden');
+                    hasError = true;
+                }
+                
+                // ตรวจสอบ phone
+                if (!validatePhone(phoneInput.value)) {
+                    document.getElementById('phoneValidation').classList.remove('hidden');
+                    hasError = true;
+                }
+                
+                if (hasError) {
+                    e.preventDefault();
+                } else {
+                    // สร้างเบอร์โทรศัพท์ที่สมบูรณ์ (รวมรหัสประเทศ)
+                    const fullPhoneInput = document.createElement('input');
+                    fullPhoneInput.type = 'hidden';
+                    fullPhoneInput.name = 'fullPhone';
+                    fullPhoneInput.value = countryCodeSelect.value + phoneInput.value;
+                    form.appendChild(fullPhoneInput);
+                }
+            });
+            
+            // รีเซ็ตฟอร์ม
+            form.addEventListener('reset', function() {
+                setTimeout(() => {
+                    document.getElementById('usernameValidation').classList.add('hidden');
+                    document.getElementById('emailValidation').classList.add('hidden');
+                    document.getElementById('phoneValidation').classList.add('hidden');
+                    
+                 // รีเซ็ตความแข็งแรงของรหัสผ่าน
+                 const strengthBar = document.querySelector('.password-strength');
+                    const feedback = document.querySelector('.password-feedback');
+                    strengthBar.style.width = '0%';
+                    strengthBar.style.backgroundColor = '';
+                    feedback.textContent = 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร';
+                    feedback.style.color = '';
+                }, 10);
+            });
+        });
+
         window.onload = function () {
-            const savedTheme = localStorage.getItem("theme");
-            const toggle = document.getElementById("themeToggle");
-            const body = document.body;
-            const navbar = document.querySelector("header");
-            const loginSection = document.querySelector(".bg-indigo-600");
-            const logo = document.getElementById("logo");
+    const savedTheme = localStorage.getItem("theme");
+    const toggle = document.getElementById("themeToggle");
+    const body = document.body;
+    const navbar = document.querySelector("header");
+    const loginSection = document.querySelector(".bg-indigo-600");
+    const logo = document.getElementById("logo");
+    // Add country code select
+    const countryCodeSelect = document.getElementById("countryCode");
 
-            if (savedTheme === "dark") {
-                toggle.checked = true;
-                body.classList.add("dark-mode");
-                logo.src = "image/logo_player/dark_logo.png";
-                body.style.backgroundColor = "#10142b";
-                navbar.style.backgroundColor = "#1a1f36";
-                loginSection.style.backgroundColor = "#232c58";
-            } else {
-                body.classList.remove("dark-mode");
-                logo.src = "image/logo_player/light_logo.png";
-                body.style.backgroundColor = "";
-                navbar.style.backgroundColor = "";
-                loginSection.style.backgroundColor = "";
-            }
-        };
+    if (savedTheme === "dark") {
+        toggle.checked = true;
+        body.classList.add("dark-mode");
+        logo.src = "image/logo_player/dark_logo.png";
+        body.style.backgroundColor = "#10142b";
+        navbar.style.backgroundColor = "#1a1f36";
+        loginSection.style.backgroundColor = "#232c58";
+        
+        // อัปเดตสี country code select
+        if (countryCodeSelect) {
+            countryCodeSelect.style.backgroundColor = "#334155";
+            countryCodeSelect.style.borderColor = "#475569";
+            countryCodeSelect.style.color = "white";
+        }
+    } else {
+        body.classList.remove("dark-mode");
+        logo.src = "image/logo_player/light_logo.png";
+        body.style.backgroundColor = "";
+        navbar.style.backgroundColor = "";
+        loginSection.style.backgroundColor = "";
+        
+        // คืนค่าสี country code select
+        if (countryCodeSelect) {
+            countryCodeSelect.style.backgroundColor = "";
+            countryCodeSelect.style.borderColor = "";
+            countryCodeSelect.style.color = "";
+        }
+    }
+
+    // ตั้งค่าเริ่มต้นสำหรับ password strength meter
+    const passwordInput = document.getElementById('password');
+    if (passwordInput && passwordInput.value) {
+        checkPasswordStrength(passwordInput.value);
+    }
+};
     </script>
-
 </body>
-
 </html>
