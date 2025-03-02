@@ -6,58 +6,228 @@
     <title>เติมเครดิต - PLAYERHAVEN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* อนิเมชันพื้นหลังสำหรับโหมดสว่าง (เพชรฟ้าขาวระยิบ) */
+        body {
+            position: relative;
+            background: linear-gradient(45deg, #e6f3ff, #b3d4ff, #e6f3ff);
+            transition: background 0.5s ease, background-color 0.5s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="50" cy="50" r="2" fill="rgba(100, 200, 255, 0.8)" /%3E%3C/svg%3E') repeat;
+            animation: sparkleLight 3s infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* อนิเมชันพื้นหลังสำหรับโหมดมืด (เพชรฟ้าดำครึ้มระยิบ) */
+        body.dark-mode {
+            background: linear-gradient(45deg, #0a1a2f, #1a3b5d, #0a1a2f);
+        }
+
+        body.dark-mode::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="100" height="100" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="50" cy="50" r="1" fill="rgba(0, 100, 200, 0.7)" /%3E%3C/svg%3E') repeat;
+            animation: sparkleDark 3s infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes sparkleLight {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.3; }
+        }
+
+        @keyframes sparkleDark {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0.2; }
+        }
+
+        /* Theme mode */
+        .dark-mode {
+            background-color: #0a1a2f;
+            color: white;
+        }
+
+        .dark-mode header {
+            background-color: #1a3b5d;
+        }
+
+        .dark-mode .bg-indigo-600 {
+            background-color: #1a3b5d !important;
+        }
+
+        /* ป้องกันปุ่มเปลี่ยนสีในโหมดสีเข้ม */
+        .dark-mode .bg-blue-600 {
+            background-color: #2563eb !important;
+            color: white !important;
+        }
+
+        .dark-mode .bg-red-600 {
+            background-color: #dc2626 !important;
+            color: white !important;
+        }
+
+        .dark-mode .bg-green-500 {
+            background-color: #22c55e !important;
+            color: white !important;
+        }
+
+        .dark-mode .bg-red-500 {
+            background-color: #ef4444 !important;
+            color: white !important;
+        }
+
+        /* Switch Toggle Button */
+        .theme-toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .theme-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: background-color 0.4s ease;
+            border-radius: 34px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 30px;
+            width: 30px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: transform 0.4s ease;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider:after {
+            content: " ";
+            font-size: 18px;
+            color: #f1c40f;
+            transition: opacity 0.3s ease, content 0.3s ease;
+        }
+
+        input:checked+.slider {
+            background-color: #2c3e50;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        input:checked+.slider:after {
+            content: "🌙";
+            color: #fff;
+        }
+
+        .bg-nav {
+            background-color: #1a1f36;
+        }
+
+        /* Red Envelope Styles */
         .red-envelope {
-            background-color: #ff4444; /* สีแดงสดใสเหมือนอังเปา */
+            background-color: #ff4444;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s, box-shadow 0.3s;
         }
+        
         .red-envelope:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
+        
         .dark-mode .red-envelope {
-            background-color: #dc2626; /* สีแดงเข้มในโหมดมืด */
+            background-color: #dc2626;
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+
+<body class="bg-gray-100">
     <!-- Header -->
-    <header class="bg-purple-600 text-white">
-        <div class="container mx-auto flex justify-between items-center p-4">
-            <div class="text-2xl font-bold">
-                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo" class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
+    <header class="bg-nav text-white">
+        <!-- Navbar -->
+        <div class="container mx-auto flex items-center justify-between py-0 px-4">
+            <div class="text-2xl font-bold inline">
+                <img id="logo" src="image/logo_player/light_logo.png" alt="light_logo"
+                    class="w-auto h-24 inline mr-3 transform transition-transform duration-300 hover:scale-105 filter brightness-90" />
                 PLAYERHAVEN
             </div>
             <nav class="flex space-x-4">
-				<a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
-				<a href="HomePage.html" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
-				<a href="RandomWheel.php" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
-				<a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
-				<a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
-				<a href="contact.html" class="hover:text-indigo-300">ติดต่อเรา</a>
-			</nav>
+                <a href="HomePage.html" class="hover:text-indigo-300">หน้าแรก</a>
+                <a href="HomePage.html" onclick="scrollToBottom()" class="hover:text-indigo-300">ซื้อไอดีเกม</a>
+                <a href="RandomWheel.php" class="hover:text-indigo-300">สุ่มไอดีเกม</a>
+                <a href="TopUpCredit.html" class="hover:text-indigo-300">เติม Points</a>
+                <a href="ProfileEdit.html" class="hover:text-indigo-300">ดูโปรไฟล์</a>
+                <a href="contact.html" class="hover:text-indigo-300">ติดต่อเรา</a>
+            </nav>
             <div class="space-x-4">
-                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800 hidden" onclick="location.href='Login.html'">
+                <!-- ปุ่มเข้าสู่ระบบ -->
+                <button id="loginBtn" class="bg-indigo-700 px-4 py-2 rounded hover:bg-indigo-800"
+                    onclick="location.href='Login.html'">
                     เข้าสู่ระบบ
                 </button>
-                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700 hidden" onclick="location.href='Register.html'">
+
+                <!-- ปุ่มสมัครสมาชิก -->
+                <button id="registerBtn" class="border border-white px-4 py-2 rounded hover:bg-indigo-700"
+                    onclick="location.href='Register.html'">
                     สมัครสมาชิก
                 </button>
-                <button id="logoutBtn" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600 hidden" onclick="logout()">
+
+                <!-- ปุ่มออกจากระบบ (ซ่อนเริ่มต้น) -->
+                <button id="logoutBtn" class="hidden bg-red-500 px-4 py-2 rounded hover:bg-red-600" onclick="logout()">
                     ออกจากระบบ
                 </button>
-                <button onclick="toggleTheme()" class="p-2 rounded bg-gray-300 dark:bg-gray-600">
-                    🌙 / ☀️
-                </button>
+
+                <!-- ปุ่มเปลี่ยนธีมแบบสไลด์ท็อกเกิล -->
+                <label class="theme-toggle">
+                    <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
     </header>
 
     <!-- Main Section -->
     <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-white">เติมเครดิตเพื่อนำไปซื้อของ</h1>
+        <h1 class="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600 decoration-4 underline underline-offset-8 decoration-blue-400">
+            เติมเครดิตเพื่อนำไปซื้อของ
+        </h1>
         
         <!-- แสดงยอดเครดิตปัจจุบัน -->
         <div class="text-center mb-6">
@@ -115,7 +285,14 @@
 
     <!-- Script -->
     <script>
-        // ฟังก์ชันตรวจสอบธีม
+        function scrollToBottom() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth' 
+            });
+        }
+
+        // ฟังก์ชันเปลี่ยนธีม
         function toggleTheme() {
             const body = document.body;
             const navbar = document.querySelector("header");
@@ -123,13 +300,13 @@
             const isDarkMode = body.classList.toggle("dark-mode");
 
             if (isDarkMode) {
-                logo.src = "image/logo_player/dark_logo.png";
+                logo.src = "image/logo_player/dark_logo.png"; // โลโก้สำหรับโหมดสีเข้ม
                 body.style.backgroundColor = "#10142b";
                 navbar.style.backgroundColor = "#1a1f36";
             } else {
-                logo.src = "image/logo_player/light_logo.png";
-                body.style.backgroundColor = "";
-                navbar.style.backgroundColor = "";
+                logo.src = "image/logo_player/light_logo.png"; // โลโก้สำหรับโหมดปกติ/โหมดสว่าง
+                body.style.backgroundColor = "#10142b";
+                navbar.style.backgroundColor = "#1a1f36";
             }
 
             localStorage.setItem("theme", isDarkMode ? "dark" : "light");
@@ -141,6 +318,8 @@
             if (savedTheme === "dark") {
                 document.body.classList.add("dark-mode");
                 document.getElementById("logo").src = "image/logo_player/dark_logo.png";
+                document.body.style.backgroundColor = "#10142b";
+                document.querySelector("header").style.backgroundColor = "#1a1f36";
             }
 
             // ตรวจสอบสถานะการล็อกอินและแสดงปุ่ม
@@ -181,6 +360,15 @@
             const creditCardFields = document.getElementById("creditCardFields");
             const paypalFields = document.getElementById("paypalFields");
 
+            // เริ่มต้นตามการเลือกเริ่มต้น
+            if (paymentMethod.value === "creditCard") {
+                creditCardFields.classList.remove("hidden");
+                paypalFields.classList.add("hidden");
+            } else {
+                creditCardFields.classList.add("hidden");
+                paypalFields.classList.remove("hidden");
+            }
+
             paymentMethod.addEventListener("change", function () {
                 if (paymentMethod.value === "creditCard") {
                     creditCardFields.classList.remove("hidden");
@@ -216,8 +404,6 @@
             // ยกเลิกการชำระเงิน
             document.getElementById("cancelPayment").onclick = function () {
                 paymentForm.classList.add("hidden");
-                creditCardFields.classList.add("hidden");
-                paypalFields.classList.add("hidden");
             };
         }
 
@@ -238,31 +424,28 @@
         }
 
         function processPayment(points, price, method) {
-    alert(`การชำระเงิน ${price} บาท สำเร็จ! คุณได้รับ ${points} เครดิต`);
+            alert(`การชำระเงิน ${price} บาท สำเร็จ! คุณได้รับ ${points} เครดิต`);
 
-    // อัปเดตเครดิตในเซิร์ฟเวอร์
-    const username = localStorage.getItem("username");
-    if (username) {
-        fetch("update_points.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `username=${encodeURIComponent(username)}&points=${points}&payment_amount=${price}&payment_method=${encodeURIComponent(method)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                fetchCurrentPoints(); // อัปเดตยอดเครดิตปัจจุบัน
-                document.getElementById("paymentForm").classList.add("hidden");
-                document.getElementById("creditCardFields").classList.add("hidden");
-                document.getElementById("paypalFields").classList.add("hidden");
-            } else {
-                alert("การอัปเดตเครดิตล้มเหลว: " + data.message);
+            // อัปเดตเครดิตในเซิร์ฟเวอร์
+            const username = localStorage.getItem("username");
+            if (username) {
+                fetch("update_points.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `username=${encodeURIComponent(username)}&points=${points}&payment_amount=${price}&payment_method=${encodeURIComponent(method)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchCurrentPoints(); // อัปเดตยอดเครดิตปัจจุบัน
+                        document.getElementById("paymentForm").classList.add("hidden");
+                    } else {
+                        alert("การอัปเดตเครดิตล้มเหลว: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error updating points:", error));
             }
-        })
-        .catch(error => console.error("Error updating points:", error));
-    }
-}
-
+        }
     </script>
 </body>
 </html>
