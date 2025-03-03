@@ -1067,6 +1067,18 @@ if ($logged_in) {
                 font-size: 14px;
             }
         }
+        .nav-link-style {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.nav-link-style:hover {
+    background: rgba(255, 152, 0, 0.2);
+    transform: scale(1.05);
+}
     </style>
 </head>
 <body>
@@ -1087,10 +1099,16 @@ if ($logged_in) {
                     👤 <?php echo $_SESSION['username'] ?? 'User'; ?> 
                     <span style="color: #C89B3C; font-weight: bold;"><?php echo number_format($user_point, 2); ?> Point</span>
                 </div>
-                <a href="logout.php">ออกจากระบบ</a>
+                <button 
+                onclick="logout()" 
+                style="background: none; border: none; color: white; font-size: inherit; font-family: inherit; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: background 0.3s, transform 0.3s;"
+                class="nav-link-style hover:text-indigo-300"
+            >
+                ออกจากระบบ
+            </button>
             <?php else: ?>
-                <a href="login.php">เข้าสู่ระบบ</a>
-                <a href="register.php">สมัครสมาชิก</a>
+                <a href="Login.html">เข้าสู่ระบบ</a>
+                <a href="Register.html">สมัครสมาชิก</a>
             <?php endif; ?>
         </div>
     </div>
@@ -1311,6 +1329,29 @@ if ($logged_in) {
     </div>
 
     <script>
+        function logout() {
+    // ลบข้อมูลทั้งหมดที่เกี่ยวข้องกับการล็อกอินออกจาก localStorage
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("point");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("session_token");
+
+    // ล้าง PHP session ผ่าน AJAX request (ถ้าใช้ PHP session)
+    fetch("logout.php", {
+        method: "POST",
+        credentials: "same-origin"
+    }).then(response => {
+        console.log("PHP session cleared");
+    }).catch(error => {
+        console.error("Error clearing PHP session:", error);
+    });
+
+    // ไปที่หน้า Login
+    window.location.href = "Login.html";
+}
         document.addEventListener('DOMContentLoaded', function() {
             // Game Selection
             const gameButtons = document.querySelectorAll('.game-btn');
