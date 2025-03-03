@@ -256,6 +256,12 @@ button:hover {
   transition: 0.1s;
   font-weight: bold;
 }
+.nav-logo {
+    text-decoration: none; 
+    font-weight: bold; 
+    font-size: 35px; 
+    color: white;
+}
 
 
 
@@ -291,7 +297,7 @@ $result = $conn->query($query);
 
  <!-- เมนูด้านบน (Navbar) -->
  <nav class="navbar">
-    <div class="nav-logo">📦 Inventory</div>
+ <a href="../../HomePage.php" class="nav-logo">📦 INVENTORY</a>
     <ul class="nav-links">
         <li><a href="inventory.php">Store</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>

@@ -551,15 +551,19 @@ mysqli_close($conn);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-
-
+.nav-logo {
+    text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+    font-weight: bold; /* ทำให้ตัวหนังสือหนา */
+    font-size: 35px; /* ปรับขนาดตัวอักษร */
+    color: white; /* ตั้งค่าสีตัวอักษร */
+}
 
     </style>
 </head>
 <body>
      <!-- เมนูด้านบน (Navbar) -->
  <nav class="navbar">
-    <div class="nav-logo">📦 Inventory</div>
+ <a href="../../HomePage.php" class="nav-logo">📦 INVENTORY</a>
     <ul class="nav-links">
         <li><a href="inventory.php">Store</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>
