@@ -1081,6 +1081,7 @@ if ($logged_in) {
             <a href="tft_shop.php">TFT</a>
             <a href="codm_shop.php">CODM</a>
             <a href="lol_shop.php">LOL</a>
+            <a href="ff_shop.php">FF</a>
             <?php if ($logged_in): ?>
                 <div class="user-info">
                     👤 <?php echo $_SESSION['username'] ?? 'User'; ?> 
