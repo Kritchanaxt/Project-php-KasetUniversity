@@ -410,7 +410,7 @@ if ($logged_in) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สุ่มไอดีเกม</title>
+    <title>PLAYER HAVEN | RANDOM GAME ID</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {

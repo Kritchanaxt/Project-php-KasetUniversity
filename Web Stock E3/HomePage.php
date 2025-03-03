@@ -22,7 +22,7 @@ if (isset($_SESSION['username']) && isAdmin($_SESSION['username'])) {
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link href="src/output.css" rel="stylesheet" />
-	<title>Home</title>
+	<title>PLAYER HAVEN SHOP</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<!-- CSS -->
 	<style>
