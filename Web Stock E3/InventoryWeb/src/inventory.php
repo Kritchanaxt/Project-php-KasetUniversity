@@ -554,7 +554,7 @@ mysqli_close($conn);
 .nav-logo {
     text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
     font-weight: bold; /* ทำให้ตัวหนังสือหนา */
-    font-size: 35px; /* ปรับขนาดตัวอักษร */
+    font-size: 30px; /* ปรับขนาดตัวอักษร */
     color: white; /* ตั้งค่าสีตัวอักษร */
 }
 

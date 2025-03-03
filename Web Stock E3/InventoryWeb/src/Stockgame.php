@@ -259,11 +259,9 @@ button:hover {
 .nav-logo {
     text-decoration: none; 
     font-weight: bold; 
-    font-size: 35px; 
+    font-size: 30px; 
     color: white;
 }
-
-
 
     </style>
 </head>

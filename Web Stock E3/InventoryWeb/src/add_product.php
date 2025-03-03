@@ -324,7 +324,7 @@ mysqli_close($conn);
 .nav-logo {
     text-decoration: none; 
     font-weight: bold; 
-    font-size: 35px; 
+    font-size: 30px; 
     color: white;
 }
 

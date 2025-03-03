@@ -392,7 +392,7 @@
         .nav-logo {
     text-decoration: none; 
     font-weight: bold; 
-    font-size: 35px; 
+    font-size: 30px; 
     color: white;
 }
     </style>
@@ -402,7 +402,7 @@
 
     <!-- Navigation Bar -->
     <nav class="navbar">
-    <a href="../../HomePage.php" class="nav-logo">:package: INVENTORY</a>
+    <a href="../../HomePage.php" class="nav-logo">📦 INVENTORY</a>
         <ul class="nav-links">
         <li><a href="inventory.php">Store</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>

@@ -304,7 +304,7 @@ if (isset($_GET['delete'])) {
 .nav-logo {
     text-decoration: none; 
     font-weight: bold; 
-    font-size: 35px; 
+    font-size: 30px; 
     color: white;
 }
 
@@ -313,7 +313,7 @@ if (isset($_GET['delete'])) {
 <body>
 <div class="background-effect"></div>
 <nav class="navbar">
-<a href="../../HomePage.php" class="nav-logo">:package: INVENTORY</a>
+    <a href="../../HomePage.php" class="nav-logo">📦 INVENTORY</a>
     <ul class="nav-links">
         <li><a href="inventory.php">Store</a></li>
         <li><a href="edit_product.php">EditProduct</a></li>
